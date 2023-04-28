@@ -1,12 +1,15 @@
-# Modified UPnP Library with Annotation
+[![GitHub Packages](https://github.com/umjammer/cyberlink4java2/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/umjammer?tab=packages&repo_name=cyberlink4java2)
+[![Java CI](https://github.com/umjammer/cyberlink4java2/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/cyberlink4java2/actions/workflows/maven.yml)
+[![CodeQL](https://github.com/umjammer/cyberlink4java2/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/cyberlink4java2/actions/workflows/codeql-analysis.yml)
+![Java](https://img.shields.io/badge/Java-8-b07219)
 
-Original is
+# UPnP Library with Annotation
 
-http://cgupnpjava.sourceforge.net/
+[Original](http://www.cybergarage.org/oss/iot/cybergarage-upnp/)
 
 ## Before
 
-repeating same code
+mostly boilerplate
 
 ```Java
 public class LightDevice extends Device {

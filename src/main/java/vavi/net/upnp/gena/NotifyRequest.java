@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.upnp.UPnP;
 import vavi.net.util.SOAPRequest;

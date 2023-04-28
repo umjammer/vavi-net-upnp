@@ -5,80 +5,127 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>vavi</groupId>
   <artifactId>vavi-net-upnp</artifactId>
   <packaging>jar</packaging>
   <name>Cyberlink for Java</name>
   <organization>
-    <name></name>
+    <name>vavi</name>
   </organization>
   <version>1.1.0</version>
   <url>https://github.com/umjammer/cyberlink4java2</url>
-  <description>Java UPnP implementation
+  <description/>
+  <scm>
+    <url>https://github.com/umjammer/cyberlink4java2</url>
+  </scm>
+  <issueManagement>
+    <url>https://github.com/umjammer/cyberlink4java2/issues</url>
+  </issueManagement>
 
-Original
-
-    http://www.cybergarage.org/net/upnp/java/index.html
-</description>
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
         <configuration>
-          <source>8</source>
-          <target>8</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <encoding>UTF-8</encoding>
         </configuration>
-        <version>3.3</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/mediagate</source>
+                <source>src/main/samples</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M7</version>
+        <configuration>
+          <argLine>
+            -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
+          </argLine>
+          <trimStackTrace>false</trimStackTrace>
+        </configuration>
       </plugin>
     </plugins>
   </build>
+
   <repositories>
     <repository>
-      <id>vavi-commons-mvn-repo</id>
-      <url>https://raw.github.com/umjammer/vavi-commons/mvn-repo/</url>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
     </repository>
     <repository>
-      <id>vavi-util-screenscraping-mvn-repo</id>
-      <url>https://raw.github.com/umjammer/vavi-util-screenscraping/mvn-repo/</url>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/umjammer/*</url>
     </repository>
   </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.9.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
   	<dependency>
   		<groupId>javax.servlet</groupId>
   		<artifactId>servlet-api</artifactId>
-  		<version>2.4</version>
-  		<type>jar</type>
-  		<optional>false</optional>
+  		<version>2.5</version>
   	</dependency>
+
   	<dependency>
-  		<groupId>vavi</groupId>
+      <groupId>com.github.umjammer</groupId>
   		<artifactId>vavi-commons</artifactId>
-  		<version>1.0.4</version>
-  		<type>jar</type>
-  		<optional>false</optional>
+      <version>1.1.9</version>
   	</dependency>
+
   	<dependency>
-  		<groupId>vavi</groupId>
+      <groupId>com.github.umjammer</groupId>
   		<artifactId>vavi-commons-net</artifactId>
-  		<version>1.0.0</version>
-  		<type>jar</type>
-  		<optional>false</optional>
+  		<version>1.0.3</version>
   	</dependency>
+
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
+      <version>4.0.0</version>
+  	</dependency>
+    <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>jaxws-rt</artifactId>
+      <version>4.0.1</version>
+      <scope>runtime</scope>
+    </dependency>
+
   	<dependency>
   		<groupId>commons-logging</groupId>
   		<artifactId>commons-logging</artifactId>
   		<version>1.1.1</version>
-  		<type>jar</type>
-  		<optional>false</optional>
   	</dependency>
   	<dependency>
   		<groupId>commons-dbutils</groupId>
@@ -86,23 +133,30 @@ Original
   		<version>1.1</version>
   	</dependency>
   	<dependency>
-  		<groupId>vavi</groupId>
+      <groupId>com.github.umjammer</groupId>
   		<artifactId>vavi-commons-sandbox</artifactId>
-  		<version>0.3.1</version>
-  		<type>jar</type>
-  		<optional>false</optional>
+  		<version>0.4.2</version>
   	</dependency>
   	<dependency>
   		<groupId>vavi</groupId>
   		<artifactId>vavi-util-screenscraping</artifactId>
-  		<version>1.0.1</version>
-  		<optional>false</optional>
+      <version>1.0.12-SNAPSHOT</version>
+  	</dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-commons</artifactId>
+      <scope>test</scope>
   	</dependency>
   </dependencies>
-  <scm>
-    <url>https://github.com/umjammer/cyberlink4java2</url>
-  </scm>
-  <issueManagement>
-    <url>https://github.com/umjammer/cyberlink4java2/issues</url>
-  </issueManagement>
 </project>

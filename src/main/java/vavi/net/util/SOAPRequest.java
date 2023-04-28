@@ -9,10 +9,10 @@ package vavi.net.util;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 import vavi.net.http.HttpProtocol;

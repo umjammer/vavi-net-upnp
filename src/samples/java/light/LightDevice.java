@@ -30,7 +30,7 @@ public class LightDevice extends Device {
     /** */
     private final static String DESCRIPTION_FILE_NAME = "light/description/description.xml";
     /** */
-    private StateVariable powerVar;
+    private final StateVariable powerVar;
 
     /** */
     public LightDevice() throws IOException {
@@ -106,13 +106,10 @@ public class LightDevice extends Device {
     public void setPowerState(String state) {
         if (state == null) {
             off();
-            return;
         } else if (state.equals("1")) {
             on();
-            return;
         } else if (state.equals("0")) {
             off();
-            return;
         } else {
             Debug.println("unknown state: " + state);
         }
@@ -124,7 +121,8 @@ public class LightDevice extends Device {
     }
 
     /** ActionListener */
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
     
@@ -153,15 +151,13 @@ public class LightDevice extends Device {
     };
 
     /** QueryListener */
-    private QueryListener queryListener = new QueryListener() {
-        public boolean queryControlReceived(StateVariable stateVar) {
-            try {
-                stateVar.setValue(getPowerState());
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
+    private final QueryListener queryListener = stateVar -> {
+        try {
+            stateVar.setValue(getPowerState());
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     };
 

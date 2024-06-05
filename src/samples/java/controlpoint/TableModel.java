@@ -60,7 +60,7 @@ public class TableModel extends DefaultTableModel {
     }
 
     // addRows
-    private String[] rowStrings = new String[2];
+    private final String[] rowStrings = new String[2];
 
     protected void addRow(String element, String value) {
         rowStrings[0] = element;
@@ -69,6 +69,7 @@ public class TableModel extends DefaultTableModel {
     }
 
     // isCellEditable
+    @Override
     public boolean isCellEditable(int row, int col) {
         return false;
     }

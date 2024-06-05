@@ -19,7 +19,7 @@ import org.cybergarage.upnp.media.server.object.ContentNode;
  */
 public class DCTitleComparator implements Comparator<ContentNode> {
 
-    /** */
+    @Override
     public int compare(ContentNode conNode1, ContentNode conNode2) {
         if (conNode1 == null || conNode2 == null) {
             return 0;

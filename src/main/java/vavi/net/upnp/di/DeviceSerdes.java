@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPathConstants;
@@ -27,6 +28,7 @@ import vavi.net.upnp.Service;
 import vavi.net.upnp.UPnP;
 import vavi.net.util.Serdes;
 import vavi.net.util.Util;
+import vavi.util.Debug;
 import vavi.util.Singleton;
 import vavi.xml.util.PrettyPrinter;
 
@@ -40,12 +42,12 @@ import vavi.xml.util.PrettyPrinter;
 public class DeviceSerdes extends Singleton implements Serdes<Device, InputStream, OutputStream> {
 
     /** */
-    private static ServiceSerdes serviceSerdes = Singleton.getInstance(ServiceSerdes.class);
+    private static final ServiceSerdes serviceSerdes = Singleton.getInstance(ServiceSerdes.class);
 
     /** */
-    private static IconSerdes iconSerdes = Singleton.getInstance(IconSerdes.class);
+    private static final IconSerdes iconSerdes = Singleton.getInstance(IconSerdes.class);
 
-    /** */
+    @Override
     public void serialize(Device device, OutputStream os) throws IOException {
         //
         Document document = Util.getDocumentBuilder().newDocument();
@@ -64,7 +66,7 @@ public class DeviceSerdes extends Singleton implements Serdes<Device, InputStrea
     }
 
     /** */
-    private void copyProperties(Device device, Node deviceNode) throws IOException {
+    private static void copyProperties(Device device, Node deviceNode) throws IOException {
         Document document = deviceNode.getOwnerDocument();
     
         Node node = document.createElement("deviceType");
@@ -146,7 +148,7 @@ public class DeviceSerdes extends Singleton implements Serdes<Device, InputStrea
         }
     }
 
-    /** */
+    @Override
     public void deserialize(InputStream is, Device device) throws IOException {
         try {
             DocumentBuilder parser = Util.getDocumentBuilder();
@@ -157,21 +159,23 @@ public class DeviceSerdes extends Singleton implements Serdes<Device, InputStrea
             copyProperties(document, device);
 
         } catch (SAXException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     /** */
-    private void copyProperties(Node document, Device device) throws IOException {
+    private static void copyProperties(Node document, Device device) throws IOException {
         try {
             //
             final String ELEM_XPATH = "/" + Device.XMLNS + ":" + "root" + "/" + Device.XMLNS + ":" + "device";
+Debug.println("ELEM_XPATH: " + ELEM_XPATH);
             Node deviceNode = (Node) SerdesUtil.getXPath().evaluate(ELEM_XPATH, document, XPathConstants.NODE);
             if (deviceNode == null) {
+new PrettyPrinter(System.err).print(document);
                 throw new IllegalArgumentException("no root device node");
             }
             copyPropertiesInternal(deviceNode, device);
-//Debug.println("Device [root]: " + device.getFriendlyName());
+Debug.println(Level.FINER, "Device [root]: " + device.getFriendlyName());
             // TODO check
             final String DEVICE_LIST_XPATH = ".//" + Device.XMLNS + ":" + "deviceList" + "/" + Device.XMLNS + ":" + "device";
             NodeList childDeviceNodes = (NodeList) SerdesUtil.getXPath().evaluate(DEVICE_LIST_XPATH, deviceNode, XPathConstants.NODESET);
@@ -182,7 +186,7 @@ public class DeviceSerdes extends Singleton implements Serdes<Device, InputStrea
                 childDevice.setParentDevice(device);
                 copyPropertiesInternal(childDeviceNode, childDevice);
                 device.getChildDevices().add(childDevice);
-//Debug.println("Device [" + n + "]: " + childDevice.getFriendlyName());
+Debug.println(Level.FINER, "Device [" + n + "]: " + childDevice.getFriendlyName());
             }
         } catch (XPathExpressionException e) {
             throw new IllegalStateException(e);
@@ -190,7 +194,7 @@ public class DeviceSerdes extends Singleton implements Serdes<Device, InputStrea
     }
 
     /** copy one device */
-    private void copyPropertiesInternal(Node deviceNode, Device device) throws XPathExpressionException, IOException {
+    private static void copyPropertiesInternal(Node deviceNode, Device device) throws XPathExpressionException, IOException {
 
         //
         device.setDeviceType(SerdesUtil.getChildNodeValue(deviceNode, Device.XMLNS, "deviceType"));

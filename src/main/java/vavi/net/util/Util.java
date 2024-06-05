@@ -35,33 +35,33 @@ public final class Util {
     private static String ifAddress = "";
 
     /** */
-    public final static void setInterface(String ifaddr) {
+    public static void setInterface(String ifaddr) {
         ifAddress = ifaddr;
     }
 
     /** */
-    public final static String getInterface() {
+    public static String getInterface() {
         return ifAddress;
     }
 
     /** */
-    private final static boolean hasAssignedInterface() {
-        return ifAddress.length() > 0;
+    private static boolean hasAssignedInterface() {
+        return !ifAddress.isEmpty();
     }
 
     /** Network Interfaces */
-    private final static boolean isUseAddress(InetAddress addr) {
-        if (UPnP.getProperty(UPnP.Flag.USE_LOOPBACK_ADDR) == false) {
+    private static boolean isUseAddress(InetAddress addr) {
+        if (!UPnP.getProperty(UPnP.Flag.USE_LOOPBACK_ADDR)) {
             if (addr.isLoopbackAddress()) {
                 return false;
             }
         }
-        if (UPnP.getProperty(UPnP.Flag.USE_ONLY_IPV4_ADDR) == true) {
+        if (UPnP.getProperty(UPnP.Flag.USE_ONLY_IPV4_ADDR)) {
             if (addr instanceof Inet6Address) {
                 return false;
             }
         }
-        if (UPnP.getProperty(UPnP.Flag.USE_ONLY_IPV6_ADDR) == true) {
+        if (UPnP.getProperty(UPnP.Flag.USE_ONLY_IPV6_ADDR)) {
             if (addr instanceof Inet4Address) {
                 return false;
             }
@@ -70,7 +70,7 @@ public final class Util {
     }
 
     /** */
-    public final static int getHostAddressesCount() {
+    public static int getHostAddressesCount() {
         if (hasAssignedInterface()) {
             return 1;
         }
@@ -96,7 +96,7 @@ e.printStackTrace(System.err);
     }
 
     /** */
-    public final static String getHostAddress(int n) {
+    public static String getHostAddress(int n) {
         if (hasAssignedInterface()) {
             return getInterface();
         }
@@ -129,7 +129,7 @@ e.printStackTrace(System.err);
     }
 
     /** isIPv?Address */
-    public final static boolean isIPv6Address(String host) {
+    public static boolean isIPv6Address(String host) {
         try {
             InetAddress addr = InetAddress.getByName(host);
             if (addr instanceof Inet6Address) {
@@ -143,7 +143,7 @@ e.printStackTrace(System.err);
     }
 
     /** */
-    public final static boolean isIPv4Address(String host) {
+    public static boolean isIPv4Address(String host) {
         try {
             InetAddress addr = InetAddress.getByName(host);
             if (addr instanceof Inet4Address) {
@@ -157,25 +157,25 @@ e.printStackTrace(System.err);
     }
 
     /** getHostURL */
-    public static final String getHostURL(String host, int port, String uri) {
+    public static String getHostURL(String host, int port, String uri) {
         String hostAddr = host;
         if (isIPv6Address(host)) {
             hostAddr = "[" + host + "]";
         }
-        return "http://" + hostAddr + ":" + Integer.toString(port) + uri;
+        return "http://" + hostAddr + ":" + port + uri;
     }
 
     //----
 
     /** */
-    public static final String toRelativeURL(String urlString, boolean withParam) {
+    public static String toRelativeURL(String urlString, boolean withParam) {
         String uri = null;
         try {
             URL url = new URL(urlString);
             uri = url.getPath();
             if (withParam == true) {
                 String queryString = url.getQuery();
-                if (!queryString.equals("")) {
+                if (!queryString.isEmpty()) {
                     uri += ("?" + queryString);
                 }
             }
@@ -185,7 +185,7 @@ e.printStackTrace(System.err);
         } catch (MalformedURLException e) {
             if (urlString == null) {
                 uri = "";
-            } else if (0 < urlString.length() && urlString.charAt(0) != '/') {
+            } else if (!urlString.isEmpty() && urlString.charAt(0) != '/') {
                 uri = "/" + urlString;
             } else {
                 uri = urlString;
@@ -195,12 +195,12 @@ e.printStackTrace(System.err);
     }
 
     /** */
-    public static final String toRelativeURL(String urlString) {
+    public static String toRelativeURL(String urlString) {
         return toRelativeURL(urlString, true);
     }
 
     /** */
-    public static final String getAbsoluteURL(String baseURLString, String relURlString) {
+    public static String getAbsoluteURL(String baseURLString, String relURlString) {
         try {
             URL baseURL = new URL(baseURLString);
             String url = baseURL.getProtocol() + "://" + baseURL.getHost() + ":" + baseURL.getPort() + toRelativeURL(relURlString);

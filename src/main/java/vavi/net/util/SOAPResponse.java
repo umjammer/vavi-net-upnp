@@ -6,10 +6,10 @@
 
 package vavi.net.util;
 
-import jakarta.xml.soap.MessageFactory;
-import jakarta.xml.soap.SOAPException;
-import jakarta.xml.soap.SOAPFactory;
-import jakarta.xml.soap.SOAPMessage;
+
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 
@@ -30,12 +30,8 @@ public abstract class SOAPResponse extends HttpContext {
 
     /**  */
     public SOAPResponse() {
-        try {
-            messageFactory = MessageFactory.newInstance();
-            soapFactory = SOAPFactory.newInstance();
-        } catch (SOAPException e) {
-            throw new IllegalStateException(e);
-        }
+        messageFactory = SoapUtil.getMessageFactory();
+        soapFactory = SoapUtil.getSOAPFactory();
     }
 
     /** */

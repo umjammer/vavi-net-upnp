@@ -27,7 +27,7 @@ public class LightView extends JPanel implements Light.View {
     private final static String LIGHT_OFF_PANEL_IMAGE = "/light2/images/lightoff.jpg";
 
     /** */
-    private BufferedImage[] images = new BufferedImage[2];
+    private final BufferedImage[] images = new BufferedImage[2];
 
     /** */
     public LightView() {
@@ -43,14 +43,14 @@ public class LightView extends JPanel implements Light.View {
     /** */
     private boolean enabled;
 
-    /** */
+    @Override
     public void setPowerEnabled(boolean enabled) {
         this.enabled = enabled;
 Debug.println("enabled: " + enabled);
         repaint();
     }
 
-    /** */
+    @Override
     public void paint(Graphics g) {
         g.setColor(Color.GRAY);
         g.clearRect(0, 0, getWidth(), getHeight());

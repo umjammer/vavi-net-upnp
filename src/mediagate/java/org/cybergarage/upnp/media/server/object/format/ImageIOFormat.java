@@ -35,7 +35,7 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
 
     // Member
 
-    private File imgFile;
+    private final File imgFile;
 
     private ImageReader imgReader;
 
@@ -64,11 +64,13 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
 
     // Abstract Methods
 
+    @Override
     public String getMediaClass() {
         return "object.item.imageItem.photo";
     }
 
     // TODO check owner document
+    @Override
     public List<Attr> getAttributeList() {
         List<Attr> attrList = new ArrayList<>();
         Document document = Util.getDocumentBuilder().newDocument();
@@ -77,7 +79,7 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
             // Resolution (Width x Height)
             int imgWidth = imgReader.getWidth(0);
             int imgHeight = imgReader.getHeight(0);
-            String resStr = Integer.toString(imgWidth) + "x" + Integer.toString(imgHeight);
+            String resStr = imgWidth + "x" + imgHeight;
             Attr resAttr = document.createAttribute(ItemNode.RESOLUTION);
             resAttr.setValue(resStr);
             attrList.add(resAttr);
@@ -94,6 +96,7 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
         return attrList;
     }
 
+    @Override
     public String getTitle() {
         String fname = imgFile.getName();
         int idx = fname.lastIndexOf(".");
@@ -105,6 +108,7 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
         return title;
     }
 
+    @Override
     public String getCreator() {
         return "";
     }

@@ -83,7 +83,7 @@ public class TvPane extends JPanel { // MouseListener
 
     private Font timeFont = null;
 
-    private Font getFont(Graphics g, int size) {
+    private static Font getFont(Graphics g, int size) {
         Font font = g.getFont();
         if (font != null) {
             return font;
@@ -119,7 +119,7 @@ public class TvPane extends JPanel { // MouseListener
 
         // Time String
         String timeStr = tvDev.getClockTime();
-        if ((timeStr != null) && (0 < timeStr.length())) {
+        if ((timeStr != null) && (!timeStr.isEmpty())) {
             strBounds = fontMetric.getStringBounds(timeStr, g);
             strWidth = (int) strBounds.getWidth();
             strHeight = (int) strBounds.getHeight();
@@ -130,7 +130,7 @@ public class TvPane extends JPanel { // MouseListener
 
         // Temperature String
         String tempStr = tvDev.getAirconTempture();
-        if ((tempStr != null) && (0 < tempStr.length())) {
+        if ((tempStr != null) && (!tempStr.isEmpty())) {
             tempStr += "C";
             strBounds = fontMetric.getStringBounds(tempStr, g);
             strWidth = (int) strBounds.getWidth();
@@ -142,7 +142,7 @@ public class TvPane extends JPanel { // MouseListener
 
         // Message String
         String msgStr = tvDev.getMessage();
-        if ((msgStr != null) && (0 < msgStr.length())) {
+        if ((msgStr != null) && (!msgStr.isEmpty())) {
             strBounds = fontMetric.getStringBounds(msgStr, g);
             strWidth = (int) strBounds.getWidth();
             strHeight = (int) strBounds.getHeight();
@@ -168,6 +168,7 @@ public class TvPane extends JPanel { // MouseListener
         g.drawImage(panelmage, 0, 0, null);
     }
 
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawPanelImage(g);

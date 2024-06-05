@@ -34,7 +34,7 @@ import vavi.util.Debug;
  *          instead of only the in arguments <br>
  *          01/04/04 Added UPnP status methods. <br>
  *          Changed about new ActionListener interface. <br>
- *          01/05/04 Added clearOutputAgumentValues() to initialize the output
+ *          01/05/04 Added clearOutputArgumentValues() to initialize the output
  *          values before calling performActionListener(). <br>
  *          07/09/04 Thanks for Dimas <cyberrate@users.sourceforge.net> and
  *          Stefano Lenzi <kismet-sl@users.sourceforge.net> <br>
@@ -97,11 +97,11 @@ Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgum
     /** */
     public List<Argument> getInputArgumentList() {
         List<Argument> resultArgumentList = new ArrayList<>();
-        for (Argument argment : argumentList) {
-            if (!argment.isInDirection()) {
+        for (Argument argument : argumentList) {
+            if (!argument.isInDirection()) {
                 continue;
             }
-            resultArgumentList.add(argment);
+            resultArgumentList.add(argument);
         }
         return resultArgumentList;
     }
@@ -129,7 +129,7 @@ Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgum
     }
 
     /** */
-    void clearOutputAgumentValues() {
+    void clearOutputArgumentValues() {
         for (Argument argument : argumentList) {
             if (!argument.isOutDirection()) {
                 continue;

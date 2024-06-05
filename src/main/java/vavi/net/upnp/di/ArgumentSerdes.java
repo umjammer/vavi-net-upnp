@@ -25,7 +25,7 @@ import vavi.util.Singleton;
  */
 public class ArgumentSerdes extends Singleton implements Serdes<Argument, Node, Node> {
 
-    /** */
+    @Override
     public void serialize(Argument argument, Node argumentNode) throws IOException {
         Document document = argumentNode.getOwnerDocument();
 
@@ -44,7 +44,7 @@ public class ArgumentSerdes extends Singleton implements Serdes<Argument, Node, 
 //        argumentNode.setTextContent(argument.getValue());
     }
     
-    /** */
+    @Override
     public void deserialize(Node argumentNode, Argument argument) throws IOException {
         argument.setName(SerdesUtil.getChildNodeValue(argumentNode, Service.XMLNS, "name"));
         argument.setDirection(SerdesUtil.getChildNodeValue(argumentNode, Service.XMLNS, "direction"));

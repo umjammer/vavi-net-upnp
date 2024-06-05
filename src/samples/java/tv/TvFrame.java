@@ -28,8 +28,8 @@ import vavi.util.Debug;
  */
 public class TvFrame extends JFrame {
     private final static String TITLE = "CyberLink Sample TV";
-    private TvDevice tvDev;
-    private TvPane tvPane;
+    private final TvDevice tvDev;
+    private final TvPane tvPane;
 
     public TvFrame() throws IOException {
         super(TITLE);
@@ -60,9 +60,10 @@ public class TvFrame extends JFrame {
 
 
     //	run	
-    private ExecutorService timerThread = Executors.newSingleThreadExecutor();
+    private final ExecutorService timerThread = Executors.newSingleThreadExecutor();
 
-    private Runnable handler = new Runnable() {
+    private final Runnable handler = new Runnable() {
+        @Override
         public void run() {
     
             try {
@@ -93,7 +94,8 @@ Debug.println("--- timerThread stopped");
 
 
     //	main
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent ev) {
             tvDev.off();
             try {

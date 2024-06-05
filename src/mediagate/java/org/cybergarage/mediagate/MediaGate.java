@@ -50,7 +50,7 @@ public class MediaGate {
             mediaServer = new MediaServer();
             setMode(mode);
 
-            boolean isFileSysMode = (mode == FILESYS_MODE) ? true : false;
+            boolean isFileSysMode = mode == FILESYS_MODE;
 
             switch (mode) {
             case FILESYS_MODE: {
@@ -109,8 +109,8 @@ public class MediaGate {
             Preferences dirPref = getUserDirectoryPreferences();
             String[] dirName = dirPref.keys();
             int dirCnt = dirName.length;
-            for (int n = 0; n < dirCnt; n++) {
-                dirPref.remove(dirName[n]);
+            for (String s : dirName) {
+                dirPref.remove(s);
             }
         } catch (Exception e) {
             Debug.printStackTrace(e);
@@ -144,11 +144,10 @@ Debug.println("[" + n + "] = " + name + "," + path);
             int dirCnt = conDir.getNDirectories();
             for (int n = 0; n < dirCnt; n++) {
                 Directory dir = conDir.getDirectory(n);
-                if (!(dir instanceof FileDirectory)) {
+                if (!(dir instanceof FileDirectory fileDir)) {
                     continue;
                 }
 
-                FileDirectory fileDir = (FileDirectory) dir;
                 dirPref.put(fileDir.getFriendlyName(), fileDir.getPath());
             }
         } catch (Exception e) {

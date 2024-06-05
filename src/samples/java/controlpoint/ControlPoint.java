@@ -88,7 +88,8 @@ public class ControlPoint extends vavi.net.upnp.ControlPoint {
     }
 
     /** Listener */
-    private NotifyListener notifyListener = new NotifyListener() {
+    private final NotifyListener notifyListener = new NotifyListener() {
+        @Override
         public void deviceNotifyReceived(SsdpRequest packet) {
 //System.out.println("-------- request: SSDP");
 //System.out.println(packet.toString());
@@ -113,14 +114,11 @@ public class ControlPoint extends vavi.net.upnp.ControlPoint {
     };
     
     /** */
-    private EventListener eventListener = new EventListener() {
-        public void eventNotifyReceived(String uuid, long seq, String name, String value) {
-            printConsole("event notify : uuid = " + uuid + ", seq = " + seq + ", name = " + name + ", value =" + value);
-        }
-    };
+    private final EventListener eventListener = (uuid, seq, name, value) -> printConsole("event notify : uuid = " + uuid + ", seq = " + seq + ", name = " + name + ", value =" + value);
 
     /** */
-    private SearchResponseListener searchResponseListener = new SearchResponseListener() {
+    private final SearchResponseListener searchResponseListener = new SearchResponseListener() {
+        @Override
         public void deviceSearchResponseReceived(SsdpRequest packet) {
             String uuid = packet.getUSN();
             String st = packet.getST();

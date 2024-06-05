@@ -44,7 +44,7 @@ public class NotifyReceiver {
     }
 
     /** run */
-    private ExecutorService notifyReceivingService = Executors.newSingleThreadExecutor();
+    private final ExecutorService notifyReceivingService = Executors.newSingleThreadExecutor();
 
     /** */
     private Future<?> notifyReceiving;
@@ -60,35 +60,33 @@ public class NotifyReceiver {
     }
 
     /** */
-    private Runnable notifyReceiver = new Runnable() {
-        public void run() {
-            try {
+    private final Runnable notifyReceiver = () -> {
+        try {
 Debug.println("+++ NotifyReceiver started: " + SSDP.PORT);
     
-                while (true) {
-                    Thread.yield();
-    
-                    try {
-                        SsdpRequest request = httpMulticastSocket.receive();
-    
-                        // Thanks for Inma (02/20/2004)
-                        InetAddress multicatAddress = httpMulticastSocket.getMulticastInetAddress();
-                        InetAddress packetAddress = request.getHostInetAddress();
-                        if (!multicatAddress.equals(packetAddress)) {
-Debug.println("Invalidate Multicast Received: " + multicatAddress + ", " + packetAddress);
-                            continue;
-                        }
-            
-                        notifyReceived(request);
-                    } catch (IOException e) {
-Debug.printStackTrace(e);
+            while (true) {
+                Thread.yield();
+
+                try {
+                    SsdpRequest request = httpMulticastSocket.receive();
+
+                    // Thanks for Inma (02/20/2004)
+                    InetAddress multicastAddress = httpMulticastSocket.getMulticastInetAddress();
+                    InetAddress packetAddress = request.getHostInetAddress();
+                    if (!multicastAddress.equals(packetAddress)) {
+Debug.println("Invalidate Multicast Received: " + multicastAddress + ", " + packetAddress);
+                        continue;
                     }
-                }
-            } catch (Exception e) {
+
+                    notifyReceived(request);
+                } catch (IOException e) {
 Debug.printStackTrace(e);
-            } finally {
-Debug.println("--- NotifyReceiver stopped");
+                }
             }
+        } catch (Exception e) {
+Debug.printStackTrace(e);
+        } finally {
+Debug.println("--- NotifyReceiver stopped");
         }
     };
 

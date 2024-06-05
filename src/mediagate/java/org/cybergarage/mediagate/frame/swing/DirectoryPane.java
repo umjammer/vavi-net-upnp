@@ -25,11 +25,11 @@ public class DirectoryPane extends JPanel {
 
     // Member
 
-    private JScrollPane scrPane;
+    private final JScrollPane scrPane;
 
-    private JList<String> dirList;
+    private final JList<String> dirList;
 
-    private DefaultListModel<String> dirListMode;
+    private final DefaultListModel<String> dirListMode;
 
     // Constructor
 

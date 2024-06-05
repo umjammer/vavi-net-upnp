@@ -50,9 +50,9 @@ public class SwingFrame extends MediaFrame implements ActionListener, ListSelect
 
     public static String TITLE = "Cyber Media Gate";
 
-    private static GraphicsDevice graphDevice;
+    private static final GraphicsDevice graphDevice;
 
-    private static GraphicsConfiguration graphGC;
+    private static final GraphicsConfiguration graphGC;
 
     static {
         GraphicsEnvironment graphEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -66,19 +66,19 @@ public class SwingFrame extends MediaFrame implements ActionListener, ListSelect
 
     // Member
 
-    private DisplayMode orgDispMode;
+    private final DisplayMode orgDispMode;
 
-    private JFrame frame;
+    private final JFrame frame;
 
-    private DirectoryPane dirPane;
+    private final DirectoryPane dirPane;
 
-    private ContentPane conPane;
+    private final ContentPane conPane;
 
     private JButton addButton;
 
     private JButton delButton;
 
-    private JButton quitButton;
+    private final JButton quitButton;
 
     // Constructor
 
@@ -154,6 +154,7 @@ Debug.println(mode);
 
     // ActionListener
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         Object srcObj = ev.getSource();
 
@@ -221,6 +222,7 @@ Debug.printStackTrace(e);
 
     // ListSelectionListener
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         // int selIdx = e.getLastIndex();
         int selIdx = dirPane.getList().getSelectedIndex();
@@ -235,7 +237,8 @@ Debug.printStackTrace(e);
     }
 
     // WindowListener
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent ev) {
             try {
                 exit();

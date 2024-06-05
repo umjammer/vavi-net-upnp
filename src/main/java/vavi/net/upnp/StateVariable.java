@@ -28,7 +28,7 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 12/06/02 first revision. <br>
  *          06/17/03 Added setSendEvents(), isSendEvents(). <br>
- *          Changed to send a event after check the eventing state using
+ *          Changed to send an event after check the eventing state using
  *          isSendEvents(). <br>
  *          01/04/04 Added UPnP status methods. <br>
  *          01/06/04 Added the following methods. <br>
@@ -44,7 +44,7 @@ import vavi.util.Debug;
  *          <br>
  *          07/09/04 Thanks for Dimas <cyberrate@users.sourceforge.net> and
  *          Stefano Lenzi <kismet-sl@users.sourceforge.net> <br>
- *          Changed postQuerylAction() to set the status code to the UPnPStatus.
+ *          Changed postQueryAction() to set the status code to the UPnPStatus.
  *          <br>
  */
 public class StateVariable {
@@ -112,7 +112,7 @@ public class StateVariable {
 
     /**
      * Value
-     * @throws IOException if {@link #doNotfy()} failed
+     * @throws IOException if {@link #doNotify()} failed
      */
     public void setValue(String value) throws IOException {
         this.value = value;
@@ -123,7 +123,7 @@ Debug.println("no service");
         }
 
         // notify event
-        if (sendEvents == true) {
+        if (sendEvents) {
             doNotify();
         } else {
 Debug.println("not sendEvents");
@@ -138,7 +138,7 @@ Debug.println("not sendEvents");
     // ----
 
     /** */
-    private List<String> allowedValueList = new ArrayList<>();
+    private final List<String> allowedValueList = new ArrayList<>();
 
     /** AllowedValueList */
     public List<String> getAllowedValueList() {
@@ -182,7 +182,7 @@ Debug.println("not sendEvents");
         List<Subscriber> copiedSubscriberList = new ArrayList<>(service.getSubscriberList());
         for (Subscriber subscriber : copiedSubscriberList) {
             boolean result = subscriber.notify(this);
-            if (result == false) {
+            if (!result) {
                 // Don't remove for NMPR specification.
 //              service.removeSubscriber(subscriber);
             }
@@ -196,7 +196,7 @@ Debug.println("not sendEvents");
      * TODO out source
      * @throws IllegalStateException when SOAPException occurs. 
      */
-    public QueryResponse postQuerylAction() throws IOException {
+    public QueryResponse postQueryAction() throws IOException {
         QueryRequest request = new QueryRequest(this);
         QueryResponse response = new QueryResponse(SoapUtil.postSoapRequest(request));
 

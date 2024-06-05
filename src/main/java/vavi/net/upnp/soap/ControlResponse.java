@@ -9,10 +9,10 @@ package vavi.net.upnp.soap;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
-import jakarta.xml.soap.SOAPBody;
-import jakarta.xml.soap.SOAPElement;
-import jakarta.xml.soap.SOAPException;
-import jakarta.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 import vavi.net.upnp.UPnP;
@@ -53,7 +53,7 @@ public class ControlResponse extends SOAPResponse {
             this.response = response;
             this.os = response.getOutputStream();
         } catch (IOException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -67,6 +67,7 @@ public class ControlResponse extends SOAPResponse {
     }
 
     /** TODO not beautiful */
+    @Override
     public void setHeader(String name, String value) {
         super.setHeader(name, value);
         if (response != null) {
@@ -127,9 +128,9 @@ public class ControlResponse extends SOAPResponse {
             upnpErrorNode.addChildElement(errorCodeNode);
 
             // "//body/s:Fault/detail/errorDescription"
-            SOAPElement errorDesctiprionNode = soapFactory.createElement("errorDescription");
-            errorDesctiprionNode.addTextNode(this.statusMessage);
-            upnpErrorNode.addChildElement(errorDesctiprionNode);
+            SOAPElement errorDescriptionNode = soapFactory.createElement("errorDescription");
+            errorDescriptionNode.addTextNode(this.statusMessage);
+            upnpErrorNode.addChildElement(errorDescriptionNode);
 
             bodyNode.addChildElement(faultNode);
 
@@ -164,9 +165,7 @@ Debug.println("response has no contents");
 //System.out.println("-------- response: " + is.available() + " bytes");
             soapMessage = SoapUtil.getSOAPMessage(headers, is);
 //System.out.println("\n--------");
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (SOAPException e) {
+        } catch (IOException | SOAPException e) {
             throw new IllegalStateException(e);
         }
 

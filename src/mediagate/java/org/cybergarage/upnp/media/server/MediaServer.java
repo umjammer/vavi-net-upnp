@@ -12,10 +12,6 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.cybergarage.upnp.media.server.object.Format;
 
 import vavi.net.http.HttpRequestListener;
@@ -89,7 +85,7 @@ public class MediaServer extends Device {
         connectionManagerService.setQueryListener(getConnectionManager().getQueryListener());
     }
 
-    /** */
+    @Override
     protected void finalize() throws Throwable {
         stop();
     }
@@ -143,33 +139,29 @@ public class MediaServer extends Device {
         return Util.getInterface();
     }
 
-    /** HttpRequestListner */
-    private HttpRequestListener httpRequestListner = new HttpRequestListener() { 
-        public void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            String uri = request.getRequestURI();
+    /** HttpRequestListener */
+    private final HttpRequestListener httpRequestListener = (request, response) -> {
+        String uri = request.getRequestURI();
 Debug.println("uri = " + uri);
-    
-            if (uri.startsWith(ContentDirectory.CONTENT_EXPORT_URI)) {
-                getContentDirectory().doService(request, response);
-                return;
-            }
-    
-            // TODO いまいちやぞ、子供に親の仕様を強いるなんて...
-            MediaServer.super.httpRequestListener.doService(request, response);
+
+        if (uri.startsWith(ContentDirectory.CONTENT_EXPORT_URI)) {
+            getContentDirectory().doService(request, response);
+            return;
         }
+
+        // TODO いまいちやぞ、子供に親の仕様を強いるなんて...
+        MediaServer.super.httpRequestListener.doService(request, response);
     };
 
     /** */
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    /** */
     @Override
     public void start() throws IOException {
         super.start();
         executorService.execute(getContentDirectory().getHandler());
     }
 
-    /** */
     @Override
     public void stop() throws IOException {
         executorService.shutdown();

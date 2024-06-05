@@ -25,7 +25,7 @@ import vavi.util.Singleton;
  */
 public class IconSerdes extends Singleton implements Serdes<Icon, Node, Node> {
 
-    /** */
+    @Override
     public void serialize(Icon icon, Node iconNode) throws IOException {
         Document document = iconNode.getOwnerDocument();
 
@@ -47,7 +47,7 @@ public class IconSerdes extends Singleton implements Serdes<Icon, Node, Node> {
         iconNode.appendChild(node);
     }
     
-    /** */
+    @Override
     public void deserialize(Node iconNode, Icon icon) throws IOException {
         icon.setURL(SerdesUtil.getChildNodeValue(iconNode, Device.XMLNS, "url"));
         icon.setDepth(SerdesUtil.getChildNodeValue(iconNode, Device.XMLNS, "depth"));

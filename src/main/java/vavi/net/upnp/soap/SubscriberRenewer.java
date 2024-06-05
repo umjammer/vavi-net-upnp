@@ -30,7 +30,7 @@ public class SubscriberRenewer {
     private final static long INTERVAL = 120;
 
     /** Member */
-    private ControlPoint controlPoint;
+    private final ControlPoint controlPoint;
 
     /** Constructor */
     public SubscriberRenewer(ControlPoint controlPoint) {
@@ -38,7 +38,7 @@ public class SubscriberRenewer {
     }
 
     /** Subscriber */
-    private ExecutorService subscriberRenewalService = Executors.newSingleThreadExecutor();
+    private final ExecutorService subscriberRenewalService = Executors.newSingleThreadExecutor();
 
     /** */
     private Future<?> subscriberRenewal;
@@ -54,23 +54,21 @@ public class SubscriberRenewer {
     }
 
     /** Thread */
-    private Runnable subscriberRenewer = new Runnable() {
-        public void run() {
-            try {
+    private final Runnable subscriberRenewer = () -> {
+        try {
 Debug.println("+++ SubscriberRenewer started");
-                while (true) {
-                    try {
-                        try { Thread.sleep(INTERVAL * 1000); } catch (InterruptedException e) {}
-                        renewSubscriberService();
-                    } catch (IOException e) {
+            while (true) {
+                try {
+                    try { Thread.sleep(INTERVAL * 1000); } catch (InterruptedException e) {}
+                    renewSubscriberService();
+                } catch (IOException e) {
 Debug.printStackTrace(e);
-                    }
                 }
-            } catch (Exception e) {
-Debug.printStackTrace(e);
-            } finally {
-Debug.println("--- SubscriberRenewer stopped");
             }
+        } catch (Exception e) {
+Debug.printStackTrace(e);
+        } finally {
+Debug.println("--- SubscriberRenewer stopped");
         }
     };
 

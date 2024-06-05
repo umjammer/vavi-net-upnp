@@ -8,9 +8,9 @@
 package org.cybergarage.upnp.media.server.object.item.mythtv;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +87,7 @@ public class MythRecordedItemNode extends ItemNode {
         String id = getID();
         String url = getContentDirectory().getContentExportURL(id);
         @SuppressWarnings("unused")
-        List<Attr> attrList = new ArrayList<Attr>(); // TODO below
+        List<Attr> attrList = new ArrayList<>(); // TODO below
         Document document = Util.getDocumentBuilder().newDocument();
         @SuppressWarnings("unused")
         Attr attr = document.createAttributeNS(ItemNode.SIZE, Long.toString(fileSize));
@@ -125,21 +125,24 @@ public class MythRecordedItemNode extends ItemNode {
         return fileByte;
     }
 
+    @Override
     public long getContentLength() {
         File recFile = getRecordedInfo().getFile();
         return recFile.length();
     }
 
+    @Override
     public InputStream getContentInputStream() {
         try {
             File recFile = getRecordedInfo().getFile();
-            return new FileInputStream(recFile);
+            return Files.newInputStream(recFile.toPath());
         } catch (Exception e) {
             Debug.println(e);
         }
         return null;
     }
 
+    @Override
     public String getMimeType() {
         return MIME_TYPE;
     }

@@ -37,7 +37,7 @@ public class HttpUnicastSocket {
     /** */
     private DatagramSocket ssdpUnicastSocket = null;
 
-    /** */
+//    /** */
 //  private MulticastSocket ssdpUniSock = null;
 
     /** */
@@ -58,6 +58,7 @@ public class HttpUnicastSocket {
         open(bindPort);
     }
 
+    @Override
     protected void finalize() {
         close();
     }
@@ -70,7 +71,7 @@ public class HttpUnicastSocket {
     }
 
     public String getLocalAddress() {
-        if (0 < localAddress.length()) {
+        if (!localAddress.isEmpty()) {
             return localAddress;
         }
         return ssdpUnicastSocket.getLocalAddress().getHostAddress();

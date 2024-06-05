@@ -24,22 +24,22 @@ import vavi.util.Singleton;
  */
 public class AllowedValueRangeSerdes extends Singleton implements Serdes<AllowedValueRange, Node, Node> {
 
-    /** */
-    public void serialize(AllowedValueRange allowdValueRange, Node allowdValueRangeNode) {
+    @Override
+    public void serialize(AllowedValueRange allowedValueRange, Node allowdValueRangeNode) {
         Document document = allowdValueRangeNode.getOwnerDocument();
 
         Node node = document.createElement("minimum");
-        node.setTextContent(allowdValueRange.getMinimum());
+        node.setTextContent(allowedValueRange.getMinimum());
         allowdValueRangeNode.appendChild(node);
         node = document.createElement("maximum");
-        node.setTextContent(allowdValueRange.getMaximum());
+        node.setTextContent(allowedValueRange.getMaximum());
         allowdValueRangeNode.appendChild(node);
         node = document.createElement("step");
-        node.setTextContent(allowdValueRange.getStep());
+        node.setTextContent(allowedValueRange.getStep());
         allowdValueRangeNode.appendChild(node);
     }
     
-    /** */
+    @Override
     public void deserialize(Node allowdValueRangeNode, AllowedValueRange allowdValueRange) {
         allowdValueRange.setMinimum(SerdesUtil.getChildNodeValue(allowdValueRangeNode, Service.XMLNS, "minimum"));
         allowdValueRange.setMaximum(SerdesUtil.getChildNodeValue(allowdValueRangeNode, Service.XMLNS, "maximum"));

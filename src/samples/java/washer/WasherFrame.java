@@ -29,10 +29,10 @@ public class WasherFrame extends JFrame {
     private final static String TITLE = "CyberLink Sample Washer";
 
     /** */
-    private WasherDevice washerDevice;
+    private final WasherDevice washerDevice;
 
     /** */
-    private WasherPane washerPane;
+    private final WasherPane washerPane;
 
     /** */
     public WasherFrame() throws IOException {
@@ -67,7 +67,8 @@ public class WasherFrame extends JFrame {
     }
 
     /** main */
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent event) {
             try {
                 washerDevice.stop();

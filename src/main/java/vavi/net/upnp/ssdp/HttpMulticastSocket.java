@@ -61,6 +61,7 @@ public class HttpMulticastSocket {
     }
 
     /** Destructor */
+    @Override
     protected void finalize() throws Throwable {
         close();
     }

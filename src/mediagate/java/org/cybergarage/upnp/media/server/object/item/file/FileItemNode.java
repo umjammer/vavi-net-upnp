@@ -7,9 +7,9 @@
 package org.cybergarage.upnp.media.server.object.item.file;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.cybergarage.upnp.media.server.ContentDirectory;
 import org.cybergarage.upnp.media.server.object.Format;
@@ -74,19 +74,22 @@ public class FileItemNode extends ItemNode {
         return fileByte;
     }
 
+    @Override
     public long getContentLength() {
         return itemFile.length();
     }
 
+    @Override
     public InputStream getContentInputStream() {
         try {
-            return new FileInputStream(itemFile);
+            return Files.newInputStream(itemFile.toPath());
         } catch (Exception e) {
             Debug.println(e);
         }
         return null;
     }
 
+    @Override
     public String getMimeType() {
         ContentDirectory cdir = getContentDirectory();
         File itemFile = getFile();

@@ -26,7 +26,7 @@ import vavi.util.Debug;
 public class SearchResponseReceiver {
 
     /** */
-    private HttpUnicastSocket httpUnicastSocket;
+    private final HttpUnicastSocket httpUnicastSocket;
 
     /** */
     public HttpUnicastSocket getHttpUnicastSocket() {
@@ -64,7 +64,8 @@ public class SearchResponseReceiver {
     }
 
     /** */
-    private Runnable responseReceiver = new Runnable() {
+    private final Runnable responseReceiver = new Runnable() {
+        @Override
         public void run() {
             try {
 Debug.println("+++ ResponseReceiver started");

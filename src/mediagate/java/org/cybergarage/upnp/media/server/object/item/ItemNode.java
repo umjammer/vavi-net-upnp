@@ -138,19 +138,18 @@ public abstract class ItemNode extends ContentNode {
     public void setResource(String url, String protocolInfo, List<Attr> attrList) {
         setProperty(DIDLLite.RES, url);
 
-        setPropertyAttribure(DIDLLite.RES, DIDLLite.RES_PROTOCOLINFO, protocolInfo);
+        setPropertyAttribute(DIDLLite.RES, DIDLLite.RES_PROTOCOLINFO, protocolInfo);
 
         int attrCnt = attrList.size();
-        for (int n = 0; n < attrCnt; n++) {
-            Attr attr = attrList.get(n);
+        for (Attr attr : attrList) {
             String name = attr.getName();
             String value = attr.getValue();
-            setPropertyAttribure(DIDLLite.RES, name, value);
+            setPropertyAttribute(DIDLLite.RES, name, value);
         }
     }
 
     public void setResource(String url, String protocolInfo) {
-        setResource(url, protocolInfo, new ArrayList<Attr>());
+        setResource(url, protocolInfo, new ArrayList<>());
     }
 
     // Abstract methods
@@ -165,19 +164,19 @@ public abstract class ItemNode extends ContentNode {
     //---- TODO check place
 
     /** */
-    protected static final byte[] load(String fileName) throws IOException {
+    protected static byte[] load(String fileName) throws IOException {
         FileInputStream fin = new FileInputStream(fileName);
         return load(fin);
     }
 
     /** */
-    protected static final byte[] load(File file) throws IOException {
+    protected static byte[] load(File file) throws IOException {
         FileInputStream fin = new FileInputStream(file);
         return load(fin);
     }
 
     /** */
-    protected static final byte[] load(FileInputStream fin) throws IOException {
+    protected static byte[] load(FileInputStream fin) throws IOException {
         byte[] readBuf = new byte[512 * 1024];
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();

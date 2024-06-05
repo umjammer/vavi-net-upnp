@@ -67,7 +67,7 @@ public class Subscriber {
             deliveryPath = url.getPath();
             deliveryPort = url.getPort();
         } catch (MalformedURLException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e);
+            throw new IllegalArgumentException(e);
         }
     }
 

@@ -41,9 +41,8 @@ public class JPEGFormat extends ImageIOFormat {
     // Abstract Methods
 
     public boolean equals(Object object) {
-        if (object instanceof File) {
-            File file = (File) object;
-//Debug.println("file: " + file);
+        if (object instanceof File file) {
+            //Debug.println("file: " + file);
             byte[] headerID = Header.getID(file, 2);
             int header1 = headerID[0] & 0xff;
             int header2 = headerID[1] & 0xff;
@@ -54,10 +53,12 @@ public class JPEGFormat extends ImageIOFormat {
         return false;
     }
 
+    @Override
     public FormatObject createObject(File file) {
         return new JPEGFormat(file);
     }
 
+    @Override
     public String getMimeType() {
         return "image/jpeg";
     }

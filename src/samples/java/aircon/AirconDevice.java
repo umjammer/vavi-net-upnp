@@ -31,12 +31,56 @@ public class AirconDevice extends Device {
     /** */
     private final static String DESCRIPTION_FILE_NAME = "aircon/description/description.xml";
     /** */
-    private StateVariable tempVar;
+    private final StateVariable tempVar;
 
     public AirconDevice() throws IOException {
         super(AirconDevice.class.getResource(DESCRIPTION_FILE_NAME));
 
         Action getPowerAction = getAction("GetPower");
+        // ActionListener
+        ActionListener actionListener = action -> {
+            String actionName = action.getName();
+
+            switch (actionName) {
+                case "GetPower": {
+                    String state = getPowerState();
+                    Argument powerArg = action.getArgument("Power");
+                    powerArg.setValue(state);
+                    break;
+                }
+                case "SetPower": {
+                    Argument powerArg = action.getArgument("Power");
+                    String state = powerArg.getValue();
+                    setPowerState(state);
+                    state = getPowerState();
+
+                    Argument resultArg = action.getArgument("Result");
+                    resultArg.setValue(state);
+                    break;
+                }
+                case "GetTemp": {
+                    int temp = getTemperature();
+                    Argument tempArg = action.getArgument("Temp");
+                    tempArg.setValue(String.valueOf(temp));
+                    break;
+                }
+                case "SetTemp": {
+                    Argument powerArg = action.getArgument("Temp");
+                    int temp = Integer.parseInt(powerArg.getValue());
+                    setTemperature(temp);
+                    temp = getTemperature();
+
+                    Argument resultArg = action.getArgument("Result");
+                    resultArg.setValue(String.valueOf(temp));
+                    break;
+                }
+                default:
+                    return false;
+            }
+
+            comp.repaint();
+            return true;
+        };
         getPowerAction.setActionListener(actionListener);
 
         Action setPowerAction = getAction("SetPower");
@@ -50,11 +94,21 @@ public class AirconDevice extends Device {
 
         List<Service> serviceList = getServiceList();
         Service service = serviceList.get(0);
+        /** QueryListener */
+        QueryListener queryListener = stateVar -> {
+            try {
+                stateVar.setValue(getPowerState());
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        };
         service.setQueryListener(queryListener);
 
         tempVar = getStateVariable("Temp");
 
-        setTempture(18);
+        setTemperature(18);
     }
 
     //	Component
@@ -96,86 +150,35 @@ public class AirconDevice extends Device {
 
     /** */
     public String getPowerState() {
-        return onFlag == true ? "1" : "0";
+        return onFlag ? "1" : "0";
     }
 
     // on/off
-    private int tempture = 18;
+    private int temperature = 18;
 
-    public void setTempture(int state) {
-        if (isOn() == false) {
+    public void setTemperature(int state) {
+        if (!isOn()) {
             return;
         }
 
         if (state == 1) {
-            tempture++;
+            temperature++;
         } else if (state == -1) {
-            tempture--;
+            temperature--;
         } else {
-            tempture = state;
+            temperature = state;
         }
 
         try {
-            tempVar.setValue(String.valueOf(tempture));
+            tempVar.setValue(String.valueOf(temperature));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public int getTempture() {
-        return tempture;
+    public int getTemperature() {
+        return temperature;
     }
-
-    // ActionListener
-    private ActionListener actionListener = new ActionListener() {
-        public boolean actionControlReceived(Action action) {
-            String actionName = action.getName();
-
-            if (actionName.equals("GetPower")) {
-                String state = getPowerState();
-                Argument powerArg = action.getArgument("Power");
-                powerArg.setValue(state);
-            } else if (actionName.equals("SetPower")) {
-                Argument powerArg = action.getArgument("Power");
-                String state = powerArg.getValue();
-                setPowerState(state);
-                state = getPowerState();
-    
-                Argument resultArg = action.getArgument("Result");
-                resultArg.setValue(state);
-            } else if (actionName.equals("GetTemp")) {
-                int temp = getTempture();
-                Argument tempArg = action.getArgument("Temp");
-                tempArg.setValue(String.valueOf(temp));
-            } else if (actionName.equals("SetTemp")) {
-                Argument powerArg = action.getArgument("Temp");
-                int temp = Integer.parseInt(powerArg.getValue());
-                setTempture(temp);
-                temp = getTempture();
-    
-                Argument resultArg = action.getArgument("Result");
-                resultArg.setValue(String.valueOf(temp));
-            } else {
-                return false;
-            }
-
-            comp.repaint();
-            return true;
-        }
-    };
-
-    /** QueryListener */
-    private QueryListener queryListener = new QueryListener() {
-        public boolean queryControlReceived(StateVariable stateVar) {
-            try {
-                stateVar.setValue(getPowerState());
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-    };
 
     /** update */
     public void update() {

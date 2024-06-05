@@ -16,7 +16,7 @@ import java.util.Calendar;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class Clock {
-    private Calendar calendar;
+    private final Calendar calendar;
 
     public Clock(Calendar cal) {
         this.calendar = cal;
@@ -42,15 +42,15 @@ public class Clock {
 
     //	paint
 
-    public final static Clock getInstance() {
+    public static Clock getInstance() {
         return new Clock(Calendar.getInstance());
     }
 
     //	getDateString
 
-    public final static String toClockString(int value) {
+    public static String toClockString(int value) {
         if (value < 10) {
-            return "0" + Integer.toString(value);
+            return "0" + value;
         }
         return Integer.toString(value);
     }
@@ -61,7 +61,7 @@ public class Clock {
         "Sep", "Oct", "Nov", "Dec",
     };
 
-    public final static String toMonthString(int value) {
+    public static String toMonthString(int value) {
         value -= Calendar.JANUARY;
         if (0 <= value && value < 12) {
             return MONTH_STRING[value];
@@ -74,7 +74,7 @@ public class Clock {
         "Thu", "Fri", "Sat",
     };
 
-    public final static String toWeekString(int value) {
+    public static String toWeekString(int value) {
         value -= Calendar.SUNDAY;
         if ((0 <= value) && (value < 7)) {
             return WEEK_STRING[value];
@@ -86,7 +86,7 @@ public class Clock {
         Calendar calendar = getCalendar();
         return toWeekString(calendar.get(Calendar.DAY_OF_WEEK)) + ", " +
                toMonthString(calendar.get(Calendar.MONTH)) + " " +
-               Integer.toString(calendar.get(Calendar.DATE)) + ", " +
+                calendar.get(Calendar.DATE) + ", " +
                toClockString(calendar.get(Calendar.YEAR) % 100);
     }
 

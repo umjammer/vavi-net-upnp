@@ -40,7 +40,7 @@ import vavi.util.Singleton;
  *          constant instead of "serviceId". <br>
  *          06/17/03 Added notifyAllStateVariables(). <br>
  *          09/03/03 Giordano Sassaroli <sassarol@cefriel.it> <br>
- *          Problem : The device does not accepts request for services when
+ *          Problem : The device does not accept request for services when
  *          control or subscription urls are absolute <br>
  *          Error : device methods, when requests are received, search for
  *          services that have a controlUrl (or eventSubUrl) equal to the
@@ -82,7 +82,7 @@ import vavi.util.Singleton;
  *          getDescriptionURL() <br>
  *          03/31/05 Added getSCPDData(). <br>
  *          04/25/05 Thanks for Mikael Hakman <mhakman@dkab.net> <br>
- *                   Changed getSCPDData() to add a XML declaration at first line. <br>
+ *                   Changed getSCPDData() to add an XML declaration at first line. <br>
  */
 public class Service {
     /** xmlns */
@@ -133,7 +133,7 @@ public class Service {
      * Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/03/03)
      * @param url must not be null
      */
-    private boolean isURL(String referenceUrl, String url) {
+    private static boolean isURL(String referenceUrl, String url) {
 
         if (url.equals(referenceUrl)) {
             return true;
@@ -195,7 +195,7 @@ public class Service {
     }
 
     /** */
-    private static ScpdSerdes scpdSerdes = Singleton.getInstance(ScpdSerdes.class);
+    private static final ScpdSerdes scpdSerdes = Singleton.getInstance(ScpdSerdes.class);
 
     /** TODO tricky! */
     public void readSCPD(URL url) throws IOException {
@@ -213,7 +213,7 @@ public class Service {
     }
 
     /** */
-    private List<Action> actionList = new ArrayList<>();
+    private final List<Action> actionList = new ArrayList<>();
 
     /** actionList */
     public List<Action> getActionList() {
@@ -233,7 +233,7 @@ public class Service {
     }
 
     /** */
-    private List<StateVariable> stateVariableList = new ArrayList<>();
+    private final List<StateVariable> stateVariableList = new ArrayList<>();
 
     /** serviceStateTable */
     public List<StateVariable> getStateVariableList() {
@@ -289,7 +289,7 @@ public class Service {
     }
 
     /** SubscriberList */
-    private List<Subscriber> subscriberList = new ArrayList<>();
+    private final List<Subscriber> subscriberList = new ArrayList<>();
 
     /** */
     public List<Subscriber> getSubscriberList() {
@@ -352,7 +352,7 @@ Debug.println("--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID
 
     /** */
     public boolean hasSID() {
-        return sid != null && sid.length() > 0;
+        return sid != null && !sid.isEmpty();
     }
 
     /** */

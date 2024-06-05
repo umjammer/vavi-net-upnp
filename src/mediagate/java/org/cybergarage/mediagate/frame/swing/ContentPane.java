@@ -24,11 +24,11 @@ public class ContentPane extends JPanel {
 
     // Member
 
-    private JScrollPane scrPane;
+    private final JScrollPane scrPane;
 
-    private JTable conTable;
+    private final JTable conTable;
 
-    private ContentTable conTableModel;
+    private final ContentTable conTableModel;
 
     // Constructor
 

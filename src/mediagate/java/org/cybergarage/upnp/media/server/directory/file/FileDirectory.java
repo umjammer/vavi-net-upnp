@@ -60,19 +60,19 @@ public class FileDirectory extends Directory {
 
         // Title
         String title = formatObj.getTitle();
-        if (0 < title.length()) {
+        if (!title.isEmpty()) {
             itemNode.setTitle(title);
         }
 
         // Creator
         String creator = formatObj.getCreator();
-        if (0 < creator.length()) {
+        if (!creator.isEmpty()) {
             itemNode.setCreator(creator);
         }
 
         // Media Class
         String mediaClass = format.getMediaClass();
-        if (0 < mediaClass.length()) {
+        if (!mediaClass.isEmpty()) {
             itemNode.setUPnPClass(mediaClass);
         }
 
@@ -117,8 +117,7 @@ public class FileDirectory extends Directory {
     private int getDirectoryItemNodeList(File dirFile, List<FileItemNode> itemNodeList) {
         File[] childFile = dirFile.listFiles();
         int fileCnt = childFile.length;
-        for (int n = 0; n < fileCnt; n++) {
-            File file = childFile[n];
+        for (File file : childFile) {
             if (file.isDirectory() == true) {
                 getDirectoryItemNodeList(file, itemNodeList);
                 continue;
@@ -213,8 +212,7 @@ public class FileDirectory extends Directory {
         // Checking Added or Updated Items
         List<FileItemNode> itemNodeList = getCurrentDirectoryItemNodeList();
         int itemNodeCnt = itemNodeList.size();
-        for (int n = 0; n < itemNodeCnt; n++) {
-            FileItemNode itemNode = itemNodeList.get(n);
+        for (FileItemNode itemNode : itemNodeList) {
             if (updateItemNodeList(itemNode) == true) {
                 updateFlag = true;
             }
@@ -229,6 +227,7 @@ public class FileDirectory extends Directory {
     }
 
     // update
+    @Override
     public void update() {
         updateItemNodeList();
     }

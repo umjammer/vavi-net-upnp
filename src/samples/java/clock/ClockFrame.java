@@ -29,9 +29,9 @@ import vavi.util.Debug;
 public class ClockFrame extends JFrame {
     private final static String TITLE = "CyberLink Sample Clock";
 
-    private ClockDevice clockDev;
+    private final ClockDevice clockDev;
 
-    private ClockPane clockPane;
+    private final ClockPane clockPane;
 
     public ClockFrame() throws IOException {
         super(TITLE);
@@ -61,21 +61,19 @@ public class ClockFrame extends JFrame {
     // run
     private ExecutorService clockService = Executors.newSingleThreadExecutor();
 
-    private Runnable handler = new Runnable() {
-        public void run() {
-            try {
+    private final Runnable handler = () -> {
+        try {
 Debug.println("+++ Clock started");
 
-                while (true) {
-                    getClockDevice().update();
-                    getClockPanel().repaint();
-                    try { Thread.sleep(1000); } catch (InterruptedException e) {}
-                }
-            } catch (Exception e) {
-Debug.printStackTrace(e);
-            } finally {
-Debug.println("--- Clock stopped");
+            while (true) {
+                getClockDevice().update();
+                getClockPanel().repaint();
+                try { Thread.sleep(1000); } catch (InterruptedException e) {}
             }
+        } catch (Exception e) {
+Debug.printStackTrace(e);
+        } finally {
+Debug.println("--- Clock stopped");
         }
     };
 
@@ -91,7 +89,8 @@ Debug.println("--- Clock stopped");
     }
 
     // main
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent ev) {
             try {
                 stop();

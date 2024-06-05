@@ -34,18 +34,18 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class ServicePane extends JPanel {
-    private ControlPoint controlPoint;
+    private final ControlPoint controlPoint;
 
-    private Service service;
+    private final Service service;
 
-    private TableModel serviceTable;
+    private final TableModel serviceTable;
 
-    private JButton subscribeButton;
+    private final JButton subscribeButton;
 
-    private JButton unsubscribeButton;
+    private final JButton unsubscribeButton;
 
     /** */
-    private ServiceSerdes serviceSerdes = Singleton.getInstance(ServiceSerdes.class);
+    private final ServiceSerdes serviceSerdes = Singleton.getInstance(ServiceSerdes.class);
 
     // Constructor
     public ServicePane(ControlPoint controlPoint, Service service) {
@@ -101,7 +101,8 @@ public class ServicePane extends JPanel {
     }
 
     // servicePerformed
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent event) {
             try {
                 if (event.getSource() == subscribeButton) {

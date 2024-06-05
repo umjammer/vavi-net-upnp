@@ -38,7 +38,7 @@ public class BrowseAction extends Action {
 
     public final static String NUMBER_RETURNED = "NumberReturned";
 
-    public final static String TOTAL_MACHES = "TotalMatches";
+    public final static String TOTAL_MATCHES = "TotalMatches";
 
     public final static String UPDATE_ID = "UpdateID";
 
@@ -94,8 +94,8 @@ public class BrowseAction extends Action {
         getArgument(NUMBER_RETURNED).setValue(String.valueOf(value));
     }
 
-    public void setTotalMaches(int value) {
-        getArgument(TOTAL_MACHES).setValue(String.valueOf(value));
+    public void setTotalMatches(int value) {
+        getArgument(TOTAL_MATCHES).setValue(String.valueOf(value));
     }
 
     public void setUpdateID(int value) {

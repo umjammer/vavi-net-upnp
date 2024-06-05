@@ -27,7 +27,7 @@ import vavi.util.Debug;
 public class Disposer {
 
     /** Member */
-    private ControlPoint controlPoint;
+    private final ControlPoint controlPoint;
 
     /** */
     private final static int DEFAULT_EXPIRED_DEVICE_MONITORING_INTERVAL = 60;
@@ -46,7 +46,7 @@ public class Disposer {
     }
 
     /** */
-    private ExecutorService disposingService = Executors.newSingleThreadExecutor();    
+    private final ExecutorService disposingService = Executors.newSingleThreadExecutor();
 
     /** */
     private Future<?> disposing;
@@ -62,21 +62,19 @@ public class Disposer {
     }
 
     /** Thread */
-    private Runnable disposer = new Runnable() {
-        public void run() {
-            try {
+    private final Runnable disposer = () -> {
+        try {
 Debug.println("+++ Disposer started");
-                final long monitorInterval = expiredDeviceMonitoringInterval * 1000;
-    
-                while (true) {
-                    try { Thread.sleep(monitorInterval); } catch (InterruptedException e) {}
-                    removeExpiredDevices();
-                }
-            } catch (Exception e) {
-Debug.printStackTrace(e);
-            } finally {
-Debug.println("--- Disposer stopped");
+            long monitorInterval = expiredDeviceMonitoringInterval * 1000;
+
+            while (true) {
+                try { Thread.sleep(monitorInterval); } catch (InterruptedException e) {}
+                removeExpiredDevices();
             }
+        } catch (Exception e) {
+Debug.printStackTrace(e);
+        } finally {
+Debug.println("--- Disposer stopped");
         }
     };
 

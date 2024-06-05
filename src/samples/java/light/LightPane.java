@@ -86,7 +86,7 @@ public class LightPane extends JPanel {
         g.drawImage(getPaneImage(), 0, 0, null);
     }
 
-    /** */
+    @Override
     public void paint(Graphics g) {
         LightDevice dev = getDevice();
         if (dev.isOn() == true) {

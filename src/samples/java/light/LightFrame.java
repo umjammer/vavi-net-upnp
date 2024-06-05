@@ -27,9 +27,9 @@ import vavi.util.Debug;
 public class LightFrame extends JFrame {
     private final static String TITLE = "CyberLink Sample Light";
 
-    private LightDevice lightDevice;
+    private final LightDevice lightDevice;
 
-    private LightPane lightPane;
+    private final LightPane lightPane;
 
     public LightFrame() throws IOException {
         super(TITLE);
@@ -60,7 +60,8 @@ public class LightFrame extends JFrame {
     }
 
     // main
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent ev) {
             try {
                 lightDevice.stop();

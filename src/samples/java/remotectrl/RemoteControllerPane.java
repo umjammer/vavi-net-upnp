@@ -78,7 +78,7 @@ public class RemoteControllerPane extends JPanel {
     private final static int DEFAULT_TIME_FONT_SIZE = 14;
     private Font timeFont = null;
 
-    private Font getFont(Graphics g, int size) {
+    private static Font getFont(Graphics g, int size) {
         Font font = g.getFont();
         if (font != null) {
             return font;
@@ -110,15 +110,16 @@ public class RemoteControllerPane extends JPanel {
     }
 
     //	mouse
-    private Rectangle tvPowerRect = new Rectangle(20, 80, 50, 50);
-    private Rectangle lightPowerRect = new Rectangle(130, 80, 50, 50);
-    private Rectangle airconPowerRect = new Rectangle(20, 170, 50, 50);
-    private Rectangle airconUpRect = new Rectangle(100, 170, 40, 50);
-    private Rectangle airconDownRect = new Rectangle(140, 170, 40, 50);
-    private Rectangle washerStartRect = new Rectangle(20, 250, 50, 50);
-    private Rectangle washerStopRect = new Rectangle(100, 250, 50, 50);
+    private final Rectangle tvPowerRect = new Rectangle(20, 80, 50, 50);
+    private final Rectangle lightPowerRect = new Rectangle(130, 80, 50, 50);
+    private final Rectangle airconPowerRect = new Rectangle(20, 170, 50, 50);
+    private final Rectangle airconUpRect = new Rectangle(100, 170, 40, 50);
+    private final Rectangle airconDownRect = new Rectangle(140, 170, 40, 50);
+    private final Rectangle washerStartRect = new Rectangle(20, 250, 50, 50);
+    private final Rectangle washerStopRect = new Rectangle(100, 250, 50, 50);
 
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mousePressed(MouseEvent event) {
             RemoteController device = getDevice();
             int x = event.getX();
@@ -200,6 +201,7 @@ public class RemoteControllerPane extends JPanel {
         g.drawImage(getPaneImage(), 0, 0, null);
     }
 
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawPanelImage(g);

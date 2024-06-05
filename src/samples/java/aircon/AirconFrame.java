@@ -27,9 +27,9 @@ import vavi.util.Debug;
 public class AirconFrame extends JFrame {
     private final static String TITLE = "CyberLink Sample Airconditoner";
 
-    private AirconDevice airconDev;
+    private final AirconDevice airconDev;
 
-    private AirconPane airconPane;
+    private final AirconPane airconPane;
 
     public AirconFrame() throws IOException {
         super(TITLE);
@@ -44,6 +44,17 @@ public class AirconFrame extends JFrame {
         getContentPane().add(airconPane, BorderLayout.CENTER);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // main
+        WindowListener windowListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent ev) {
+                try {
+                    airconDev.stop();
+                } catch (IOException e) {
+                    Debug.printStackTrace(e);
+                }
+            }
+        };
         addWindowListener(windowListener);
 
         pack();
@@ -59,17 +70,6 @@ public class AirconFrame extends JFrame {
     public AirconDevice getClockDevice() {
         return airconDev;
     }
-
-    // main
-    private WindowListener windowListener = new WindowAdapter() {
-        public void windowClosing(WindowEvent ev) {
-            try {
-                airconDev.stop();
-            } catch (IOException e) {
-Debug.printStackTrace(e);
-            }
-        }
-    };
 
     // main
     public static void main(String[] args) throws Exception {

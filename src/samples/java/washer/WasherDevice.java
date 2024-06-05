@@ -32,7 +32,7 @@ public class WasherDevice extends Device {
     /** */
     private final static String DESCRIPTION_FILE_NAME = "washer/description/description.xml";
     /** */
-    private StateVariable stateVar;
+    private final StateVariable stateVar;
 
     /** */
     public WasherDevice() throws IOException {
@@ -103,7 +103,7 @@ public class WasherDevice extends Device {
 
     /** */
     public boolean isWashing() {
-        return washing == null ? false : !washing.isDone();
+        return washing != null && !washing.isDone();
     }
 
     /** */
@@ -125,7 +125,8 @@ public class WasherDevice extends Device {
     }
 
     /** ActionListener */
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
     
@@ -154,20 +155,17 @@ public class WasherDevice extends Device {
     };
 
     /** QueryListener */
-    private QueryListener queryListener = new QueryListener() {
-        public boolean queryControlReceived(StateVariable stateVar) {
-            return false;
-        }
-    };
+    private final QueryListener queryListener = stateVar -> false;
 
     /** run */	
-    private static ExecutorService washingService = Executors.newSingleThreadExecutor();
+    private static final ExecutorService washingService = Executors.newSingleThreadExecutor();
 
     /** on/off */
     private Future<?> washing; 
 
     /** */
-    private Runnable washer = new Runnable() {
+    private final Runnable washer = new Runnable() {
+        @Override
         public void run() {
     
             try {

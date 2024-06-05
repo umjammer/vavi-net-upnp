@@ -11,8 +11,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,22 +38,16 @@ import vavi.net.upnp.StateVariable;
  */
 public class ActionDialog extends JDialog {
     /** */
-    private Action action;
-
-    /** */
-    private JButton okButton;
-
-    /** */
-    private JButton cancelButton;
+    private final Action action;
 
     /** */
     private boolean result;
 
     /** */
-    private List<Argument> inArgumentList;
+    private final List<Argument> inArgumentList;
 
     /** */
-    private List<JComponent> inArgumentFieldList;
+    private final List<JComponent> inArgumentFieldList;
 
     /** */
     public ActionDialog(Frame frame, Action action) {
@@ -78,7 +70,7 @@ public class ActionDialog extends JDialog {
             JComponent argumentField = null;
             StateVariable stateVariable = argument.getAction().getService().getStateVariable(argument.getName());
             if (stateVariable != null) {
-                if (stateVariable.getAllowedValueList().size() > 0) {
+                if (!stateVariable.getAllowedValueList().isEmpty()) {
                     argumentField = new JComboBox<>(stateVariable.getAllowedValueList().toArray());
                 } else if (stateVariable.getAllowedValueRange() != null) {
                     AllowedValueRange avr = stateVariable.getAllowedValueRange();
@@ -102,34 +94,31 @@ public class ActionDialog extends JDialog {
             inArgumentList.add(inArgument);
         }
 
-        okButton = new JButton("OK");
-        okButton.addActionListener(new ActionListener() {
-            @SuppressWarnings("rawtypes")
-            public void actionPerformed(ActionEvent event) {
-                result = true;
+        /** */
+        JButton okButton = new JButton("OK");
+        okButton.addActionListener(event -> {
+            result = true;
 
-                for (int n = 0; n < inArgumentFieldList.size(); n++) {
-                    JComponent field = inArgumentFieldList.get(n);
-                    String value = null;
-                    if (field instanceof JTextField) {
-                        value = ((JTextField) field).getText();
-                    } if (field instanceof JComboBox) {
-                        value = (String) ((JComboBox) field).getSelectedItem();
-                    }
-                    Argument argument = inArgumentList.get(n);
-                    argument.setValue(value);
+            for (int n = 0; n < inArgumentFieldList.size(); n++) {
+                JComponent field = inArgumentFieldList.get(n);
+                String value = null;
+                if (field instanceof JTextField) {
+                    value = ((JTextField) field).getText();
+                } if (field instanceof JComboBox) {
+                    value = (String) ((JComboBox<?>) field).getSelectedItem();
                 }
-                ActionDialog.this.action.updateArguments(inArgumentList);
+                Argument argument = inArgumentList.get(n);
+                argument.setValue(value);
+            }
+            ActionDialog.this.action.updateArguments(inArgumentList);
 
-                dispose();
-            }
+            dispose();
         });
-        cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                result = false;
-                dispose();
-            }
+        /** */
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(event -> {
+            result = false;
+            dispose();
         });
 
         JPanel buttonPane = new JPanel();

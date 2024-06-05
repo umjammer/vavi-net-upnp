@@ -34,7 +34,7 @@ public @interface UPnPDevice {
         }
 
         /** */
-        private static Log logger = LogFactory.getLog(Util.class); 
+        private static final Log logger = LogFactory.getLog(Util.class);
 
         /** */
         public static String getDescription(Object bean) {

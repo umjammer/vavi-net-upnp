@@ -48,6 +48,7 @@ public final class UPnPFactory {
             this.method = method;
 Debug.println("getter: " + name + ", " + argName + ", " + stateVariable.getName());
         }
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
     
@@ -88,6 +89,7 @@ e.printStackTrace(System.err);
             this.method = method;
 Debug.println("setter: " + name + ", " + argName + ", " + resultName + ", " + stateVariable.getName());
         }
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
     
@@ -121,6 +123,7 @@ e.printStackTrace(System.err);
             this.stateVariable = stateVariable;
 Debug.println("query: " + stateVariable.getName());
         }
+        @Override
         public boolean queryControlReceived(StateVariable stateVar) {
             try {
                 stateVar.setValue(stateVariable.getValue());
@@ -196,7 +199,7 @@ Debug.println("@UPnPAction: not setter/getter" + method.getName());
         if (fieldClass.equals(Boolean.class)) {
             method.invoke(bean, value == null || value.isEmpty() ? null : Boolean.parseBoolean(value));
         } else if (fieldClass.equals(Boolean.TYPE)) {
-            method.invoke(bean, value == null || value.isEmpty() ? false : Boolean.parseBoolean(value));
+            method.invoke(bean, value != null && !value.isEmpty() && Boolean.parseBoolean(value));
         } else if (fieldClass.equals(Integer.class)) {
             method.invoke(bean, value == null || value.isEmpty() ? null : Integer.parseInt(value));
         } else if (fieldClass.equals(Integer.TYPE)) {
@@ -222,9 +225,9 @@ Debug.println("@UPnPAction: not setter/getter" + method.getName());
         } else if (fieldClass.equals(Double.TYPE)) {
             method.invoke(bean, value == null || value.isEmpty() ? 0 : Double.parseDouble(value));
         } else if (fieldClass.equals(Character.class)) {
-            method.invoke(bean, value == null || value.isEmpty() ? null : Character.valueOf(value.charAt(0))); // TODO ???
+            method.invoke(bean, value == null || value.isEmpty() ? null : value.charAt(0)); // TODO ???
         } else if (fieldClass.equals(Character.TYPE)) {
-            method.invoke(bean, value == null || value.isEmpty() ? 0 : Character.valueOf(value.charAt(0))); // TODO ???
+            method.invoke(bean, value == null || value.isEmpty() ? 0 : value.charAt(0)); // TODO ???
         } else {
             method.invoke(bean, value);
         }

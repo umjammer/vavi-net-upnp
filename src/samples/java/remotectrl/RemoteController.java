@@ -17,7 +17,6 @@ import vavi.net.upnp.Device;
 import vavi.net.upnp.event.EventListener;
 import vavi.net.upnp.event.NotifyListener;
 import vavi.net.upnp.event.SearchResponseListener;
-import vavi.net.upnp.ssdp.SsdpRequest;
 
 
 /**
@@ -61,21 +60,15 @@ public class RemoteController extends ControlPoint {
     }
 
     /** Listener */
-    private NotifyListener notifyListener = new NotifyListener() {
-        public void deviceNotifyReceived(SsdpRequest packet) {
-        }
+    private final NotifyListener notifyListener = packet -> {
     };
 
     /** */
-    private EventListener eventListener = new EventListener() {
-        public void eventNotifyReceived(String uuid, long seq, String name, String value) {
-        }
+    private final EventListener eventListener = (uuid, seq, name, value) -> {
     };
 
     /** */
-    private SearchResponseListener searchResponseListener = new SearchResponseListener() {
-        public void deviceSearchResponseReceived(SsdpRequest packet) {
-        }
+    private final SearchResponseListener searchResponseListener = packet -> {
     };
 
     /** Power */

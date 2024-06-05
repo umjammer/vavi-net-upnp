@@ -71,7 +71,7 @@ public class ClockPane extends JPanel { // MouseListener
     private Font dateFont = null;
     private Font secondFont = null;
 
-    private Font getFont(Graphics g, int size) {
+    private static Font getFont(Graphics g, int size) {
         Font font = g.getFont();
         if (font != null) {
             return font;
@@ -166,6 +166,7 @@ public class ClockPane extends JPanel { // MouseListener
         g.drawImage(getPaneImage(), 0, 0, null);
     }
 
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawPanelImage(g);

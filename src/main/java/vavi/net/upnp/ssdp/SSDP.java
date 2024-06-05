@@ -53,12 +53,12 @@ public class SSDP {
     private static String ipv6Address;
 
     /** */
-    public static final void setIPv6Address(String ipv6Address) {
+    public static void setIPv6Address(String ipv6Address) {
         SSDP.ipv6Address = ipv6Address;
     }
 
     /** */
-    public static final String getIPv6Address() {
+    public static String getIPv6Address() {
         return ipv6Address;
     }
 
@@ -74,7 +74,7 @@ public class SSDP {
     }
 
     /** LeaseTime */
-    public final static int getLeaseTime(String cacheCont) {
+    public static int getLeaseTime(String cacheCont) {
         int index = cacheCont.indexOf('=');
         int mx = 0;
         try {
@@ -89,12 +89,12 @@ public class SSDP {
     /** */
     public static final String ALL_DEVICE = "ssdp:all";
 
-    /** TODO ssdp:rootdevice */
+    // TODO ssdp:rootdevice
 
     /** 
      * @param target must not be null
      */
-    public final static boolean isEqual(String constant, String target) {
+    public static boolean isEqual(String constant, String target) {
         if (target.equals(constant)) {
             return true;
         }
@@ -104,7 +104,7 @@ public class SSDP {
     /**
      * @param target must not be null
      */
-    public final static boolean isStartedWith(String constant, String target) {
+    public static boolean isStartedWith(String constant, String target) {
         if (target.startsWith(constant)) {
             return true;
         }

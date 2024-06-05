@@ -41,9 +41,8 @@ public class MPEGFormat implements Format, FormatObject {
 
     // Abstract Methods
     public boolean equals(Object object) {
-        if (object instanceof File) {
-            File file = (File) object;
-//Debug.println("file: " + file);
+        if (object instanceof File file) {
+            //Debug.println("file: " + file);
             String ext = Header.getSuffix(file);
             if (ext == null) {
                 return false;
@@ -55,19 +54,23 @@ public class MPEGFormat implements Format, FormatObject {
         return false;
     }
 
+    @Override
     public FormatObject createObject(File file) {
         return new MPEGFormat(file);
     }
 
+    @Override
     public String getMimeType() {
         return "video/mpeg";
     }
 
+    @Override
     public String getMediaClass() {
         return "object.item.videoItem.movie";
     }
 
     // TODO check owner document
+    @Override
     public List<Attr> getAttributeList() {
         List<Attr> attrList = new ArrayList<>();
         Document document = Util.getDocumentBuilder().newDocument();
@@ -85,6 +88,7 @@ public class MPEGFormat implements Format, FormatObject {
         return attrList;
     }
 
+    @Override
     public String getTitle() {
         String fname = mpegFile.getName();
         int idx = fname.lastIndexOf(".");
@@ -96,6 +100,7 @@ public class MPEGFormat implements Format, FormatObject {
         return title;
     }
 
+    @Override
     public String getCreator() {
         return "";
     }

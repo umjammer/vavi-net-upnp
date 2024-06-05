@@ -31,9 +31,9 @@ import vavi.util.Singleton;
 public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node> {
 
     /** */
-    private static ArgumentSerdes argumentSerdes = Singleton.getInstance(ArgumentSerdes.class); 
+    private static final ArgumentSerdes argumentSerdes = Singleton.getInstance(ArgumentSerdes.class);
 
-    /** */
+    @Override
     public void serialize(Action action, Node actionNode) throws IOException {
         Document document = actionNode.getOwnerDocument();
 
@@ -55,7 +55,7 @@ public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node
 //      actionNode.setUserData("actionData", action.getActionData(), null);
     }
 
-    /** */
+    @Override
     public void deserialize(Node actionNode, Action action) throws IOException {
         try {
             //

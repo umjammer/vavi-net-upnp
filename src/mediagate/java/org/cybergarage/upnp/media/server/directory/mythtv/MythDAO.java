@@ -40,7 +40,7 @@ public class MythDAO {
 
         try {
             QueryRunner qr = new QueryRunner();
-            ResultSetHandler rsh = new MapListHandler();
+            ResultSetHandler<?> rsh = new MapListHandler();
             List<Map<String, ?>> resultSet = (List<Map<String, ?>>) qr.query(
                 connection,
                 "select * from settings where value = 'RecordFilePrefix'",
@@ -63,7 +63,7 @@ public class MythDAO {
 
         try {
             QueryRunner qr = new QueryRunner();
-            ResultSetHandler rsh = new MapListHandler();
+            ResultSetHandler<?> rsh = new MapListHandler();
             List<Map<String, ?>> resultSet = (List<Map<String, ?>>) qr.query(
                 connection,
                 "select * from recorded",
@@ -85,7 +85,7 @@ public class MythDAO {
                 recVec.add(recInfo);
             }
 
-            return recVec.toArray(new MythRecordedInfo[recVec.size()]);
+            return recVec.toArray(new MythRecordedInfo[0]);
 
         } finally {
             DbUtils.close(connection);            

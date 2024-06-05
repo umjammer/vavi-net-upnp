@@ -7,12 +7,11 @@
 package vavi.net.util;
 
 import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
-import jakarta.xml.soap.MessageFactory;
-import jakarta.xml.soap.SOAPException;
-import jakarta.xml.soap.SOAPFactory;
-import jakarta.xml.soap.SOAPMessage;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 import vavi.net.http.HttpProtocol;
@@ -28,10 +27,10 @@ import vavi.net.http.HttpUtil;
 public abstract class SOAPRequest extends HttpContext {
 
     /** */
-    protected static MessageFactory messageFactory = SoapUtil.getMessageFactory();
+    protected static MessageFactory messageFactory;
 
     /** */
-    protected static SOAPFactory soapFactory = SoapUtil.getSOAPFactory();
+    protected static SOAPFactory soapFactory;
 
     /** SOAP message */
     protected SOAPMessage soapMessage;
@@ -41,13 +40,9 @@ public abstract class SOAPRequest extends HttpContext {
         return soapMessage;
     }
 
-    {
-        try {
-            messageFactory = MessageFactory.newInstance();
-            soapFactory = SOAPFactory.newInstance();
-        } catch (SOAPException e) {
-            throw new IllegalStateException(e);
-        }
+    static {
+        messageFactory = SoapUtil.getMessageFactory();
+        soapFactory = SoapUtil.getSOAPFactory();
     }
 
     /** Creates a SOAP request. */

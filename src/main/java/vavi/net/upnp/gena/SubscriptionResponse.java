@@ -41,6 +41,7 @@ public class SubscriptionResponse extends HttpContext {
     }
 
     /** TODO not beautiful */
+    @Override
     public void setStatus(int status) {
         if (response != null) {
             response.setStatus(status);
@@ -51,6 +52,7 @@ public class SubscriptionResponse extends HttpContext {
     }
 
     /** TODO not beautiful */
+    @Override
     public void setHeader(String name, String value) {
         super.setHeader(name, value);
         if (response != null) {

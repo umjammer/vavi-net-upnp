@@ -64,7 +64,7 @@ public abstract class ContentNode extends BaseElement {
     }
 
     // is*Node
-    public boolean isContaierNode() {
+    public boolean isContainerNode() {
         if (this instanceof ContainerNode) {
             return true;
         }
@@ -87,7 +87,7 @@ public abstract class ContentNode extends BaseElement {
     }
 
     // Property (Basic)
-    private List<Property> propList = new ArrayList<>();
+    private final List<Property> propList = new ArrayList<>();
 
     public int getNProperties() {
         return propList.size();
@@ -98,9 +98,9 @@ public abstract class ContentNode extends BaseElement {
     }
 
     public Property getProperty(String name) {
-        for (int i = 0; i < propList.size(); i++) {
-            if (propList.get(i).getName().equals(name)) {
-                return propList.get(i);
+        for (Property property : propList) {
+            if (property.getName().equals(name)) {
+                return property;
             }
         }
         return null;
@@ -180,7 +180,7 @@ public abstract class ContentNode extends BaseElement {
     }
 
     // Property Attribute (Extension)
-    public void setPropertyAttribure(String propName, String attrName, String value) {
+    public void setPropertyAttribute(String propName, String attrName, String value) {
         Property prop = getProperty(propName);
         if (prop == null) {
             prop = new Property(propName, "");
@@ -189,7 +189,7 @@ public abstract class ContentNode extends BaseElement {
         prop.setAttribute(attrName, value);
     }
 
-    public String getPropertyAttribureValue(String propName, String attrName) {
+    public String getPropertyAttributeValue(String propName, String attrName) {
         Property prop = getProperty(propName);
         if (prop != null) {
             return prop.getAttribute(attrName);

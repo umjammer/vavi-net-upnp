@@ -15,7 +15,6 @@ import vavi.net.upnp.Argument;
 import vavi.net.upnp.ControlPoint;
 import vavi.net.upnp.Device;
 import vavi.net.upnp.Service;
-import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.event.EventListener;
 import vavi.net.upnp.event.NotifyListener;
@@ -51,13 +50,13 @@ public class TvDevice {
 
     private final static String WASHER_SERVICE_TYPE = "urn:schemas-upnp-org:service:state:1";
 
-    private ControlPoint controlPoint;
+    private final ControlPoint controlPoint;
 
-    private Device tvDevice;
+    private final Device tvDevice;
 
     public TvDevice() throws IOException {
 
-        // Control Ponit
+        // Control Point
         controlPoint = new ControlPoint();
 
         controlPoint.addNotifyListener(notifyListener);
@@ -80,7 +79,8 @@ public class TvDevice {
         on();
     }
 
-    public void finalize() {
+    @Override
+    protected void finalize() {
         off();
     }
 
@@ -211,31 +211,28 @@ Debug.println("no such service: " + deviceType + ", " + serviceType);
     }
 
     // Control Point Listener
-    private SearchResponseListener searchResponseListener = new SearchResponseListener() {
-        public void deviceSearchResponseReceived(SsdpRequest packet) {
-            try {
+    private final SearchResponseListener searchResponseListener = packet -> {
+        try {
+            checkNewDevices(packet);
+        } catch (IOException e) {
+            Debug.printStackTrace(e);
+        }
+    };
+
+    private final NotifyListener notifyListener = packet -> {
+        try {
+            if (packet.isAlive()) {
                 checkNewDevices(packet);
-            } catch (IOException e) {
-                Debug.printStackTrace(e);
+            } else if (packet.isByeBye()) {
+                checkRemoveDevices(packet);
             }
+        } catch (IOException e) {
+            Debug.printStackTrace(e);
         }
     };
 
-    private NotifyListener notifyListener = new NotifyListener() {
-        public void deviceNotifyReceived(SsdpRequest packet) {
-            try {
-                if (packet.isAlive()) {
-                    checkNewDevices(packet);
-                } else if (packet.isByeBye()) {
-                    checkRemoveDevices(packet);
-                }
-            } catch (IOException e) {
-                Debug.printStackTrace(e);
-            }
-        }
-    };
-
-    private EventListener eventListener = new EventListener() {
+    private final EventListener eventListener = new EventListener() {
+        @Override
         public void eventNotifyReceived(String uuid, long seq, String name, String value) {
 // Debug.println("Notify = " + uuid + ", " + seq + "," + name + "," + value);
             Service service = getSubscriberService(uuid);
@@ -248,7 +245,7 @@ Debug.println("no service for: " + uuid);
             } else if (service.isServiceOf(AIRCON_SERVICE_TYPE)) {
                 airconTemp = value;
             } else {
-                if ((value != null) && (0 < value.length())) {
+                if ((value != null) && (!value.isEmpty())) {
                     Device device = service.getDevice();
                     String deviceName = device.getFriendlyName();
                     message = deviceName + ":" + value;
@@ -269,8 +266,9 @@ Debug.println("no service for: " + uuid);
     };
 
     // ActionListener
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
 
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
             if (actionName.equals("GetPower")) {
@@ -295,16 +293,14 @@ Debug.println("no service for: " + uuid);
     };
 
     // QueryListener
-    private QueryListener queryListener = new QueryListener() {
-        public boolean queryControlReceived(StateVariable stateVariable) {
-            try {
-                // TODO always return power state
-                stateVariable.setValue(getPowerState());
-                return true;
-            } catch (IOException e) {
+    private final QueryListener queryListener = stateVariable -> {
+        try {
+            // TODO always return power state
+            stateVariable.setValue(getPowerState());
+            return true;
+        } catch (IOException e) {
 e.printStackTrace();
-                return false;
-            }
+            return false;
         }
     };
 

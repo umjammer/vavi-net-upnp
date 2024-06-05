@@ -34,26 +34,32 @@ public class DefaultFormat implements Format, FormatObject {
         return true;
     }
 
+    @Override
     public FormatObject createObject(File file) {
         return new DefaultFormat();
     }
 
+    @Override
     public String getMimeType() {
         return "*/*";
     }
 
+    @Override
     public String getMediaClass() {
         return "object.item";
     }
 
+    @Override
     public List<Attr> getAttributeList() {
         return new ArrayList<>();
     }
 
+    @Override
     public String getTitle() {
         return "";
     }
 
+    @Override
     public String getCreator() {
         return "";
     }

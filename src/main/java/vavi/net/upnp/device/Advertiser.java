@@ -33,7 +33,7 @@ import vavi.util.Debug;
 public class Advertiser {
 
     /** Member */
-    private Device device;
+    private final Device device;
 
     /** Constructor */
     public Advertiser(Device device) {
@@ -41,7 +41,7 @@ public class Advertiser {
     }
 
     /** */
-    private ExecutorService advertisingService = Executors.newSingleThreadExecutor();    
+    private final ExecutorService advertisingService = Executors.newSingleThreadExecutor();
 
     /** */
     private Future<?> advertising;
@@ -69,7 +69,8 @@ public class Advertiser {
     }
 
     /** Thread */
-    private Runnable advertiser = new Runnable() {
+    private final Runnable advertiser = new Runnable() {
+        @Override
         public void run() {
             try {
 Debug.println("+++ Advertiser started: " + device.getFriendlyName());
@@ -261,7 +262,7 @@ Debug.println("byebye to: " + n + ": " + bindAddress + ": "+ e.getMessage());
     private static final int DEFAULT_DISCOVERY_WAIT_TIME = 300;
 
     /** */
-    private static final void sleep() {
+    private static void sleep() {
         try { Thread.sleep(DEFAULT_DISCOVERY_WAIT_TIME); } catch (InterruptedException e) {}
     }
 }

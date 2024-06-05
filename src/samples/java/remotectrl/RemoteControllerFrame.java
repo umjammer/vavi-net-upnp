@@ -32,10 +32,10 @@ public class RemoteControllerFrame extends JFrame {
     private final static String TITLE = "CyberLink Sample Remote Controller";
 
     /** */
-    private RemoteController remoteController;
+    private final RemoteController remoteController;
 
     /** */
-    private RemoteControllerPane remoteControllerPane;
+    private final RemoteControllerPane remoteControllerPane;
 
     /** */
     public RemoteControllerFrame() throws IOException {
@@ -67,13 +67,14 @@ public class RemoteControllerFrame extends JFrame {
     }
 
     /** run */
-    private ExecutorService updateService = Executors.newSingleThreadExecutor();
+    private final ExecutorService updateService = Executors.newSingleThreadExecutor();
 
     /** */
     private Future<?> updating;
 
     /** */
-    private Runnable updater = new Runnable() {
+    private final Runnable updater = new Runnable() {
+        @Override
         public void run() {
             try {
 Debug.println("+++ RemoteController started");
@@ -102,7 +103,8 @@ Debug.println("--- RemoteController stopped");
     }
 
     /** window */
-    private WindowListener windowListener = new WindowAdapter() { 
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent event) {
             try {
                 stop();

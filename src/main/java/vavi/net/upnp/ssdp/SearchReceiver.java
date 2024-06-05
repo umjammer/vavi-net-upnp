@@ -28,7 +28,7 @@ import vavi.util.Debug;
  */
 public class SearchReceiver {
     /** */
-    private HttpMulticastSocket httpMulticastSocket;
+    private final HttpMulticastSocket httpMulticastSocket;
 
     /** */
     private boolean useIPv6Address;
@@ -56,7 +56,8 @@ public class SearchReceiver {
     }
 
     /** */
-    private Runnable searchReceiver = new Runnable() {
+    private final Runnable searchReceiver = new Runnable() {
+        @Override
         public void run() {
             try {
 Debug.println("+++ SearchReceiver started");
@@ -82,7 +83,7 @@ Debug.println("--- SearchReceiver stopped");
     };
 
     /** deviceSearch */
-    private EventListenerList searchListenerList = new EventListenerList();
+    private final EventListenerList searchListenerList = new EventListenerList();
 
     /** */
     public void addSearchListener(SearchListener listener) {

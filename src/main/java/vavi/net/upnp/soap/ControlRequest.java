@@ -86,7 +86,7 @@ public abstract class ControlRequest extends SOAPRequest {
 
         // Thanks for Thomas Schulz (2004/03/20)
         String urlBase = service.getDevice().getRootDevice().getURLBase();
-        if (urlBase != null && urlBase.length() > 0) {
+        if (urlBase != null && !urlBase.isEmpty()) {
             try {
                 URL url = new URL(urlBase);
                 String basePath = url.getPath();
@@ -97,7 +97,7 @@ public abstract class ControlRequest extends SOAPRequest {
                     }
                 }
             } catch (MalformedURLException e) {
-                throw (RuntimeException) new IllegalArgumentException().initCause(e);
+                throw new IllegalArgumentException(e);
             }
         }
 
@@ -121,7 +121,7 @@ public abstract class ControlRequest extends SOAPRequest {
                     // description.xml
                     url = new URL(service.getDevice().getRootDevice().getLocation());
                 } catch (MalformedURLException g) {
-                    throw (RuntimeException) new IllegalArgumentException().initCause(e);
+                    throw new IllegalArgumentException(e);
                 }
             }
         }

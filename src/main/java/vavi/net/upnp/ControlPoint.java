@@ -50,12 +50,12 @@ import vavi.util.StringUtil;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 11/18/02 first revision. <br>
  *          05/13/03 Changed to create socket threads each local interfaces.
- *          (HTTP, SSDPNotiry, SSDPSerachResponse) <br>
- *          05/28/03 Changed to send m-serach packets from
+ *          (HTTP, SSDPNotify, SSDPSearchResponse) <br>
+ *          05/28/03 Changed to send m-search packets from
  *          SSDPSearchResponseSocket. The socket doesn't bind interface address.
  *          <br>
- *          SSDPSearchResponsSocketList that binds a port and a interface can't
- *          send m-serch packets of IPv6 on J2SE v 1.4.1_02 and Redhat 9. <br>
+ *          SSDPSearchResponsSocketList that binds a port and an interface can't
+ *          send m-search packets of IPv6 on J2SE v 1.4.1_02 and Redhat 9. <br>
  *          07/23/03 Suzan Foster (suislief) <br>
  *          Fixed a bug. HOST field was missing. <br>
  *          07/29/03 Synchronized when a device is added by the ssdp message.
@@ -66,7 +66,7 @@ import vavi.util.StringUtil;
  *          variable update is notified. <br>
  *          Error : the other xml nodes of the message are ignored <br>
  *          Fix : add two methods to the NotifyRequest for extracting the
- *          property array and modify the httpRequestRecieved method in
+ *          property array and modify the httpRequestReceived method in
  *          ControlPoint <br>
  *          12/12/03 Added a static() to initialize UPnP class. <br>
  *          01/06/04 Added the following methods to remove expired devices
@@ -99,10 +99,10 @@ public class ControlPoint {
     private final static String DEFAULT_EVENTSUB_URI = "/eventSub";
 
     /** Member */
-    private List<NotifyReceiver> notifyReceiverList = new ArrayList<>();
+    private final List<NotifyReceiver> notifyReceiverList = new ArrayList<>();
 
     /** */
-    private List<SearchResponseReceiver> searchResponseReceiverList = new ArrayList<>();
+    private final List<SearchResponseReceiver> searchResponseReceiverList = new ArrayList<>();
 
     /** Constructor */
     public ControlPoint(int ssdpPort, int httpPort) {
@@ -118,8 +118,8 @@ public class ControlPoint {
         this(DEFAULT_SSDP_PORT, DEFAULT_EVENTSUB_PORT);
     }
 
-    /** */
-    public void finalize() throws Throwable {
+    @Override
+    protected void finalize() throws Throwable {
         stop();
     }
 
@@ -143,10 +143,10 @@ public class ControlPoint {
     }
 
     /** Device List */
-    private List<Device> deviceList = new ArrayList<>();
+    private final List<Device> deviceList = new ArrayList<>();
 
     /** */
-    private String getUDN(String usnValue) {
+    private static String getUDN(String usnValue) {
         if (usnValue == null) {
             return "";
         }
@@ -333,8 +333,8 @@ Debug.println("no such device: " + name);
         request.setSubscribeRequest(service, getEventSubCallbackURL(interfaceAddress), timeout);
 Debug.print(StringUtil.paramString(request));
 
-        HttpContext responceContext  = HttpUtil.postRequest(request);
-        SubscriptionResponse response = new SubscriptionResponse(responceContext);
+        HttpContext responseContext  = HttpUtil.postRequest(request);
+        SubscriptionResponse response = new SubscriptionResponse(responseContext);
         if (response.getStatus() == HttpURLConnection.HTTP_OK) {
             service.setSID(response.getSID());
             service.setTimeout(response.getTimeout());
@@ -351,8 +351,8 @@ Debug.print(StringUtil.paramString(request));
         request.setRenewRequest(service, uuid, timeout);
 Debug.print(StringUtil.paramString(request));
 
-        HttpContext responceContext  = HttpUtil.postRequest(request);
-        SubscriptionResponse response = new SubscriptionResponse(responceContext);
+        HttpContext responseContext  = HttpUtil.postRequest(request);
+        SubscriptionResponse response = new SubscriptionResponse(responseContext);
 //Debug.print(response);
         if (HttpUtil.isStatusCodeSucces(response.getStatus())) {
             service.setSID(response.getSID());
@@ -369,8 +369,8 @@ Debug.print(StringUtil.paramString(request));
         SubscriptionRequest request = new SubscriptionRequest();
         request.setUnsubscribeRequest(service);
 
-        HttpContext responceContext  = HttpUtil.postRequest(request);
-        SubscriptionResponse response = new SubscriptionResponse(responceContext);
+        HttpContext responseContext  = HttpUtil.postRequest(request);
+        SubscriptionResponse response = new SubscriptionResponse(responseContext);
         if (HttpUtil.isStatusCodeSucces(response.getStatus())) {
             service.clearSID();
             return true;
@@ -402,7 +402,7 @@ Debug.print(StringUtil.paramString(request));
     // EventListener
 
     /** */
-    private EventListenerList eventListenerList = new EventListenerList();
+    private final EventListenerList eventListenerList = new EventListenerList();
 
     /** Notify */
     public void addNotifyListener(NotifyListener listener) {
@@ -460,7 +460,8 @@ Debug.print(StringUtil.paramString(request));
     private HttpServer httpServer;
 
     /** HTTP Server task */
-    private HttpRequestListener httpRequestListener = new HttpRequestListener() {
+    private final HttpRequestListener httpRequestListener = new HttpRequestListener() {
+        @Override
         public void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //Debug.println(StringUtil.paramString(request));
 
@@ -602,5 +603,3 @@ Debug.println("cannot create socket: " + n + ": " + bindAddress + ": " + e.getMe
         }
     }
 }
-
-/* */

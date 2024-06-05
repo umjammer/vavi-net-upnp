@@ -32,7 +32,7 @@ public class DirectoryAddPane implements ActionListener {
 
     // Member
 
-    private Component parentComp;
+    private final Component parentComp;
 
     private JTextField nameText;
 
@@ -40,7 +40,7 @@ public class DirectoryAddPane implements ActionListener {
 
     private JButton dirButton;
 
-    // Constuctor
+    // Constructor
 
     public DirectoryAddPane(Component parent) {
         parentComp = parent;
@@ -102,6 +102,7 @@ public class DirectoryAddPane implements ActionListener {
 
     // ActionListener
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

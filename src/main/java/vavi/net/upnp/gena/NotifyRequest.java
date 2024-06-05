@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
-import jakarta.xml.soap.SOAPBody;
-import jakarta.xml.soap.SOAPElement;
-import jakarta.xml.soap.SOAPException;
-import jakarta.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import vavi.net.upnp.UPnP;
 import vavi.net.util.SOAPRequest;
@@ -51,7 +51,7 @@ import vavi.util.Debug;
  *          variable update is notified. <br>
  *          Error : the other xml nodes of the message are ignored <br>
  *          Fix : add two methods to the NotifyRequest for extracting the
- *          property array and modify the httpRequestRecieved method in
+ *          property array and modify the httpRequestReceived method in
  *          ControlPoint <br>
  */
 public class NotifyRequest extends SOAPRequest {
@@ -100,18 +100,18 @@ public class NotifyRequest extends SOAPRequest {
     
             SOAPBody bodyNode = soapMessage.getSOAPPart().getEnvelope().getBody();
             
-            // "//body/propertset"
+            // "//body/propertyset"
             SOAPElement propertysetNode = soapFactory.createElement(PROPERTYSET, XMLNS_PREFIX, Subscription.XMLNS);
 //Debug.println(Thread.currentThread().getName() + ": " + propertysetNode.getOwnerDocument().hashCode());    
             // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (05/22/03)
             Enumeration<?> e = properties.propertyNames();
             while (e.hasMoreElements()) {
-                // "//body/propertset/property"
+                // "//body/propertyset/property"
                 SOAPElement propertyNode = soapFactory.createElement(PROPERTY);
 //              propertyNode.setPrefix(XMLNS_PREFIX);
 //Debug.println(Thread.currentThread().getName() + ": " + propertysetNode.getOwnerDocument().hashCode() + ", " + propertyNode.getOwnerDocument().hashCode());
 
-                // "//body/propertset/property/VARNAME"
+                // "//body/propertyset/property/VARNAME"
                 String varName = (String) e.nextElement();
                 String value = properties.getProperty(varName);
                 SOAPElement varNameNode = soapFactory.createElement(varName);
@@ -203,7 +203,7 @@ Debug.println("property: " + varName + " = " + value);
     //----
 
     /** */
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
     /** */
     public void setProperty(String varName, String value) {

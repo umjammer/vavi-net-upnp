@@ -28,7 +28,7 @@ public class UPnP {
     private final static String VERSION = "2.0.0";
 
     /** */
-    public final static String getServerName() {
+    public static String getServerName() {
         String osName = System.getProperty("os.name");
         String osVersion = System.getProperty("os.version");
         return osName + "/" + osVersion + " " + "UPnP" + "/" + "1.0" + " " + NAME + "/" + VERSION;
@@ -101,7 +101,7 @@ public class UPnP {
     }
 
     /** */
-    public final static void setProperty(Flag flag, boolean value) {
+    public static void setProperty(Flag flag, boolean value) {
         if (value == true) {
             switch (flag) {
             case USE_ONLY_IPV6_ADDR:
@@ -145,15 +145,12 @@ public class UPnP {
     }
 
     /** */
-    public final static boolean getProperty(Flag flag) {
-        switch (flag) {
-        case USE_ONLY_IPV6_ADDR:
-            return USE_ONLY_IPV6_ADDR;
-        case USE_ONLY_IPV4_ADDR:
-            return USE_ONLY_IPV4_ADDR;
-        case USE_LOOPBACK_ADDR:
-            return USE_LOOPBACK_ADDR;
-        }
-        return false;
+    public static boolean getProperty(Flag flag) {
+        return switch (flag) {
+            case USE_ONLY_IPV6_ADDR -> USE_ONLY_IPV6_ADDR;
+            case USE_ONLY_IPV4_ADDR -> USE_ONLY_IPV4_ADDR;
+            case USE_LOOPBACK_ADDR -> USE_LOOPBACK_ADDR;
+            default -> false;
+        };
     }
 }

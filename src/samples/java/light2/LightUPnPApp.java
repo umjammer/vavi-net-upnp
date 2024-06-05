@@ -28,7 +28,7 @@ public class LightUPnPApp extends JFrame {
         setTitle("Sample Light");
 
         Light model = new Light();
-        final Device device = UPnPFactory.getDevice(model);
+        Device device = UPnPFactory.getDevice(model);
 
         getContentPane().setLayout(new BorderLayout());
 
@@ -38,6 +38,7 @@ public class LightUPnPApp extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent ev) {
                 try {
                     device.stop();

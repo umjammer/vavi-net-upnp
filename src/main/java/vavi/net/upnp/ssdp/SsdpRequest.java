@@ -27,13 +27,13 @@ import vavi.net.upnp.UPnP;
  *          11/01/04 - Theo Beisch <theo.beisch@gmx.de> <br> - Fixed
  *          isRootDevice() to check the ST header. <br>
  *          11/19/04 - Theo Beisch <theo.beisch@gmx.de> <br> - Changed
- *          getRemoteAddress() to return the adresss instead of the host name.
+ *          getRemoteAddress() to return the address instead of the host name.
  *          <br>
  */
 public class SsdpRequest extends SsdpContext {
 
     /** */
-    private byte[] data;
+    private final byte[] data;
 
     /** Constructor */
     public SsdpRequest(DatagramPacket datagramPacket, String localHost, int localPort) {
@@ -105,11 +105,11 @@ public class SsdpRequest extends SsdpContext {
     public InetAddress getHostInetAddress() {
         String addressString = "127.0.0.1";
         String host = getHost();
-        int canmaIndex = host.lastIndexOf(":");
-        if (0 <= canmaIndex) {
-            addressString = host.substring(0, canmaIndex);
+        int colonIndex = host.lastIndexOf(":");
+        if (0 <= colonIndex) {
+            addressString = host.substring(0, colonIndex);
             if (addressString.charAt(0) == '[') {
-                addressString = addressString.substring(1, addressString.length());
+                addressString = addressString.substring(1);
             }
             if (addressString.charAt(addressString.length() - 1) == ']') {
                 addressString = addressString.substring(0, addressString.length() - 1);
@@ -189,7 +189,7 @@ public class SsdpRequest extends SsdpContext {
         return ntsValue.startsWith(SSDP.BYEBYE);
     }
 
-    /** */
+    @Override
     public int getLeaseTime() {
         return SSDP.getLeaseTime(getCacheControl());
     }

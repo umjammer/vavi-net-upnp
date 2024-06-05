@@ -49,7 +49,7 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class ControlPointPane extends JPanel {
-    private ControlPoint controlPoint;
+    private final ControlPoint controlPoint;
 
     public ControlPointPane(ControlPoint controlPoint) {
         setLayout(new BorderLayout());
@@ -88,16 +88,16 @@ public class ControlPointPane extends JPanel {
     }
 
     /** SplitPane */
-    private JSplitPane deviceSplitPane;
+    private final JSplitPane deviceSplitPane;
 
     private JSplitPane getDeviceSplitPane() {
         return deviceSplitPane;
     }
 
     /** Console */
-    private JTextArea consoleArea;
+    private final JTextArea consoleArea;
 
-    private JScrollPane consoleScrollPane;
+    private final JScrollPane consoleScrollPane;
 
     public JTextArea getConsoleArea() {
         return consoleArea;
@@ -116,14 +116,15 @@ public class ControlPointPane extends JPanel {
     }
 
     /** TreeComp */
-    private TreeComponent deviceTree;
+    private final TreeComponent deviceTree;
 
     public TreeComponent getTreeComponent() {
         return deviceTree;
     }
 
     /** mouse */
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getComponent() == getTreeComponent()) {
                 deviceTreeClicked(e);
@@ -139,13 +140,13 @@ public class ControlPointPane extends JPanel {
     }
 
     /** */
-    private static Document document = Util.getDocumentBuilder().newDocument();
+    private static final Document document = Util.getDocumentBuilder().newDocument();
 
     /** */
-    private IconSerdes iconSerdes = Singleton.getInstance(IconSerdes.class);
+    private final IconSerdes iconSerdes = Singleton.getInstance(IconSerdes.class);
 
     /** */
-    private ArgumentSerdes argumentSerdes = Singleton.getInstance(ArgumentSerdes.class);
+    private final ArgumentSerdes argumentSerdes = Singleton.getInstance(ArgumentSerdes.class);
 
     /** */
     public void deviceTreeClicked(MouseEvent event) {
@@ -159,8 +160,7 @@ public class ControlPointPane extends JPanel {
 
         Component rightView = null;
 
-        if (lastComponent instanceof TreeNode) {
-            TreeNode deviceTreeNode = (TreeNode) lastComponent;
+        if (lastComponent instanceof TreeNode deviceTreeNode) {
             Object data = deviceTreeNode.getUserData();
             if (data instanceof Device) {
                 rightView = getDeviceView((Device) data);
@@ -186,7 +186,7 @@ public class ControlPointPane extends JPanel {
 
     /** */
     private Component getIconView(Icon icon) {
-        final Image image = Toolkit.getDefaultToolkit().createImage(icon.getURL());
+        Image image = Toolkit.getDefaultToolkit().createImage(icon.getURL());
         TableModel iconTable = null;
         try {
             Document document = Util.getDocumentBuilder().newDocument();
@@ -204,9 +204,11 @@ public class ControlPointPane extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(new JPanel() {
+            @Override
             public Dimension getPreferredSize() {
                 return new Dimension(getWidth(), 64);
             }
+            @Override
             public void paint(Graphics g) {
                 g.drawImage(image, 0, 0, this);
             }
@@ -216,7 +218,7 @@ public class ControlPointPane extends JPanel {
     }
 
     /** */
-    private Component getDeviceView(Device device) {
+    private static Component getDeviceView(Device device) {
         TableModel devTable = new TableModel(DeviceFactory.toNode(device));
         JScrollPane scrollPane = new JScrollPane();
         JTable table = new JTable(devTable);

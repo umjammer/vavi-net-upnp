@@ -38,6 +38,7 @@ public class ScpdSerdes extends Singleton implements Serdes<Node, InputStream, O
      * /scpd
      * </pre> 
      */
+    @Override
     public void serialize(Node scpdNode, OutputStream os) throws IOException {
         PrintWriter pw = new PrintWriter(os);
         PrettyPrinter pp = new PrettyPrinter(pw);
@@ -45,6 +46,7 @@ public class ScpdSerdes extends Singleton implements Serdes<Node, InputStream, O
     }
 
     /** TODO tricky! */
+    @Override
     public void deserialize(InputStream is, Node scpdNodeWrapper) throws IOException {
         try {
             DocumentBuilder parser = Util.getDocumentBuilder();
@@ -54,7 +56,7 @@ System.out.println("--------");
 PrettyPrinter pp = new PrettyPrinter(System.out);
 pp.print(scpdNode);
         } catch (SAXException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e); // TODO
+            throw new IllegalArgumentException(e); // TODO
         }
     }
 }

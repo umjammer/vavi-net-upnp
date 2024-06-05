@@ -78,7 +78,7 @@ public class AirconPane extends JPanel {
     private final static int DEFAULT_TIME_FONT_SIZE = 8;
     private Font timeFont = null;
 
-    private Font getFont(Graphics g, int size) {
+    private static Font getFont(Graphics g, int size) {
         Font font = g.getFont();
         if (font != null) {
             return font;
@@ -102,7 +102,7 @@ public class AirconPane extends JPanel {
         g.setFont(getFont(g));
 
         // power
-        if (dev.isOn() == true) {
+        if (dev.isOn()) {
             g.setColor(Color.YELLOW);
         } else {
             g.setColor(Color.LIGHT_GRAY);
@@ -110,13 +110,13 @@ public class AirconPane extends JPanel {
 
         g.fillRect(5, 50, 20, 5);
 
-        // tempture
+        // temperature
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(250, 50, 40, 10);
 
-        if (dev.isOn() == true) {
+        if (dev.isOn()) {
             g.setColor(Color.BLACK);
-            g.drawString(String.valueOf(dev.getTempture()), 280, 59);
+            g.drawString(String.valueOf(dev.getTemperature()), 280, 59);
         }
     }
 
@@ -129,6 +129,7 @@ public class AirconPane extends JPanel {
         g.drawImage(getPaneImage(), 0, 0, null);
     }
 
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawPanelImage(g);

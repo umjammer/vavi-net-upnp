@@ -37,15 +37,15 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class StateVariablePane extends JPanel {
-    private ControlPoint controlPoint;
+    private final ControlPoint controlPoint;
 
-    private StateVariable stateVariable;
+    private final StateVariable stateVariable;
 
-    private TableModel stateVariableTable;
+    private final TableModel stateVariableTable;
 
-    private JButton queryButton;
+    private final JButton queryButton;
     /** */
-    private StateVariableSerdes serdes = Singleton.getInstance(StateVariableSerdes.class);
+    private final StateVariableSerdes serdes = Singleton.getInstance(StateVariableSerdes.class);
 
     // Constructor
     public StateVariablePane(ControlPoint controlPoint, StateVariable stateVariable) {
@@ -95,7 +95,8 @@ public class StateVariablePane extends JPanel {
     }
 
     // varPerformed
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() != queryButton) {
                 return;
@@ -104,7 +105,7 @@ public class StateVariablePane extends JPanel {
             String title = stateVariable.getName();
             String message;
             try {
-                QueryResponse queryResponse = stateVariable.postQuerylAction();
+                QueryResponse queryResponse = stateVariable.postQueryAction();
                 if (queryResponse.getStatus() == HttpURLConnection.HTTP_OK) {
                     message = stateVariable.getName() + " = " + stateVariable.getValue();
                 } else {

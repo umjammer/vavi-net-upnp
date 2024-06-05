@@ -32,9 +32,9 @@ import vavi.util.Singleton;
 public class StateVariableSerdes extends Singleton implements Serdes<StateVariable, Node, Node> {
 
     /** */
-    private static AllowedValueRangeSerdes allowedValueRangeSerdes = Singleton.getInstance(AllowedValueRangeSerdes.class);
+    private static final AllowedValueRangeSerdes allowedValueRangeSerdes = Singleton.getInstance(AllowedValueRangeSerdes.class);
 
-    /** */
+    @Override
     public void serialize(StateVariable stateVariable, Node stateVariableNode) throws IOException {
         Document document = stateVariableNode.getOwnerDocument();
 
@@ -67,7 +67,7 @@ public class StateVariableSerdes extends Singleton implements Serdes<StateVariab
 //      node.setUserData("stateVariableData", stateVariable.getStateVariableData(), null);
     }
     
-    /** */
+    @Override
     public void deserialize(Node node, StateVariable stateVariable) throws IOException {
         try {
             //
@@ -81,7 +81,7 @@ public class StateVariableSerdes extends Singleton implements Serdes<StateVariab
             for (int n = 0; n < valueNodes.getLength(); n++) {
                 Node valueNode = valueNodes.item(n);
 
-                String value = ((Element) valueNode).getTextContent();
+                String value = valueNode.getTextContent();
                 stateVariable.getAllowedValueList().add(value);
             }
 

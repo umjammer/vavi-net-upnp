@@ -41,7 +41,7 @@ public class MythDirectory extends Directory {
         return recNode;
     }
 
-    private MythRecordedInfo[] getCurrentRecordedInfos() {
+    private static MythRecordedInfo[] getCurrentRecordedInfos() {
         MythDAO mythdb = new MythDAO();
 
         MythRecordedInfo[] recInfo = null;
@@ -54,6 +54,7 @@ public class MythDirectory extends Directory {
     }
 
     // update
+    @Override
     public void update() {
         boolean updateFlag = false;
 
@@ -63,12 +64,10 @@ public class MythDirectory extends Directory {
         int nCurrRecInfos = currRecInfo.length;
 
         // Checking Deleted Items
-        for (int i = 0; i < nAddedItems; i++) {
-            MythRecordedItemNode recItem = addedItemNode[i];
+        for (MythRecordedItemNode recItem : addedItemNode) {
             boolean hasRecItem = false;
-            for (int j = 0; j < nCurrRecInfos; j++) {
-                MythRecordedInfo recInfo = currRecInfo[j];
-                if (recItem.equals(recInfo) == true) {
+            for (MythRecordedInfo recInfo : currRecInfo) {
+                if (recItem.equals(recInfo)) {
                     hasRecItem = true;
                     break;
                 }
@@ -81,12 +80,10 @@ public class MythDirectory extends Directory {
         }
 
         // Checking Added Items
-        for (int j = 0; j < nCurrRecInfos; j++) {
-            MythRecordedInfo recInfo = currRecInfo[j];
+        for (MythRecordedInfo recInfo : currRecInfo) {
             boolean hasRecItem = false;
-            for (int i = 0; i < nAddedItems; i++) {
-                MythRecordedItemNode recItem = addedItemNode[i];
-                if (recItem.equals(recInfo) == true) {
+            for (MythRecordedItemNode recItem : addedItemNode) {
+                if (recItem.equals(recInfo)) {
                     hasRecItem = true;
                     break;
                 }

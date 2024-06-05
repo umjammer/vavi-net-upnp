@@ -31,7 +31,7 @@ public interface Serdes<T, I, O> {
     final class SerdesUtil {
 
         /** XPath */
-        private static XPath xpath = XPathFactory.newInstance().newXPath();
+        private static final XPath xpath = XPathFactory.newInstance().newXPath();
 
         /** XPath */
         public static XPath getXPath() {

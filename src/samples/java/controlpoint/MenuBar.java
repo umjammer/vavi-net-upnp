@@ -76,24 +76,28 @@ public class MenuBar extends JMenuBar {
     }
 
     Action quitAction = new AbstractAction() {
+        @Override
         public void actionPerformed(ActionEvent ev) {
             System.exit(0);
         }
     };
 
     Action clearAction = new AbstractAction() {
+        @Override
         public void actionPerformed(ActionEvent ev) {
             controlPoint.clearConsole();
         }
     };
 
     Action stopUpdateAction = new AbstractAction() {
+        @Override
         public void actionPerformed(ActionEvent ev) {
             controlPoint.setStopUpdate(stopUpdate.getState());
         }
     };
 
     Action searchAction = new AbstractAction() {
+        @Override
         public void actionPerformed(ActionEvent ev) {
             try {
                 controlPoint.search("upnp:rootdevice", SSDP.DEFAULT_MSEARCH_MX);
@@ -104,6 +108,7 @@ public class MenuBar extends JMenuBar {
     };
 
     Action searchAllAction = new AbstractAction() {
+        @Override
         public void actionPerformed(ActionEvent ev) {
             try {
                 controlPoint.search(SSDP.ALL_DEVICE, SSDP.DEFAULT_MSEARCH_MX);

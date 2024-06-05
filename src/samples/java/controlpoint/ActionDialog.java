@@ -151,5 +151,3 @@ public class ActionDialog extends JDialog {
         return result;
     }
 }
-
-/* */

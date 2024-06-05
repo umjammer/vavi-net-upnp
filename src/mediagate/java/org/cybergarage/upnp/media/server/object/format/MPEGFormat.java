@@ -100,5 +100,3 @@ public class MPEGFormat implements Format, FormatObject {
         return "";
     }
 }
-
-/* */

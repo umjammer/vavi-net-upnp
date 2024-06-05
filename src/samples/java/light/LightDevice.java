@@ -169,5 +169,3 @@ public class LightDevice extends Device {
     public void update() {
     }
 }
-
-/* */

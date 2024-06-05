@@ -241,5 +241,3 @@ System.out.println("--------");
         return soapMessage;
     }
 }
-
-/* */

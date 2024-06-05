@@ -145,5 +145,3 @@ public class ActionRequest extends ControlRequest {
         return argumentList;
     }
 }
-
-/* */

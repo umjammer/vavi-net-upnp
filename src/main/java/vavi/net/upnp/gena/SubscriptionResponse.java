@@ -119,5 +119,3 @@ public class SubscriptionResponse extends HttpContext {
         return Subscription.getTimeout(getHeader("TIMEOUT"));
     }
 }
-
-/* */

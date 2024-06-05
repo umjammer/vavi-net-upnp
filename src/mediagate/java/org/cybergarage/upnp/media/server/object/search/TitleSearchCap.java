@@ -44,5 +44,3 @@ public class TitleSearchCap implements SearchCap {
         return false;
     }
 }
-
-/* */

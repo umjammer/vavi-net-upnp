@@ -21,5 +21,3 @@ public class RootNode extends ContainerNode {
         setTitle("Root");
     }
 }
-
-/* */

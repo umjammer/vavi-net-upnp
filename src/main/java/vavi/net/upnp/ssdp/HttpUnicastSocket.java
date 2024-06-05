@@ -183,5 +183,3 @@ public class HttpUnicastSocket {
         send(ssdpAddress, SSDP.PORT, baos.toByteArray());
     }
 }
-
-/* */

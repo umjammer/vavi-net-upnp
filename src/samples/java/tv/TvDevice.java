@@ -319,5 +319,3 @@ e.printStackTrace();
         tvDevice.stop();
     }
 }
-
-/* */

@@ -232,5 +232,3 @@ public class DeviceSerdes extends Singleton implements Serdes<Device, InputStrea
         }
     }
 }
-
-/* */

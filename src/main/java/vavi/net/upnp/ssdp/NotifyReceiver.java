@@ -109,5 +109,3 @@ Debug.println("--- NotifyReceiver stopped");
         controlPoint.performNotifyListener(request);
     }
 }
-
-/* */

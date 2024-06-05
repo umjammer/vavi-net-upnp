@@ -95,5 +95,3 @@ public final class DeviceFactory {
         inject(new File(fileName).toURI().toURL(), device);
     }
 }
-
-/* */

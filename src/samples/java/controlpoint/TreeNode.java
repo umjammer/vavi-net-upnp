@@ -36,5 +36,3 @@ public class TreeNode extends DefaultMutableTreeNode {
         return userData;
     }
 }
-
-/* */

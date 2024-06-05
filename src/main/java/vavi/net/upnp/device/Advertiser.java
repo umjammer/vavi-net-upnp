@@ -265,5 +265,3 @@ Debug.println("byebye to: " + n + ": " + bindAddress + ": "+ e.getMessage());
         try { Thread.sleep(DEFAULT_DISCOVERY_WAIT_TIME); } catch (InterruptedException e) {}
     }
 }
-
-/* */

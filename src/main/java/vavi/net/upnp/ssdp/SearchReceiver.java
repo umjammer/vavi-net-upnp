@@ -104,5 +104,3 @@ Debug.println("--- SearchReceiver stopped");
         }
     }
 }
-
-/* */

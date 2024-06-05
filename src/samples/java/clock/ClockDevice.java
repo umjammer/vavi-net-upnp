@@ -123,5 +123,3 @@ public class ClockDevice extends Device {
         }
     }
 }
-
-/* */

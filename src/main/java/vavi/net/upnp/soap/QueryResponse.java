@@ -114,5 +114,3 @@ public class QueryResponse extends ControlResponse {
         return value;
     }
 }
-
-/* */

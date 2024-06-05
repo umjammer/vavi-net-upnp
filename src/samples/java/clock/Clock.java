@@ -106,5 +106,3 @@ public class Clock {
                toClockString(calendar.get(Calendar.SECOND));
     }
 }
-
-/* */

@@ -59,5 +59,3 @@ public enum UPnPStatus {
         throw new IllegalArgumentException(String.valueOf(code));
     }
 }
-
-/* */

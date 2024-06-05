@@ -28,5 +28,3 @@ public abstract class MediaFrame {
         return mediaGate;
     }
 }
-
-/* */

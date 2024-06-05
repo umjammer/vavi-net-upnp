@@ -35,5 +35,3 @@ public class IdSearchCap implements SearchCap {
 
     }
 }
-
-/* */

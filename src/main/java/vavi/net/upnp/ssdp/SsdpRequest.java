@@ -199,5 +199,3 @@ public class SsdpRequest extends SsdpContext {
         return new String(data);
     }
 }
-
-/* */

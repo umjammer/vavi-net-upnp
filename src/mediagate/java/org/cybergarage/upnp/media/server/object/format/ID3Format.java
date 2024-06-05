@@ -300,5 +300,3 @@ public class ID3Format extends Header implements Format, FormatObject {
         }
     }
 }
-
-/* */

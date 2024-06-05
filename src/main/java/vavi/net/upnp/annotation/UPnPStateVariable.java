@@ -26,5 +26,3 @@ public @interface UPnPStateVariable {
 
     boolean query() default false;
 }
-
-/* */

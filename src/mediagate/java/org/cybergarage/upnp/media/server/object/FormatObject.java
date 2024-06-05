@@ -26,5 +26,3 @@ public interface FormatObject {
     /* */
     String getCreator();
 }
-
-/* */

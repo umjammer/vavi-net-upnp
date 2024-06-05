@@ -101,5 +101,3 @@ public class StateVariableSerdes extends Singleton implements Serdes<StateVariab
         }
     }
 }
-
-/* */

@@ -58,5 +58,3 @@ public class DefaultFormat implements Format, FormatObject {
         return "";
     }
 }
-
-/* */

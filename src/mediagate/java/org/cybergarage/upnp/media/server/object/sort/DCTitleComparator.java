@@ -38,5 +38,3 @@ public class DCTitleComparator implements Comparator<ContentNode> {
         return DC.TITLE;
     }
 }
-
-/* */

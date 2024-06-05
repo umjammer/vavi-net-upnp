@@ -130,5 +130,3 @@ public class ActionResponse extends ControlResponse {
         return argumentList;
     }
 }
-
-/* */

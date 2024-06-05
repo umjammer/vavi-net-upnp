@@ -53,5 +53,3 @@ public class SsdpSearchRequest extends SsdpContext {
         setRemotePort(SSDP.PORT);
     }
 }
-
-/* */

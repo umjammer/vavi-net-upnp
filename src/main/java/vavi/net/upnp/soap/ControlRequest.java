@@ -130,5 +130,3 @@ public abstract class ControlRequest extends SOAPRequest {
         this.remotePort = url.getPort();
     }
 }
-
-/* */

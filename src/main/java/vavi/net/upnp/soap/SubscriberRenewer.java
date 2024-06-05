@@ -104,5 +104,3 @@ Debug.println("--- SubscriberRenewer stopped");
         }
     }
 }
-
-/* */

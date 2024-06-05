@@ -46,5 +46,3 @@ public class AllowedValueRangeSerdes extends Singleton implements Serdes<Allowed
         allowdValueRange.setStep(SerdesUtil.getChildNodeValue(allowdValueRangeNode, Service.XMLNS, "step"));
     }
 }
-
-/* */

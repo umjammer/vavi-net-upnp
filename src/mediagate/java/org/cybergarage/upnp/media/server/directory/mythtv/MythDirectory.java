@@ -119,5 +119,3 @@ public class MythDirectory extends Directory {
         mythdir.update();
     }
 }
-
-/* */

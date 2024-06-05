@@ -26,5 +26,3 @@ public class DIDLLiteNode extends BaseElement { // Thanks for Brent Hills (10/28
         setAttribute(DIDLLite.XMLNS_UPNP, DIDLLite.XMLNS_UPNP_URL);
     }
 }
-
-/* */

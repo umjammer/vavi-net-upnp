@@ -233,5 +233,3 @@ public class SubscriptionRequest extends HttpContext {
         return Subscription.getTimeout(getHeader("TIMEOUT"));
     }
 }
-
-/* */

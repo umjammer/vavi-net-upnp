@@ -81,5 +81,3 @@ public class DIDLLite {
         return nodeList.get(n);
     }
 }
-
-/* */

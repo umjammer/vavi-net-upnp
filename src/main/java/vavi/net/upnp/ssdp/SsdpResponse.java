@@ -30,5 +30,3 @@ public class SsdpResponse extends SsdpContext {
         setHeader("DATE", Protocol.Util.toDateString(System.currentTimeMillis()));
     }
 }
-
-/* */

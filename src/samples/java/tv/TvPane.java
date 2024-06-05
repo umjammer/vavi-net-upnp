@@ -179,5 +179,3 @@ public class TvPane extends JPanel { // MouseListener
         }
     }
 }
-
-/* */

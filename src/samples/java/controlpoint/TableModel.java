@@ -73,5 +73,3 @@ public class TableModel extends DefaultTableModel {
         return false;
     }
 }
-
-/* */

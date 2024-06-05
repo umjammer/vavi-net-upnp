@@ -67,5 +67,3 @@ public class ContainerNode extends ContentNode {
         return Integer.parseInt(getAttribute(SEARCHABLE));
     }
 }
-
-/* */

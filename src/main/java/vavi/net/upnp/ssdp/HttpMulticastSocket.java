@@ -165,5 +165,3 @@ public class HttpMulticastSocket {
         send(request, null, -1);
     }
 }
-
-/* */

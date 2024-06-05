@@ -56,5 +56,3 @@ public class IconSerdes extends Singleton implements Serdes<Icon, Node, Node> {
         icon.setMimeType(SerdesUtil.getChildNodeValue(iconNode, Device.XMLNS, "mimetype"));
     }
 }
-
-/* */

@@ -31,5 +31,3 @@ public @interface UPnPAction {
     /** */
     String result() default "";
 }
-
-/* */

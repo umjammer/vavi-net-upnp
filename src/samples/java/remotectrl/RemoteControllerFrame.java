@@ -119,5 +119,3 @@ Debug.printStackTrace(e);
         remoteControllerFrame.start();
     }
 }
-
-/* */

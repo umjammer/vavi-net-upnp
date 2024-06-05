@@ -181,5 +181,3 @@ public class AirconDevice extends Device {
     public void update() {
     }
 }
-
-/* */

@@ -115,5 +115,3 @@ public class QueryRequest extends ControlRequest {
         return varName;
     }
 }
-
-/* */

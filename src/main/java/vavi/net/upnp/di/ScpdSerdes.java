@@ -58,5 +58,3 @@ pp.print(scpdNode);
         }
     }
 }
-
-/* */

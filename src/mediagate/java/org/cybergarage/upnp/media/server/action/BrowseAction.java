@@ -102,5 +102,3 @@ public class BrowseAction extends Action {
         getArgument(UPDATE_ID).setValue(String.valueOf(value));
     }
 }
-
-/* */

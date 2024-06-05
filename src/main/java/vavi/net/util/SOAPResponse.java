@@ -46,5 +46,3 @@ public abstract class SOAPResponse extends HttpContext {
         return soapMessage;
     }
 }
-
-/* */

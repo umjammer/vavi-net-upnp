@@ -154,5 +154,3 @@ public class RemoteController extends ControlPoint {
         setWasherState("0");
     }
 }
-
-/* */

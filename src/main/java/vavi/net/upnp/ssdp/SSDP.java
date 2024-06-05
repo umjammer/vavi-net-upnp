@@ -111,5 +111,3 @@ public class SSDP {
         return target.startsWith("\"" + constant);
     }
 }
-
-/* */

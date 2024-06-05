@@ -273,5 +273,3 @@ public abstract class ContentNode extends BaseElement {
         return getPropertyValue(UPnP.WRITE_STATUS);
     }
 }
-
-/* */

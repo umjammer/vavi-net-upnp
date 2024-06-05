@@ -25,5 +25,3 @@ public interface EventListener extends java.util.EventListener {
      */
     void eventNotifyReceived(String uuid, long seq, String varName, String value);
 }
-
-/* */

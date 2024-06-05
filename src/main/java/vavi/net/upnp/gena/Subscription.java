@@ -70,5 +70,3 @@ public final class Subscription {
         return headerValue.substring(Subscription.PROTOCOL_UUID.length(), headerValue.length());
     }
 }
-
-/* */

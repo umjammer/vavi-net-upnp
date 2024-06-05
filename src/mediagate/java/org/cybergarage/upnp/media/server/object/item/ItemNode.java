@@ -193,5 +193,3 @@ public abstract class ItemNode extends ContentNode {
         return bout.toByteArray();
     }
 }
-
-/* */

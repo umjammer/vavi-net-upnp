@@ -22,5 +22,3 @@ public interface NotifyListener extends EventListener {
     /** */
     void deviceNotifyReceived(SsdpRequest ssdpPacket);
 }
-
-/* */

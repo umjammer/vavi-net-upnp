@@ -476,5 +476,3 @@ public class BaseElement implements Element {
         throw new UnsupportedOperationException("setIdAttributeNode");
     }
 }
-
-/* */

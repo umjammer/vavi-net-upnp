@@ -215,5 +215,3 @@ Debug.print("undefined upnp status: " + statusCode);
         return response;
     }
 }
-
-/* */

@@ -817,5 +817,3 @@ Debug.println("+++ ContentDirectory server started");
         return handler;
     }
 }
-
-/* */

@@ -57,5 +57,3 @@ Debug.println("enabled: " + enabled);
         g.drawImage(images[enabled ? 1 : 0], 0, 0, null);
     }
 }
-
-/* */

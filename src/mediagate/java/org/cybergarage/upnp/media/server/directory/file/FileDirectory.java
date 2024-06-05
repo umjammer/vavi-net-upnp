@@ -233,5 +233,3 @@ public class FileDirectory extends Directory {
         updateItemNodeList();
     }
 }
-
-/* */

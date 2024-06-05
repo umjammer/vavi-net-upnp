@@ -22,5 +22,3 @@ public interface SearchListener extends EventListener {
     /** */
     void deviceSearchReceived(SsdpRequest ssdpPacket);
 }
-
-/* */

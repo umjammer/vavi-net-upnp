@@ -114,5 +114,3 @@ public class WasherPane extends JPanel {
         drawInfo(g);
     }
 }
-
-/* */

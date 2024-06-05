@@ -42,5 +42,3 @@ public class Light {
         this.view = view;
     }
 }
-
-/* */

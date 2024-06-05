@@ -32,5 +32,3 @@ public class UPnP {
     /** */
     public final static String OBJECT_ITEM_VIDEOITEM_MOVIE = "object.item.videoItem.movie";
 }
-
-/* */

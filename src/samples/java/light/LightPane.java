@@ -99,5 +99,3 @@ public class LightPane extends JPanel {
         drawPanelImage(g);
     }
 }
-
-/* */

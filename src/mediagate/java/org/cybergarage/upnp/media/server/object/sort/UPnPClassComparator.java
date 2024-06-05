@@ -38,5 +38,3 @@ public class UPnPClassComparator implements Comparator<ContentNode> {
         return UPnP.CLASS;
     }
 }
-
-/* */

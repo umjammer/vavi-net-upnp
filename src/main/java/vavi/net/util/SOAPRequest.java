@@ -91,5 +91,3 @@ System.out.println("\n--------");
         return getHeader("SOAPACTION");
     }
 }
-
-/* */

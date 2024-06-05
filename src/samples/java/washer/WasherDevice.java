@@ -194,5 +194,3 @@ Debug.println("--- Washer stopped");
     public void update() {
     }
 }
-
-/* */

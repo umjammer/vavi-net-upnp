@@ -94,5 +94,3 @@ public class ContentTable extends AbstractTableModel {
         setDirectory(dir);
     }
 }
-
-/* */

@@ -99,5 +99,3 @@ Debug.println("--- ResponseReceiver stopped");
         controlPoint.performSearchResponseListener(packet);
     }
 }
-
-/** */

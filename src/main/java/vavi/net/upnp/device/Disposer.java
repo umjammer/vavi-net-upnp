@@ -91,5 +91,3 @@ Debug.println("Expired device: " + device.getFriendlyName());
         }
     }
 }
-
-/* */

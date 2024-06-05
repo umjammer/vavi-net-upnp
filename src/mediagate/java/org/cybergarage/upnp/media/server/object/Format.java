@@ -22,5 +22,3 @@ public interface Format {
     /** */
     String getMediaClass();
 }
-
-/* */

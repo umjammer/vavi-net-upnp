@@ -23,5 +23,3 @@ public interface QueryListener {
      */
     boolean queryControlReceived(StateVariable stateVar);
 }
-
-/* */

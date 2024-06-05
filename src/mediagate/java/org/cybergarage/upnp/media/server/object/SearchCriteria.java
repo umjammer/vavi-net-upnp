@@ -190,5 +190,3 @@ public class SearchCriteria {
         return result;
     }
 }
-
-/* */

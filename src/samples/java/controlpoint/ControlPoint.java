@@ -146,5 +146,3 @@ public class ControlPoint extends vavi.net.upnp.ControlPoint {
         controlPoint.start();
     }
 }
-
-/* */

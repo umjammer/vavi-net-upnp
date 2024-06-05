@@ -57,5 +57,3 @@ public interface Serdes<T, I, O> {
         }
     }
 }
-
-/* */

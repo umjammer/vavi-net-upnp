@@ -41,5 +41,3 @@ public abstract class Directory extends ContainerNode {
 
     public abstract void update();
 }
-
-/* */

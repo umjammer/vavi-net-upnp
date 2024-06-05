@@ -108,5 +108,3 @@ public class SsdpContext extends HttpContext {
         return getHeader("MYNAME");
     }
 }
-
-/* */

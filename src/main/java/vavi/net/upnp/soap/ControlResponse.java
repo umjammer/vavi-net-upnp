@@ -208,5 +208,3 @@ Debug.println("response has no contents");
     }
 }
 
-/* */
-

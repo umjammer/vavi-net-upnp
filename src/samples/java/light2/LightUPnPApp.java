@@ -60,5 +60,3 @@ Debug.printStackTrace(e);
 Debug.println(upnpApp.getTitle());
     }
 }
-
-/* */

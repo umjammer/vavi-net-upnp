@@ -57,5 +57,3 @@ public class AllowedValueRange {
         return step;
     }
 }
-
-/* */

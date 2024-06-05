@@ -237,5 +237,3 @@ public class ConnectionManager {
         return queryListener;
     }
 }
-
-/* */

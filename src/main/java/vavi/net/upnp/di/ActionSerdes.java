@@ -80,5 +80,3 @@ public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node
         }
     }
 }
-
-/* */

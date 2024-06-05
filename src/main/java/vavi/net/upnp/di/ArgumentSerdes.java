@@ -54,5 +54,3 @@ public class ArgumentSerdes extends Singleton implements Serdes<Argument, Node, 
 //        argument.setValue(argumentNode.getTextContent());
     }
 }
-
-/* */

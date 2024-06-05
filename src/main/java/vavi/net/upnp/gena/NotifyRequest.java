@@ -215,5 +215,3 @@ Debug.println("property: " + varName + " = " + value);
         return properties;
     }
 }
-
-/* */

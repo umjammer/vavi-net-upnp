@@ -113,5 +113,3 @@ public class MenuBar extends JMenuBar {
         }
     };
 }
-
-/* */

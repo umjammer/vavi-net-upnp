@@ -32,7 +32,7 @@ import vavi.net.upnp.StateVariable;
 
 /**
  * ActionDialog.
- * TODO allowedValue/Range �����B��ꍇ
+ * TODO allowedValue/Range 許容値の場合
  * @author Satoshi Konno
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */

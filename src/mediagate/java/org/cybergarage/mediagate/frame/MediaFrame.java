@@ -22,11 +22,9 @@ public abstract class MediaFrame {
     }
 
     /** */
-    private MediaGate mediaGate;
+    private final MediaGate mediaGate;
 
     public MediaGate getMediaGate() {
         return mediaGate;
     }
 }
-
-/* */

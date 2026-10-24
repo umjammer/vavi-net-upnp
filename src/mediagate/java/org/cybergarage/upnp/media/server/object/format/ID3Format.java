@@ -9,9 +9,12 @@ package org.cybergarage.upnp.media.server.object.format;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +27,6 @@ import org.cybergarage.upnp.media.server.object.FormatObject;
 import org.cybergarage.upnp.media.server.object.item.ItemNode;
 
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -34,6 +36,8 @@ import vavi.util.Debug;
  */
 public class ID3Format extends Header implements Format, FormatObject {
 
+    private static final Logger logger = System.getLogger(ID3Format.class.getName());
+
     // Constants
     public final static String HEADER_ID = "ID3";
 
@@ -42,15 +46,15 @@ public class ID3Format extends Header implements Format, FormatObject {
     public final static int FRAME_HEADER_SIZE = 10;
 
     // Member
-    private byte[] header = new byte[HEADER_SIZE];
+    private final byte[] header = new byte[HEADER_SIZE];
 
-    private byte[] extHeader = new byte[4];
+    private final byte[] extHeader = new byte[4];
 
-    private byte[] frameHeader = new byte[FRAME_HEADER_SIZE];
+    private final byte[] frameHeader = new byte[FRAME_HEADER_SIZE];
 
-    private Map<String, ID3Frame> frameList = new HashMap<>();
+    private final Map<String, ID3Frame> frameList = new HashMap<>();
 
-    private File mp3File;
+    private final File mp3File;
 
     // Constructor
     public ID3Format() {
@@ -71,7 +75,7 @@ public class ID3Format extends Header implements Format, FormatObject {
                 header[n] = dataIn.readByte();
             }
 
-            // Reading a extended header
+            // Reading an extended header
             if (hasExtendedHeader()) {
                 for (int n = 0; n < 4; n++) {
                     header[n] = dataIn.readByte();
@@ -119,7 +123,7 @@ public class ID3Format extends Header implements Format, FormatObject {
             dataIn.close();
         } catch (EOFException eofe) {
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
             return false;
         }
         return true;
@@ -127,9 +131,9 @@ public class ID3Format extends Header implements Format, FormatObject {
 
     public boolean loadHeader(File file) {
         try {
-            return loadHeader(new FileInputStream(file));
+            return loadHeader(Files.newInputStream(file.toPath()));
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
             return false;
         }
     }
@@ -161,19 +165,19 @@ public class ID3Format extends Header implements Format, FormatObject {
     }
 
     public boolean isUnsynchronisation() {
-        return ((getFlag() & 0x80) != 0) ? true : false;
+        return (getFlag() & 0x80) != 0;
     }
 
     public boolean hasExtendedHeader() {
-        return ((getFlag() & 0x40) != 0) ? true : false;
+        return (getFlag() & 0x40) != 0;
     }
 
     public boolean isExperimental() {
-        return ((getFlag() & 0x20) != 0) ? true : false;
+        return (getFlag() & 0x20) != 0;
     }
 
     public boolean hasFooter() {
-        return ((getFlag() & 0x10) != 0) ? true : false;
+        return (getFlag() & 0x10) != 0;
     }
 
     // Extended Header
@@ -188,11 +192,11 @@ public class ID3Format extends Header implements Format, FormatObject {
 
     // Header
 
-    private String getFrameID(byte[] frameHeader) {
+    private static String getFrameID(byte[] frameHeader) {
         return new String(frameHeader, 0, 4);
     }
 
-    private int getFrameSize(byte[] frameHeader) {
+    private static int getFrameSize(byte[] frameHeader) {
         int size = 0;
         for (int n = 0; n < 4; n++) {
             size += ((frameHeader[7 - n] & 0xFF) << n);
@@ -200,7 +204,7 @@ public class ID3Format extends Header implements Format, FormatObject {
         return size;
     }
 
-    private int getFrameFlag(byte[] frameHeader) {
+    private static int getFrameFlag(byte[] frameHeader) {
         return ((frameHeader[8] & 0xFF) << 8) + (frameHeader[9] & 0xFF);
     }
 
@@ -215,9 +219,8 @@ public class ID3Format extends Header implements Format, FormatObject {
     // Abstract Methods
 
     public boolean equals(Object object) {
-        if (object instanceof File) {
-            File file = (File) object;
-//Debug.println("file: " + file);
+        if (object instanceof File file) {
+            //logger.log(Level.DEBUG, "file: " + file);
             String headerID = Header.getIDString(file, 3);
             if (headerID.startsWith(HEADER_ID)) {
                 return true;
@@ -226,19 +229,23 @@ public class ID3Format extends Header implements Format, FormatObject {
         return false;
     }
 
+    @Override
     public FormatObject createObject(File file) {
         return new ID3Format(file);
     }
 
+    @Override
     public String getMimeType() {
         return "audio/mpeg";
     }
 
+    @Override
     public String getMediaClass() {
         return "object.item.audioItem.musicTrack";
     }
 
     // TODO check owner document
+    @Override
     public List<Attr> getAttributeList() {
         List<Attr> attrList = new ArrayList<>();
         Document document = Util.getDocumentBuilder().newDocument();
@@ -252,29 +259,31 @@ public class ID3Format extends Header implements Format, FormatObject {
         return attrList;
     }
 
+    @Override
     public String getTitle() {
         String title = getFrameStringData(ID3Frame.TIT2);
-        if (0 < title.length()) {
+        if (!title.isEmpty()) {
             return title;
         }
         title = getFrameStringData(ID3Frame.TIT1);
-        if (0 < title.length()) {
+        if (!title.isEmpty()) {
             return title;
         }
         return getFrameStringData(ID3Frame.TIT2);
     }
 
+    @Override
     public String getCreator() {
         String creator = getFrameStringData(ID3Frame.TPE1);
-        if (0 < creator.length()) {
+        if (!creator.isEmpty()) {
             return creator;
         }
         creator = getFrameStringData(ID3Frame.TPE2);
-        if (0 < creator.length()) {
+        if (!creator.isEmpty()) {
             return creator;
         }
         creator = getFrameStringData(ID3Frame.TPE3);
-        if (0 < creator.length()) {
+        if (!creator.isEmpty()) {
             return creator;
         }
         return getFrameStringData(ID3Frame.TPE4);
@@ -284,21 +293,19 @@ public class ID3Format extends Header implements Format, FormatObject {
 
     public void print() {
         String headerStr = new String(header);
-        System.out.println("header = " + headerStr);
-        System.out.println("ID = " + getHeaderID());
-        System.out.println("Size = " + getHeaderSize());
-        System.out.println("isUnsynchronisation = " + isUnsynchronisation());
-        System.out.println("hasExtendedHeader = " + hasExtendedHeader());
-        System.out.println("isExperimental = " + isExperimental());
-        System.out.println("hasFooter = " + hasFooter());
+        logger.log(Level.DEBUG, "header = " + headerStr);
+        logger.log(Level.DEBUG, "ID = " + getHeaderID());
+        logger.log(Level.DEBUG, "Size = " + getHeaderSize());
+        logger.log(Level.DEBUG, "isUnsynchronisation = " + isUnsynchronisation());
+        logger.log(Level.DEBUG, "hasExtendedHeader = " + hasExtendedHeader());
+        logger.log(Level.DEBUG, "isExperimental = " + isExperimental());
+        logger.log(Level.DEBUG, "hasFooter = " + hasFooter());
 
         int frameCnt = frameList.size();
         for (int n = 0; n < frameCnt; n++) {
             ID3Frame frame = frameList.get(n);
-            System.out.println("[" + n + "] : " + frame.getID());
-            System.out.println("     " + frame.getData());
+            logger.log(Level.DEBUG, "[" + n + "] : " + frame.getID());
+            logger.log(Level.DEBUG, "     " + Arrays.toString(frame.getData()));
         }
     }
 }
-
-/* */

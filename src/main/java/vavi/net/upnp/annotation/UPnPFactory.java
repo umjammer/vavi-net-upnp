@@ -7,6 +7,8 @@
 package vavi.net.upnp.annotation;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -18,7 +20,6 @@ import vavi.net.upnp.Argument;
 import vavi.net.upnp.Device;
 import vavi.net.upnp.Service;
 import vavi.net.upnp.StateVariable;
-import vavi.util.Debug;
 
 
 /**
@@ -29,25 +30,28 @@ import vavi.util.Debug;
  */
 public final class UPnPFactory {
 
+    private static final Logger logger = System.getLogger(UPnPFactory.class.getName());
+
     /** */
     private UPnPFactory() {
     }
 
     /** ActionListener for getter */
     private static class GetterActionListener implements vavi.net.upnp.event.ActionListener {
-        String name;
-        String argName;
-        StateVariable stateVariable;
-        Object bean;
-        Method method;
+        final String name;
+        final String argName;
+        final StateVariable stateVariable;
+        final Object bean;
+        final Method method;
         GetterActionListener(String name, String argName, StateVariable stateVariable, Object bean, Method method) {
             this.name = name;
             this.argName = argName;
             this.stateVariable = stateVariable;
             this.bean = bean;
             this.method = method;
-Debug.println("getter: " + name + ", " + argName + ", " + stateVariable.getName());
+logger.log(Level.DEBUG, "getter: " + name + ", " + argName + ", " + stateVariable.getName());
         }
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
     
@@ -73,12 +77,12 @@ e.printStackTrace(System.err);
 
     /** ActionListener for setter */
     private static class SetterActionListener implements vavi.net.upnp.event.ActionListener {
-        String name;
-        String argName;
-        String resultName;
-        StateVariable stateVariable;
-        Object bean;
-        Method method;
+        final String name;
+        final String argName;
+        final String resultName;
+        final StateVariable stateVariable;
+        final Object bean;
+        final Method method;
         SetterActionListener(String name, String argName, String resultName, StateVariable stateVariable, Object bean, Method method) {
             this.name = name;
             this.argName = argName;
@@ -86,8 +90,9 @@ e.printStackTrace(System.err);
             this.stateVariable = stateVariable;
             this.bean = bean;
             this.method = method;
-Debug.println("setter: " + name + ", " + argName + ", " + resultName + ", " + stateVariable.getName());
+logger.log(Level.DEBUG, "setter: " + name + ", " + argName + ", " + resultName + ", " + stateVariable.getName());
         }
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
     
@@ -116,11 +121,12 @@ e.printStackTrace(System.err);
     
     /** QueryListener */
     private static class QueryListener implements vavi.net.upnp.event.QueryListener {
-        StateVariable stateVariable;
+        final StateVariable stateVariable;
         QueryListener(StateVariable stateVariable) {
             this.stateVariable = stateVariable;
-Debug.println("query: " + stateVariable.getName());
+logger.log(Level.DEBUG, "query: " + stateVariable.getName());
         }
+        @Override
         public boolean queryControlReceived(StateVariable stateVar) {
             try {
                 stateVar.setValue(stateVariable.getValue());
@@ -140,7 +146,7 @@ e.printStackTrace(System.err);
             throw new IllegalArgumentException("bean is not annotated with @UPnPDevice");
         }
         String description = UPnPDevice.Util.getDescription(bean);
-Debug.println("description: " + description);
+logger.log(Level.DEBUG, "description: " + description);
 
         Device device = new Device(UPnPFactory.class.getResource(description));
 
@@ -151,7 +157,7 @@ Debug.println("description: " + description);
             if (stateVariableAnnotation == null) {
                 continue;
             }
-Debug.println("stateVariable: " + stateVariableAnnotation.name());
+logger.log(Level.DEBUG, "stateVariable: " + stateVariableAnnotation.name());
             StateVariable stateVariable = device.getStateVariable(stateVariableAnnotation.name());
             stateValiavles.put(stateVariableAnnotation.name(), stateVariable);
             if (stateVariableAnnotation.query()) {
@@ -167,7 +173,7 @@ Debug.println("stateVariable: " + stateVariableAnnotation.name());
             if (actionAnnotation == null) {
                 continue;
             }
-Debug.println("action: " + actionAnnotation.name());
+logger.log(Level.DEBUG, "action: " + actionAnnotation.name());
 
             // TODO is~
             if (method.getName().startsWith("get")) {
@@ -177,7 +183,7 @@ Debug.println("action: " + actionAnnotation.name());
                 Action setterAction = device.getAction(actionAnnotation.name());
                 setterAction.setActionListener(new SetterActionListener(actionAnnotation.name(), actionAnnotation.arg(), actionAnnotation.result(), stateValiavles.get(actionAnnotation.arg()), bean, method));
             } else {
-Debug.println("@UPnPAction: not setter/getter" + method.getName());
+logger.log(Level.DEBUG, "@UPnPAction: not setter/getter" + method.getName());
             }
         }
         
@@ -188,15 +194,15 @@ Debug.println("@UPnPAction: not setter/getter" + method.getName());
      * String to Object conversion on setter method.
      *
      * @param bean bean
-     * @param value value が null or empty の場合、
-     *        設定先がプリミティブなら 0, false、ラッパークラスならば null
+     * @param value If value is null or empty, the value is set to 0 or
+     *             false if the target is a primitive, or null if it is a wrapper class.
      */
     private static void invokeSetterMethodByString(Method method, Object bean, String value) throws Exception {
         Class<?> fieldClass = method.getParameterTypes()[0];
         if (fieldClass.equals(Boolean.class)) {
             method.invoke(bean, value == null || value.isEmpty() ? null : Boolean.parseBoolean(value));
         } else if (fieldClass.equals(Boolean.TYPE)) {
-            method.invoke(bean, value == null || value.isEmpty() ? false : Boolean.parseBoolean(value));
+            method.invoke(bean, value != null && !value.isEmpty() && Boolean.parseBoolean(value));
         } else if (fieldClass.equals(Integer.class)) {
             method.invoke(bean, value == null || value.isEmpty() ? null : Integer.parseInt(value));
         } else if (fieldClass.equals(Integer.TYPE)) {
@@ -222,13 +228,11 @@ Debug.println("@UPnPAction: not setter/getter" + method.getName());
         } else if (fieldClass.equals(Double.TYPE)) {
             method.invoke(bean, value == null || value.isEmpty() ? 0 : Double.parseDouble(value));
         } else if (fieldClass.equals(Character.class)) {
-            method.invoke(bean, value == null || value.isEmpty() ? null : Character.valueOf(value.charAt(0))); // TODO ???
+            method.invoke(bean, value == null || value.isEmpty() ? null : value.charAt(0)); // TODO ???
         } else if (fieldClass.equals(Character.TYPE)) {
-            method.invoke(bean, value == null || value.isEmpty() ? 0 : Character.valueOf(value.charAt(0))); // TODO ???
+            method.invoke(bean, value == null || value.isEmpty() ? 0 : value.charAt(0)); // TODO ???
         } else {
             method.invoke(bean, value);
         }
     }
 }
-
-/* */

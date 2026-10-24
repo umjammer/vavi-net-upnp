@@ -1,12 +1,25 @@
-# Modified UPnP Library with Annotation
+[![Release](https://jitpack.io/v/umjammer/vavi-net-upnp.svg)](https://jitpack.io/#umjammer/vavi-net-upmp)
+[![Java CI](https://github.com/umjammer/vavi-net-upnp/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/vavi-net-upnp/actions/workflows/maven.yml)
+[![CodeQL](https://github.com/umjammer/vavi-net-upnp/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-net-upnp/actions/workflows/codeql-analysis.yml)
+![Java](https://img.shields.io/badge/Java-17-b07219)
 
-Original is
+# vavi-net-upnp
 
-http://cgupnpjava.sourceforge.net/
+<img alt="logo" src="src/test/resources/duke_upnp.png" width="160" />
 
-## Before
+UPnP Library with Annotation
 
-repeating same code
+[Original](http://www.cybergarage.org/oss/iot/cybergarage-upnp/)
+
+## Install
+
+- [maven]()
+
+## Usage
+
+### Before
+
+mostly boilerplate
 
 ```Java
 public class LightDevice extends Device {
@@ -76,7 +89,7 @@ public class LightDevice extends Device {
 }
 ```
 
-## After
+### After
 
 pojo w/ annotation
 
@@ -113,3 +126,11 @@ public class Light {
 
         device.start();
 ```
+
+## References
+
+## TODO
+
+---
+
+<sub>image designed by @umjammer, drawn by nano banana</sub>

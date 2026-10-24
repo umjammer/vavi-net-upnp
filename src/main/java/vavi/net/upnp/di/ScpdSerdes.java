@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -32,12 +34,15 @@ import vavi.xml.util.PrettyPrinter;
  */
 public class ScpdSerdes extends Singleton implements Serdes<Node, InputStream, OutputStream> {
 
+    private static final Logger logger = System.getLogger(ScpdSerdes.class.getName());
+
     /**
      * scpd node
      * <pre>
      * /scpd
      * </pre> 
      */
+    @Override
     public void serialize(Node scpdNode, OutputStream os) throws IOException {
         PrintWriter pw = new PrintWriter(os);
         PrettyPrinter pp = new PrettyPrinter(pw);
@@ -45,18 +50,17 @@ public class ScpdSerdes extends Singleton implements Serdes<Node, InputStream, O
     }
 
     /** TODO tricky! */
+    @Override
     public void deserialize(InputStream is, Node scpdNodeWrapper) throws IOException {
         try {
             DocumentBuilder parser = Util.getDocumentBuilder();
             Document scpdNode = parser.parse(is);
             ((Document) scpdNodeWrapper).adoptNode(scpdNode.getLastChild());
-System.out.println("--------");
+logger.log(Level.DEBUG, "--------");
 PrettyPrinter pp = new PrettyPrinter(System.out);
 pp.print(scpdNode);
         } catch (SAXException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e); // TODO
+            throw new IllegalArgumentException(e); // TODO
         }
     }
 }
-
-/* */

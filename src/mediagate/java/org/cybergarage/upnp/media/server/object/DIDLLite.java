@@ -62,7 +62,7 @@ public class DIDLLite {
 
     // ContentNode
 
-    private List<ContentNode> nodeList = new ArrayList<>();
+    private final List<ContentNode> nodeList = new ArrayList<>();
 
     public void setContentNode(ContentNode node) {
         nodeList.clear();
@@ -81,5 +81,3 @@ public class DIDLLite {
         return nodeList.get(n);
     }
 }
-
-/* */

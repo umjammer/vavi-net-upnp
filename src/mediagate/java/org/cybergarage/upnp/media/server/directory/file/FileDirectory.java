@@ -7,6 +7,8 @@
 package org.cybergarage.upnp.media.server.directory.file;
 
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +21,6 @@ import org.cybergarage.upnp.media.server.object.Format;
 import org.cybergarage.upnp.media.server.object.FormatObject;
 import org.cybergarage.upnp.media.server.object.item.file.FileItemNode;
 
-import vavi.util.Debug;
-
 
 /**
  * FileDirectory
@@ -28,6 +28,8 @@ import vavi.util.Debug;
  * @version	021004	first revision.
  */
 public class FileDirectory extends Directory {
+
+    private static final Logger logger = System.getLogger(FileDirectory.class.getName());
 
     // Constructor
     public FileDirectory(String name, String path) {
@@ -60,19 +62,19 @@ public class FileDirectory extends Directory {
 
         // Title
         String title = formatObj.getTitle();
-        if (0 < title.length()) {
+        if (!title.isEmpty()) {
             itemNode.setTitle(title);
         }
 
         // Creator
         String creator = formatObj.getCreator();
-        if (0 < creator.length()) {
+        if (!creator.isEmpty()) {
             itemNode.setCreator(creator);
         }
 
         // Media Class
         String mediaClass = format.getMediaClass();
-        if (0 < mediaClass.length()) {
+        if (!mediaClass.isEmpty()) {
             itemNode.setUPnPClass(mediaClass);
         }
 
@@ -85,7 +87,7 @@ public class FileDirectory extends Directory {
             long fileSize = file.length();
             itemNode.setStorageUsed(fileSize);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
 
         // ProtocolInfo
@@ -117,8 +119,7 @@ public class FileDirectory extends Directory {
     private int getDirectoryItemNodeList(File dirFile, List<FileItemNode> itemNodeList) {
         File[] childFile = dirFile.listFiles();
         int fileCnt = childFile.length;
-        for (int n = 0; n < fileCnt; n++) {
-            File file = childFile[n];
+        for (File file : childFile) {
             if (file.isDirectory() == true) {
                 getDirectoryItemNodeList(file, itemNodeList);
                 continue;
@@ -213,8 +214,7 @@ public class FileDirectory extends Directory {
         // Checking Added or Updated Items
         List<FileItemNode> itemNodeList = getCurrentDirectoryItemNodeList();
         int itemNodeCnt = itemNodeList.size();
-        for (int n = 0; n < itemNodeCnt; n++) {
-            FileItemNode itemNode = itemNodeList.get(n);
+        for (FileItemNode itemNode : itemNodeList) {
             if (updateItemNodeList(itemNode) == true) {
                 updateFlag = true;
             }
@@ -229,9 +229,8 @@ public class FileDirectory extends Directory {
     }
 
     // update
+    @Override
     public void update() {
         updateItemNodeList();
     }
 }
-
-/* */

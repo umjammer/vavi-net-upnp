@@ -25,18 +25,18 @@ import vavi.util.Singleton;
  */
 public class ArgumentSerdes extends Singleton implements Serdes<Argument, Node, Node> {
 
-    /** */
+    @Override
     public void serialize(Argument argument, Node argumentNode) throws IOException {
         Document document = argumentNode.getOwnerDocument();
 
         //
-        Node node = document.createElement("name");
+        Node node = document.createElementNS(Service.XMLNS, "name");
         node.setTextContent(argument.getName());
         argumentNode.appendChild(node);
-        node = document.createElement("direction");
+        node = document.createElementNS(Service.XMLNS, "direction");
         node.setTextContent(argument.getDirection());
         argumentNode.appendChild(node);
-        node = document.createElement("relatedStateVariable");
+        node = document.createElementNS(Service.XMLNS, "relatedStateVariable");
         node.setTextContent(argument.getRelatedStateVariableName());
         argumentNode.appendChild(node);
 
@@ -44,7 +44,7 @@ public class ArgumentSerdes extends Singleton implements Serdes<Argument, Node, 
 //        argumentNode.setTextContent(argument.getValue());
     }
     
-    /** */
+    @Override
     public void deserialize(Node argumentNode, Argument argument) throws IOException {
         argument.setName(SerdesUtil.getChildNodeValue(argumentNode, Service.XMLNS, "name"));
         argument.setDirection(SerdesUtil.getChildNodeValue(argumentNode, Service.XMLNS, "direction"));
@@ -54,5 +54,3 @@ public class ArgumentSerdes extends Singleton implements Serdes<Argument, Node, 
 //        argument.setValue(argumentNode.getTextContent());
     }
 }
-
-/* */

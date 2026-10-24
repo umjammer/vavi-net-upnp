@@ -12,21 +12,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 import vavi.net.http.HttpUtil;
-import vavi.util.Debug;
 
 
 /**
@@ -36,6 +36,8 @@ import vavi.util.Debug;
  * @version 0.00 050930 nsano initial version <br>
  */
 public final class SoapUtil {
+
+    private static final Logger logger = System.getLogger(SoapUtil.class.getName());
 
     /** SOAP */
     private static MessageFactory mf;
@@ -47,12 +49,12 @@ public final class SoapUtil {
         try {
             mf = MessageFactory.newInstance();
         } catch (SOAPException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.DEBUG, e.getMessage(), e);
         }
         try {
             sf = SOAPFactory.newInstance();
         } catch (SOAPException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.DEBUG, e.getMessage(), e);
         }
     }
 
@@ -74,7 +76,7 @@ Debug.println(Level.SEVERE, e);
      */
     public static HttpContext postSoapRequest(SOAPRequest request) throws IOException {
 
-Debug.println(">>>> POST " + request.getClass() + ": " + request.getRemoteHost() + ":" + request.getRemotePort() + ": ");
+logger.log(Level.DEBUG, ">>>> POST " + request.getClass() + ": " + request.getRemoteHost() + ":" + request.getRemotePort() + ": ");
         Socket socket = new Socket(request.getRemoteHost(), request.getRemotePort());
         OutputStream os = socket.getOutputStream();
         InputStream is = socket.getInputStream();
@@ -106,14 +108,14 @@ Debug.println(">>>> POST " + request.getClass() + ": " + request.getRemoteHost()
         ps.flush();
 
         // request
-System.out.println("-------- soap request: " + baos.size() + " bytes");
-System.out.println(new String(baos.toByteArray()));
+logger.log(Level.DEBUG, "-------- soap request: " + baos.size() + " bytes");
+logger.log(Level.DEBUG, baos);
         os.write(baos.toByteArray());
         os.flush();
-System.out.println("--------");
+logger.log(Level.DEBUG, "--------");
 
         // response header
-//Debug.println("waiting for response: " + is.available() + " bytes");
+//logger.log(Level.DEBUG, "waiting for response: " + is.available() + " bytes");
         HttpContext response = new HttpContext();
         response.setRemoteHost(((InetSocketAddress) socket.getRemoteSocketAddress()).getHostName());
         response.setRemotePort(((InetSocketAddress) socket.getRemoteSocketAddress()).getPort());
@@ -130,7 +132,7 @@ System.out.println("--------");
                 response.setInputStream(getFixedInputStream3(is, Integer.parseInt(lengthString)));
             } else {
                 response.setInputStream(null);
-Debug.println("content length is 0");
+logger.log(Level.DEBUG, "content length is 0");
             }
         } else {
             // not have content-length
@@ -138,7 +140,7 @@ Debug.println("content length is 0");
         }
 
         socket.close();
-Debug.println(">>>> " + request.getClass() + " POST done");
+logger.log(Level.DEBUG, ">>>> " + request.getClass() + " POST done");
 
         return response;
     }
@@ -157,16 +159,16 @@ Debug.println(">>>> " + request.getClass() + " POST done");
             SOAPMessage soapMessage = response.getSoapMessage();
             soapMessage.writeTo(ps);
         } catch (SOAPException e) {
-            throw (IOException) new IOException().initCause(e);
+            throw new IOException(e);
         }
         ps.flush();
 
         // request
-//System.out.println("-------- soap response: " + baos.size() + " bytes: " + response.getOutputStream());
+//logger.log(Level.DEBUG, "-------- soap response: " + baos.size() + " bytes: " + response.getOutputStream());
         os.write(baos.toByteArray());
         os.flush(); // write status line, headers
-//System.out.println(new String(baos.toByteArray()));
-//System.out.println("--------");
+//logger.log(Level.DEBUG, new String(baos.toByteArray()));
+//logger.log(Level.DEBUG, "--------");
     }
 
     /**
@@ -183,9 +185,9 @@ Debug.println(">>>> " + request.getClass() + " POST done");
             baos.write(c);
             length--;
         }
-System.out.println("-------- soap response: " + baos.size() + " bytes");
-System.out.println(new String(baos.toByteArray()));
-System.out.println("--------");
+logger.log(Level.DEBUG, "-------- soap response: " + baos.size() + " bytes");
+logger.log(Level.DEBUG, baos);
+logger.log(Level.DEBUG, "--------");
         return new ByteArrayInputStream(baos.toByteArray());
     }
 
@@ -202,9 +204,9 @@ System.out.println("--------");
             }
             baos.write(c);
         }
-System.out.println("-------- soap response: " + baos.size() + " bytes");
-System.out.println(new String(baos.toByteArray()));
-System.out.println("--------");
+logger.log(Level.DEBUG, "-------- soap response: " + baos.size() + " bytes");
+logger.log(Level.DEBUG, baos);
+logger.log(Level.DEBUG, "--------");
         return new ByteArrayInputStream(baos.toByteArray());
     }
 
@@ -241,5 +243,3 @@ System.out.println("--------");
         return soapMessage;
     }
 }
-
-/* */

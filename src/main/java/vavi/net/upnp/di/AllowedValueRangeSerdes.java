@@ -24,27 +24,25 @@ import vavi.util.Singleton;
  */
 public class AllowedValueRangeSerdes extends Singleton implements Serdes<AllowedValueRange, Node, Node> {
 
-    /** */
-    public void serialize(AllowedValueRange allowdValueRange, Node allowdValueRangeNode) {
+    @Override
+    public void serialize(AllowedValueRange allowedValueRange, Node allowdValueRangeNode) {
         Document document = allowdValueRangeNode.getOwnerDocument();
 
-        Node node = document.createElement("minimum");
-        node.setTextContent(allowdValueRange.getMinimum());
+        Node node = document.createElementNS(Service.XMLNS, "minimum");
+        node.setTextContent(allowedValueRange.getMinimum());
         allowdValueRangeNode.appendChild(node);
-        node = document.createElement("maximum");
-        node.setTextContent(allowdValueRange.getMaximum());
+        node = document.createElementNS(Service.XMLNS, "maximum");
+        node.setTextContent(allowedValueRange.getMaximum());
         allowdValueRangeNode.appendChild(node);
-        node = document.createElement("step");
-        node.setTextContent(allowdValueRange.getStep());
+        node = document.createElementNS(Service.XMLNS, "step");
+        node.setTextContent(allowedValueRange.getStep());
         allowdValueRangeNode.appendChild(node);
     }
     
-    /** */
+    @Override
     public void deserialize(Node allowdValueRangeNode, AllowedValueRange allowdValueRange) {
         allowdValueRange.setMinimum(SerdesUtil.getChildNodeValue(allowdValueRangeNode, Service.XMLNS, "minimum"));
         allowdValueRange.setMaximum(SerdesUtil.getChildNodeValue(allowdValueRangeNode, Service.XMLNS, "maximum"));
         allowdValueRange.setStep(SerdesUtil.getChildNodeValue(allowdValueRangeNode, Service.XMLNS, "step"));
     }
 }
-
-/* */

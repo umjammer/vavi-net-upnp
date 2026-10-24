@@ -6,10 +6,12 @@
 
 package vavi.net.upnp.gena;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import vavi.net.http.HttpContext;
 import vavi.net.http.HttpProtocol;
@@ -18,7 +20,6 @@ import vavi.net.upnp.Device;
 import vavi.net.upnp.Service;
 import vavi.net.upnp.UPnP;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -44,13 +45,15 @@ import vavi.util.Debug;
  *          Description: The method setRequestHost/setService should be changed
  *          as follows <br>
  *          06/11/04 - Markus Thurner <markus.thurner@fh-hagenberg.at> <br>
- *          (06/11/2004) - Changed setServie() to get the host address from the
+ *          (06/11/2004) - Changed setService() to get the host address from the
  *          SSDP Location field when the URLBase is null <br>
  *          12/06/04 - Grzegorz Lehmann <grzegorz.lehmann@dai-labor.de> <br>
  *          Stefano Lenzi <kismet-sl@users.sourceforge.net> <br>
  *          Fixed getSID() to loop between getSID() and hasSID();
  */
 public class SubscriptionRequest extends HttpContext {
+
+    private static final Logger logger = System.getLogger(SubscriptionRequest.class.getName());
 
     /** (for server) */
     public SubscriptionRequest(HttpServletRequest request) {
@@ -113,7 +116,7 @@ public class SubscriptionRequest extends HttpContext {
         if (device != null) {
             urlBaseString = device.getURLBase();
 
-            if (urlBaseString == null || urlBaseString.length() == 0) {
+            if (urlBaseString == null || urlBaseString.isEmpty()) {
                 Device rootDevice = device.getRootDevice();
                 if (rootDevice != null) {
                     urlBaseString = rootDevice.getURLBase();
@@ -121,7 +124,7 @@ public class SubscriptionRequest extends HttpContext {
             }
 
             // Thansk for Markus Thurner <markus.thurner@fh-hagenberg.at> (06/11/2004)
-            if (urlBaseString == null || urlBaseString.length() == 0) {
+            if (urlBaseString == null || urlBaseString.isEmpty()) {
                 Device rootDevice = device.getRootDevice();
                 if (rootDevice != null) {
                     urlBaseString = rootDevice.getLocation();
@@ -129,12 +132,12 @@ public class SubscriptionRequest extends HttpContext {
             }
             
             // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/02/03)
-            if (urlBaseString == null || urlBaseString.length() == 0) {
+            if (urlBaseString == null || urlBaseString.isEmpty()) {
                 try {
                     new URL(eventSubURL);
                     urlBaseString = eventSubURL;
                 } catch (MalformedURLException e) {
-                    Debug.println(e);
+                    logger.log(Level.ERROR, e);
                 }
             }
         }
@@ -164,7 +167,7 @@ public class SubscriptionRequest extends HttpContext {
     /** */
     public boolean hasNT() {
         String nt = getNT();
-        return (nt != null && 0 < nt.length()) ? true : false;
+        return nt != null && !nt.isEmpty();
     }
 
     /** CALLBACK */
@@ -188,7 +191,7 @@ public class SubscriptionRequest extends HttpContext {
     public String getCallback() {
         String headerValue = getHeader("CALLBACK");
         if (headerValue.startsWith(CALLBACK_START_WITH)) {
-            headerValue = headerValue.substring(1, headerValue.length());
+            headerValue = headerValue.substring(1);
         }
         if (headerValue.endsWith(CALLBACK_END_WITH)) {
             headerValue = headerValue.substring(0, headerValue.length() - 1);
@@ -199,7 +202,7 @@ public class SubscriptionRequest extends HttpContext {
     /** */
     public boolean hasCallback() {
         String callback = getHeader("CALLBACK");
-        return callback != null && callback.length() > 0;
+        return callback != null && !callback.isEmpty();
     }
 
     /** SID */
@@ -220,7 +223,7 @@ public class SubscriptionRequest extends HttpContext {
     /** */
     public boolean hasSID() {
         String sid = getHeader("SID");
-        return sid != null && sid.length() > 0;
+        return sid != null && !sid.isEmpty();
     }
 
     /** Timeout */
@@ -233,5 +236,3 @@ public class SubscriptionRequest extends HttpContext {
         return Subscription.getTimeout(getHeader("TIMEOUT"));
     }
 }
-
-/* */

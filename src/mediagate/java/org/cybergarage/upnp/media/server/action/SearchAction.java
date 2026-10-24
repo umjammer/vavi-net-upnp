@@ -90,5 +90,3 @@ public class SearchAction extends Action {
         getArgument(UPDATE_ID).setValue(String.valueOf(value));
     }
 }
-
-/* */

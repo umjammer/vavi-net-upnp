@@ -11,6 +11,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -18,7 +20,6 @@ import java.util.concurrent.Future;
 import javax.swing.JFrame;
 
 import vavi.net.upnp.UPnP;
-import vavi.util.Debug;
 
 
 /**
@@ -28,14 +29,17 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class RemoteControllerFrame extends JFrame {
+
+    private static final Logger logger = System.getLogger(RemoteControllerFrame.class.getName());
+
     /** */
     private final static String TITLE = "CyberLink Sample Remote Controller";
 
     /** */
-    private RemoteController remoteController;
+    private final RemoteController remoteController;
 
     /** */
-    private RemoteControllerPane remoteControllerPane;
+    private final RemoteControllerPane remoteControllerPane;
 
     /** */
     public RemoteControllerFrame() throws IOException {
@@ -67,24 +71,25 @@ public class RemoteControllerFrame extends JFrame {
     }
 
     /** run */
-    private ExecutorService updateService = Executors.newSingleThreadExecutor();
+    private final ExecutorService updateService = Executors.newSingleThreadExecutor();
 
     /** */
     private Future<?> updating;
 
     /** */
-    private Runnable updater = new Runnable() {
+    private final Runnable updater = new Runnable() {
+        @Override
         public void run() {
             try {
-Debug.println("+++ RemoteController started");
+logger.log(Level.DEBUG, "+++ RemoteController started");
                 while (true) {
                     remoteControllerPane.repaint();
                     try { Thread.sleep(1000); } catch (InterruptedException e) {}
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             } finally {
-Debug.println("--- RemoteController stopped");
+logger.log(Level.DEBUG, "--- RemoteController stopped");
             }
         }
     };
@@ -102,12 +107,13 @@ Debug.println("--- RemoteController stopped");
     }
 
     /** window */
-    private WindowListener windowListener = new WindowAdapter() { 
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent event) {
             try {
                 stop();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };
@@ -119,5 +125,3 @@ Debug.printStackTrace(e);
         remoteControllerFrame.start();
     }
 }
-
-/* */

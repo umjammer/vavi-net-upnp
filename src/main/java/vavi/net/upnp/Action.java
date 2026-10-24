@@ -7,6 +7,8 @@
 package vavi.net.upnp;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,6 @@ import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.soap.ActionRequest;
 import vavi.net.upnp.soap.ActionResponse;
 import vavi.net.util.SoapUtil;
-import vavi.util.Debug;
 
 
 /**
@@ -34,7 +35,7 @@ import vavi.util.Debug;
  *          instead of only the in arguments <br>
  *          01/04/04 Added UPnP status methods. <br>
  *          Changed about new ActionListener interface. <br>
- *          01/05/04 Added clearOutputAgumentValues() to initialize the output
+ *          01/05/04 Added clearOutputArgumentValues() to initialize the output
  *          values before calling performActionListener(). <br>
  *          07/09/04 Thanks for Dimas <cyberrate@users.sourceforge.net> and
  *          Stefano Lenzi <kismet-sl@users.sourceforge.net> <br>
@@ -43,7 +44,9 @@ import vavi.util.Debug;
  */
 public class Action {
 
-    /** 所属するサービス */
+    private static final Logger logger = System.getLogger(Action.class.getName());
+
+    /** Services to which this belongs */
     private Service service;
 
     public Service getService() {
@@ -68,10 +71,10 @@ public class Action {
         return name;
     }
 
-    /** 引数のリスト */
-    protected List<Argument> argumentList = new ArrayList<>();
+    /** List of arguments */
+    protected final List<Argument> argumentList = new ArrayList<>();
 
-    /** 引数のリストを取得します。 */
+    /** Gets a list of arguments. */
     public List<Argument> getArgumentList() {
         return argumentList;
     }
@@ -84,12 +87,12 @@ public class Action {
                 if (argument.getName().equals(targetArgument.getName())) {
                     found = true;
                     argument.setValue(targetArgument.getValue());
-Debug.println("Argument updated: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getValue());
+logger.log(Level.DEBUG, "Argument updated: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getValue());
                 }
             }
             if (!found) { // TODO need?
                 argumentList.add(targetArgument);
-Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgument.getDirection() + ", " + targetArgument.getValue());
+logger.log(Level.DEBUG, "Argument added: " + targetArgument.getName() + ", " + targetArgument.getDirection() + ", " + targetArgument.getValue());
             }
         }
     }
@@ -97,11 +100,11 @@ Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgum
     /** */
     public List<Argument> getInputArgumentList() {
         List<Argument> resultArgumentList = new ArrayList<>();
-        for (Argument argment : argumentList) {
-            if (!argment.isInDirection()) {
+        for (Argument argument : argumentList) {
+            if (!argument.isInDirection()) {
                 continue;
             }
-            resultArgumentList.add(argment);
+            resultArgumentList.add(argument);
         }
         return resultArgumentList;
     }
@@ -129,7 +132,7 @@ Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgum
     }
 
     /** */
-    void clearOutputAgumentValues() {
+    void clearOutputArgumentValues() {
         for (Argument argument : argumentList) {
             if (!argument.isOutDirection()) {
                 continue;
@@ -162,7 +165,7 @@ Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgum
     public ActionResponse postActionRequest() throws IOException {
         // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (08/30/03)
         ActionRequest request = new ActionRequest(this);
-Debug.print(">>>> REQUEST: " + request.getSOAPAction());
+logger.log(Level.DEBUG, ">>>> REQUEST: " + request.getSOAPAction());
         HttpContext httpContext = SoapUtil.postSoapRequest(request);
         ActionResponse response = new ActionResponse(httpContext);
 
@@ -174,7 +177,7 @@ Debug.print(">>>> REQUEST: " + request.getSOAPAction());
             response.setStatusMessage(statusMessage);
         } catch (IllegalArgumentException e) {
             response.setStatusMessage(httpContext.getStatusMessage());
-Debug.print("undefined upnp status: " + statusCode);
+logger.log(Level.DEBUG, "undefined upnp status: " + statusCode);
         }
         if (HttpUtil.isStatusCodeSucces(statusCode)) {
             updateArguments(response.getArgumentList());
@@ -183,5 +186,3 @@ Debug.print("undefined upnp status: " + statusCode);
         return response;
     }
 }
-
-/* */

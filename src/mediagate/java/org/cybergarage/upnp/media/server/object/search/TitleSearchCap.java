@@ -21,6 +21,7 @@ public class TitleSearchCap implements SearchCap {
         return SearchCriteria.TITLE;
     }
 
+    @Override
     public boolean compare(SearchCriteria searchCri, ContentNode conNode) {
         String searchCriTitle = searchCri.getValue();
         String conTitle = conNode.getTitle();
@@ -44,5 +45,3 @@ public class TitleSearchCap implements SearchCap {
         return false;
     }
 }
-
-/* */

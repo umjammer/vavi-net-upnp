@@ -20,19 +20,19 @@ import vavi.net.util.Util;
 public class SsdpSearchRequest extends SsdpContext {
 
     /** Constructor */
-    public SsdpSearchRequest(String serachTarget, int mx) {
+    public SsdpSearchRequest(String searchTarget, int mx) {
         setMethod("M-SEARCH");
 
         setRequestURI("*");
 
-        setHeader("ST", serachTarget);
+        setHeader("ST", searchTarget);
         setHeader("MX", String.valueOf(mx));
         setHeader("MAN", "\"" + SSDP.DISCOVER + "\"");
     }
 
     /** mx = 3 */
-    public SsdpSearchRequest(String serachTarget) {
-        this(serachTarget, SSDP.DEFAULT_MSEARCH_MX);
+    public SsdpSearchRequest(String searchTarget) {
+        this(searchTarget, SSDP.DEFAULT_MSEARCH_MX);
     }
 
     /** st = rootdevice */
@@ -53,5 +53,3 @@ public class SsdpSearchRequest extends SsdpContext {
         setRemotePort(SSDP.PORT);
     }
 }
-
-/* */

@@ -7,6 +7,8 @@
 package org.cybergarage.upnp.media.server.object.format;
 
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,6 @@ import org.cybergarage.upnp.media.server.object.FormatObject;
 import org.cybergarage.upnp.media.server.object.item.ItemNode;
 
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -27,6 +28,8 @@ import vavi.util.Debug;
  * @version 02/02/04 first revision.
  */
 public class MPEGFormat implements Format, FormatObject {
+
+    private static final Logger logger = System.getLogger(MPEGFormat.class.getName());
 
     // Member
     private File mpegFile;
@@ -41,9 +44,8 @@ public class MPEGFormat implements Format, FormatObject {
 
     // Abstract Methods
     public boolean equals(Object object) {
-        if (object instanceof File) {
-            File file = (File) object;
-//Debug.println("file: " + file);
+        if (object instanceof File file) {
+            //logger.log(Level.DEBUG, "file: " + file);
             String ext = Header.getSuffix(file);
             if (ext == null) {
                 return false;
@@ -55,19 +57,23 @@ public class MPEGFormat implements Format, FormatObject {
         return false;
     }
 
+    @Override
     public FormatObject createObject(File file) {
         return new MPEGFormat(file);
     }
 
+    @Override
     public String getMimeType() {
         return "video/mpeg";
     }
 
+    @Override
     public String getMediaClass() {
         return "object.item.videoItem.movie";
     }
 
     // TODO check owner document
+    @Override
     public List<Attr> getAttributeList() {
         List<Attr> attrList = new ArrayList<>();
         Document document = Util.getDocumentBuilder().newDocument();
@@ -79,12 +85,13 @@ public class MPEGFormat implements Format, FormatObject {
             sizeStr.setTextContent(Long.toString(fsize));
             attrList.add(sizeStr);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
 
         return attrList;
     }
 
+    @Override
     public String getTitle() {
         String fname = mpegFile.getName();
         int idx = fname.lastIndexOf(".");
@@ -96,9 +103,8 @@ public class MPEGFormat implements Format, FormatObject {
         return title;
     }
 
+    @Override
     public String getCreator() {
         return "";
     }
 }
-
-/* */

@@ -4,7 +4,7 @@
 		<major>1</major> 
 		<minor>0</minor> 
 	</specVersion>
-	<device>
+	<device xmlns="urn:schemas-upnp-org:device-1-0">
 		<deviceType>urn:schemas-upnp-org:device:light:1</deviceType> 
 		<friendlyName>CyberGarage Light Device</friendlyName> 
 		<manufacturer>CyberGarage</manufacturer> 

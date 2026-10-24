@@ -83,5 +83,3 @@ public class Icon {
         return url;
     }
 }
-
-/* */

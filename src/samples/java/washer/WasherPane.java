@@ -10,11 +10,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -25,6 +25,8 @@ import vavi.util.Debug;
  */
 public class WasherPane extends JPanel {
 
+    private static final Logger logger = System.getLogger(WasherPane.class.getName());
+
     /** */
     public WasherPane() {
         loadImage();
@@ -32,42 +34,42 @@ public class WasherPane extends JPanel {
     }
 
     /** */
-    private final static String WASHER_PANEL_IMAGE = "/images/washer.jpg";
+    private final static String WASHER_PANEL_IMAGE = "/washer/images/washer.jpg";
     /** */
-    private final static String WASHER_ANIM_IMAGE1 = "/images/washeron1.jpg";
+    private final static String WASHER_ANIM_IMAGE1 = "/washer/images/washeron1.jpg";
     /** */
-    private final static String WASHER_ANIM_IMAGE2 = "/images/washeron2.jpg";
+    private final static String WASHER_ANIM_IMAGE2 = "/washer/images/washeron2.jpg";
     /** */
-    private BufferedImage panelmage;
+    private BufferedImage panelImage;
     /** */
-    private BufferedImage animlmage;
+    private BufferedImage animImage;
     /** */
-    private BufferedImage anim1lmage;
+    private BufferedImage anim1Image;
     /** */
-    private BufferedImage anim2lmage;
+    private BufferedImage anim2Image;
 
     /** */
     private void loadImage() {
         try {
-            panelmage = ImageIO.read(WasherFrame.class.getResource(WASHER_PANEL_IMAGE));
-            anim1lmage = ImageIO.read(WasherFrame.class.getResource(WASHER_ANIM_IMAGE1));
-            anim2lmage = ImageIO.read(WasherFrame.class.getResource(WASHER_ANIM_IMAGE2));
+            panelImage = ImageIO.read(washer.WasherFrame.class.getResource(WASHER_PANEL_IMAGE));
+            anim1Image = ImageIO.read(washer.WasherFrame.class.getResource(WASHER_ANIM_IMAGE1));
+            anim2Image = ImageIO.read(washer.WasherFrame.class.getResource(WASHER_ANIM_IMAGE2));
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
     /** */
     private BufferedImage getPaneImage() {
-        return panelmage;
+        return panelImage;
     }
 
     /** */
     public void flipAnimationImage() {
-        if (animlmage == anim1lmage) {
-            animlmage = anim2lmage;
+        if (animImage == anim1Image) {
+            animImage = anim2Image;
         } else {
-            animlmage = anim1lmage;
+            animImage = anim1Image;
         }
     }
 
@@ -78,25 +80,25 @@ public class WasherPane extends JPanel {
     }
 
     /** LightDevice */
-    private WasherDevice washerDevice;
+    private washer.WasherDevice washerDevice;
 
     /** */
-    public void setDevice(WasherDevice device) {
+    public void setDevice(washer.WasherDevice device) {
         washerDevice = device;
     }
 
     /** */
-    public WasherDevice getDevice() {
+    public washer.WasherDevice getDevice() {
         return washerDevice;
     }
 
     /** paint */
     private void drawInfo(Graphics g) {
         if (washerDevice.isWashing()) {
-            g.drawImage(animlmage, 0, 0, null);
+            g.drawImage(animImage, 0, 0, null);
             g.setColor(Color.YELLOW);
         } else {
-            g.drawImage(panelmage, 0, 0, null);
+            g.drawImage(panelImage, 0, 0, null);
             g.setColor(Color.LIGHT_GRAY);
         }
         g.fillRect(5, 20, 20, 5);
@@ -108,11 +110,9 @@ public class WasherPane extends JPanel {
         g.clearRect(0, 0, getWidth(), getHeight());
     }
 
-    /** */
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawInfo(g);
     }
 }
-
-/* */

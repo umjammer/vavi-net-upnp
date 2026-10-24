@@ -11,6 +11,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 
 import javax.swing.JButton;
@@ -26,7 +28,6 @@ import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.di.StateVariableSerdes;
 import vavi.net.upnp.soap.QueryResponse;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -37,15 +38,18 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class StateVariablePane extends JPanel {
-    private ControlPoint controlPoint;
 
-    private StateVariable stateVariable;
+    private static final Logger logger = System.getLogger(StateVariablePane.class.getName());
 
-    private TableModel stateVariableTable;
+    private final ControlPoint controlPoint;
 
-    private JButton queryButton;
+    private final StateVariable stateVariable;
+
+    private final TableModel stateVariableTable;
+
+    private final JButton queryButton;
     /** */
-    private StateVariableSerdes serdes = Singleton.getInstance(StateVariableSerdes.class);
+    private final StateVariableSerdes serdes = Singleton.getInstance(StateVariableSerdes.class);
 
     // Constructor
     public StateVariablePane(ControlPoint controlPoint, StateVariable stateVariable) {
@@ -95,7 +99,8 @@ public class StateVariablePane extends JPanel {
     }
 
     // varPerformed
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() != queryButton) {
                 return;
@@ -104,17 +109,17 @@ public class StateVariablePane extends JPanel {
             String title = stateVariable.getName();
             String message;
             try {
-                QueryResponse queryResponse = stateVariable.postQuerylAction();
+                QueryResponse queryResponse = stateVariable.postQueryAction();
                 if (queryResponse.getStatus() == HttpURLConnection.HTTP_OK) {
                     message = stateVariable.getName() + " = " + stateVariable.getValue();
                 } else {
                     message = queryResponse.getStatusMessage() + " (" + queryResponse.getStatus() + ")";
                 }
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 message = e.getClass() + " (" + e.getMessage() + ")";
             } catch (IllegalStateException e) {
-Debug.printStackTrace(e.getCause());
+logger.log(Level.ERROR, e.getCause().getMessage(), e.getCause());
                 message = e.getCause().getClass() + " (" + e.getCause().getMessage() + ")";
             }
 

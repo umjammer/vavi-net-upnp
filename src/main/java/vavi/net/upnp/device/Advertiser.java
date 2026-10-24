@@ -7,6 +7,8 @@
 package vavi.net.upnp.device;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -18,7 +20,6 @@ import vavi.net.upnp.ssdp.HttpMulticastSocket;
 import vavi.net.upnp.ssdp.SSDP;
 import vavi.net.upnp.ssdp.SsdpContext;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -32,8 +33,10 @@ import vavi.util.Debug;
  */
 public class Advertiser {
 
+    private static final Logger logger = System.getLogger(Advertiser.class.getName());
+
     /** Member */
-    private Device device;
+    private final Device device;
 
     /** Constructor */
     public Advertiser(Device device) {
@@ -41,7 +44,7 @@ public class Advertiser {
     }
 
     /** */
-    private ExecutorService advertisingService = Executors.newSingleThreadExecutor();    
+    private final ExecutorService advertisingService = Executors.newSingleThreadExecutor();
 
     /** */
     private Future<?> advertising;
@@ -54,7 +57,7 @@ public class Advertiser {
 
     /** */
     public void stop(boolean doByeBye) throws IOException {
-        if (doByeBye == true) {
+        if (doByeBye) {
             byebye();
         }
         advertising.cancel(true);
@@ -69,10 +72,11 @@ public class Advertiser {
     }
 
     /** Thread */
-    private Runnable advertiser = new Runnable() {
+    private final Runnable advertiser = new Runnable() {
+        @Override
         public void run() {
             try {
-Debug.println("+++ Advertiser started: " + device.getFriendlyName());
+logger.log(Level.DEBUG, "+++ Advertiser started: " + device.getFriendlyName());
                 long leaseTime = device.getLeaseTime();
                 while (true) {
                     try {
@@ -80,13 +84,13 @@ Debug.println("+++ Advertiser started: " + device.getFriendlyName());
                         try { Thread.sleep(notifyInterval * 1000); } catch (InterruptedException e) {}
                         announce();
                     } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             } finally {
-Debug.println("--- Advertiser stopped: " + device.getFriendlyName());
+logger.log(Level.DEBUG, "--- Advertiser stopped: " + device.getFriendlyName());
             }
         }
     };
@@ -107,8 +111,8 @@ Debug.println("--- Advertiser stopped: " + device.getFriendlyName());
                 try {
                     announce(device, bindAddress);
                 } catch (IOException e) {
-//Debug.printStackTrace(e);
-Debug.println("announce to: " + n + ": " + bindAddress + ": "+ e.getMessage());
+//logger.log(Level.ERROR, e.getMessage(), e);
+logger.log(Level.DEBUG, "announce to: " + n + ": " + bindAddress + ": "+ e.getMessage());
                 }
             }
         }
@@ -194,7 +198,7 @@ Debug.println("announce to: " + n + ": " + bindAddress + ": "+ e.getMessage());
                 try {
                     byebye(device, bindAddress);
                 } catch (IOException e) {
-Debug.println("byebye to: " + n + ": " + bindAddress + ": "+ e.getMessage());
+logger.log(Level.DEBUG, "byebye to: " + n + ": " + bindAddress + ": "+ e.getMessage());
                 }
             }
         }
@@ -261,9 +265,7 @@ Debug.println("byebye to: " + n + ": " + bindAddress + ": "+ e.getMessage());
     private static final int DEFAULT_DISCOVERY_WAIT_TIME = 300;
 
     /** */
-    private static final void sleep() {
+    private static void sleep() {
         try { Thread.sleep(DEFAULT_DISCOVERY_WAIT_TIME); } catch (InterruptedException e) {}
     }
 }
-
-/* */

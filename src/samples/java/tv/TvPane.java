@@ -13,12 +13,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -28,6 +28,8 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class TvPane extends JPanel { // MouseListener
+
+    private static final Logger logger = System.getLogger(TvPane.class.getName());
 
     private final static int IMAGE_BORDER_SIZE = 20;
 
@@ -51,11 +53,11 @@ public class TvPane extends JPanel { // MouseListener
     }
 
     // Background
-    private final static String TV_PANEL_IMAGE = "/images/tv.jpg";
+    private final static String TV_PANEL_IMAGE = "/tv/images/tv.jpg";
 
-    private final static String TV_ON_IMAGE = "/images/tvon.jpg";
+    private final static String TV_ON_IMAGE = "/tv/images/tvon.jpg";
 
-    private BufferedImage panelmage;
+    private BufferedImage panelImage;
 
     private BufferedImage tvOnImage;
 
@@ -63,17 +65,17 @@ public class TvPane extends JPanel { // MouseListener
         URL f;
         try {
             f = TvPane.class.getResource(TV_PANEL_IMAGE);
-            panelmage = ImageIO.read(f);
+            panelImage = ImageIO.read(f);
             f = TvPane.class.getResource(TV_ON_IMAGE);
             tvOnImage = ImageIO.read(f);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
     // Background
     private void initPanel() {
-        setPreferredSize(new Dimension(panelmage.getWidth(), panelmage.getHeight()));
+        setPreferredSize(new Dimension(panelImage.getWidth(), panelImage.getHeight()));
     }
 
     // Font
@@ -83,7 +85,7 @@ public class TvPane extends JPanel { // MouseListener
 
     private Font timeFont = null;
 
-    private Font getFont(Graphics g, int size) {
+    private static Font getFont(Graphics g, int size) {
         Font font = g.getFont();
         if (font != null) {
             return font;
@@ -119,7 +121,7 @@ public class TvPane extends JPanel { // MouseListener
 
         // Time String
         String timeStr = tvDev.getClockTime();
-        if ((timeStr != null) && (0 < timeStr.length())) {
+        if ((timeStr != null) && (!timeStr.isEmpty())) {
             strBounds = fontMetric.getStringBounds(timeStr, g);
             strWidth = (int) strBounds.getWidth();
             strHeight = (int) strBounds.getHeight();
@@ -130,7 +132,7 @@ public class TvPane extends JPanel { // MouseListener
 
         // Temperature String
         String tempStr = tvDev.getAirconTempture();
-        if ((tempStr != null) && (0 < tempStr.length())) {
+        if ((tempStr != null) && (!tempStr.isEmpty())) {
             tempStr += "C";
             strBounds = fontMetric.getStringBounds(tempStr, g);
             strWidth = (int) strBounds.getWidth();
@@ -142,7 +144,7 @@ public class TvPane extends JPanel { // MouseListener
 
         // Message String
         String msgStr = tvDev.getMessage();
-        if ((msgStr != null) && (0 < msgStr.length())) {
+        if ((msgStr != null) && (!msgStr.isEmpty())) {
             strBounds = fontMetric.getStringBounds(msgStr, g);
             strWidth = (int) strBounds.getWidth();
             strHeight = (int) strBounds.getHeight();
@@ -165,19 +167,18 @@ public class TvPane extends JPanel { // MouseListener
     }
 
     private void drawPanelImage(Graphics g) {
-        g.drawImage(panelmage, 0, 0, null);
+        g.drawImage(panelImage, 0, 0, null);
     }
 
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawPanelImage(g);
 
         TvDevice tvDev = getDevice();
-        if (tvDev.isOn() == true) {
+        if (tvDev.isOn()) {
             drawTvImage(g);
             drawClockInfo(g);
         }
     }
 }
-
-/* */

@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.cybergarage.upnp.media.server.object.Format;
 
 import vavi.net.upnp.Action;
-import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.event.QueryListener;
 
@@ -54,7 +53,7 @@ public class ConnectionManager {
 
     public final static String CONNECTION_ID = "ConnectionID";
 
-    public final static String AV_TRNSPORT_ID = "AVTransportID";
+    public final static String AV_TRANSPORT_ID = "AVTransportID";
 
     public final static String RCS_ID = "RcsID";
 
@@ -94,7 +93,7 @@ public class ConnectionManager {
     }
 
     /** ConnectionID */
-    private AtomicInteger maxConnectionID;
+    private final AtomicInteger maxConnectionID;
 
     public int getNextConnectionID() {
         return maxConnectionID.incrementAndGet();
@@ -104,7 +103,7 @@ public class ConnectionManager {
      * ConnectionInfoList
      * Thanks for Brian Owens (12/02/04)
      */
-    private List<ConnectionInfo> connectionInfoList = new ArrayList<>();
+    private final List<ConnectionInfo> connectionInfoList = new ArrayList<>();
 
     public List<ConnectionInfo> getConnectionInfoList() {
         return connectionInfoList;
@@ -137,52 +136,48 @@ public class ConnectionManager {
     }
 
     /** ActionListener */
-    private ActionListener actionListener = new ActionListener() {
-        public boolean actionControlReceived(Action action) {
-            // action.print();
+    private final ActionListener actionListener = action -> {
+        // action.print();
 
-            String actionName = action.getName();
+        String actionName = action.getName();
 
-            if (actionName.equals(GET_PROTOCOL_INFO)) {
+        switch (actionName) {
+            case GET_PROTOCOL_INFO -> {
                 // Source
-                String sourceValue = "";
+                StringBuilder sourceValue = new StringBuilder();
                 int mimeTypeCnt = getContentDirectory().getNFormats();
                 for (int n = 0; n < mimeTypeCnt; n++) {
                     if (0 < n)
-                        sourceValue += ",";
+                        sourceValue.append(",");
                     Format format = getContentDirectory().getFormat(n);
                     String mimeType = format.getMimeType();
-                    sourceValue += HTTP_GET + ":*:" + mimeType + ":*";
+                    sourceValue.append(HTTP_GET + ":*:").append(mimeType).append(":*");
                 }
-                action.getArgument(SOURCE).setValue(sourceValue);
+                action.getArgument(SOURCE).setValue(sourceValue.toString());
                 // Sink
                 action.getArgument(SINK).setValue("");
                 return true;
             }
-
-            if (actionName.equals(PREPARE_FOR_CONNECTION)) {
+            case PREPARE_FOR_CONNECTION -> {
                 action.getArgument(CONNECTION_ID).setValue(String.valueOf(-1));
-                action.getArgument(AV_TRNSPORT_ID).setValue(String.valueOf(-1));
+                action.getArgument(AV_TRANSPORT_ID).setValue(String.valueOf(-1));
                 action.getArgument(RCS_ID).setValue(String.valueOf(-1));
                 return true;
             }
-
-            if (actionName.equals(CONNECTION_COMPLETE)) {
+            case CONNECTION_COMPLETE -> {
                 return true;
             }
-
-            if (actionName.equals(GET_CURRENT_CONNECTION_INFO)) {
+            case GET_CURRENT_CONNECTION_INFO -> {
                 getCurrentConnectionInfo(action);
                 return true;
             }
-
-            if (actionName.equals(GET_CURRENT_CONNECTION_IDS)) {
+            case GET_CURRENT_CONNECTION_IDS -> {
                 getCurrentConnectionIDs(action);
                 return true;
             }
-
-            return false;
         }
+
+        return false;
     };
 
     /** GetCurrentConnectionIDs */
@@ -205,14 +200,14 @@ public class ConnectionManager {
         ConnectionInfo connectionInfo = getConnectionInfo(id);
         if (connectionInfo != null) {
             action.getArgument(RCS_ID).setValue(String.valueOf(connectionInfo.getRcsID()));
-            action.getArgument(AV_TRNSPORT_ID).setValue(String.valueOf(connectionInfo.getAVTransportID()));
+            action.getArgument(AV_TRANSPORT_ID).setValue(String.valueOf(connectionInfo.getAVTransportID()));
             action.getArgument(PEER_CONNECTION_MANAGER).setValue(connectionInfo.getPeerConnectionManager());
             action.getArgument(PEER_CONNECTION_ID).setValue(String.valueOf(connectionInfo.getPeerConnectionID()));
             action.getArgument(DIRECTION).setValue(connectionInfo.getDirection());
             action.getArgument(STATUS).setValue(connectionInfo.getStatus());
         } else {
             action.getArgument(RCS_ID).setValue(String.valueOf(-1));
-            action.getArgument(AV_TRNSPORT_ID).setValue(String.valueOf(-1));
+            action.getArgument(AV_TRANSPORT_ID).setValue(String.valueOf(-1));
             action.getArgument(PEER_CONNECTION_MANAGER).setValue("");
             action.getArgument(PEER_CONNECTION_ID).setValue(String.valueOf(-1));
             action.getArgument(DIRECTION).setValue(ConnectionInfo.OUTPUT);
@@ -221,11 +216,7 @@ public class ConnectionManager {
     }
 
     /** QueryListener */
-    private QueryListener queryListener = new QueryListener() {
-        public boolean queryControlReceived(StateVariable stateVariable) {
-            return false;
-        }
-    };
+    private final QueryListener queryListener = stateVariable -> false;
 
     /** */
     public ActionListener getActionListener() {
@@ -237,5 +228,3 @@ public class ConnectionManager {
         return queryListener;
     }
 }
-
-/* */

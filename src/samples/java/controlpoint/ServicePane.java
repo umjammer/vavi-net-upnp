@@ -11,6 +11,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -34,18 +36,21 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class ServicePane extends JPanel {
-    private ControlPoint controlPoint;
 
-    private Service service;
+    private static final Logger logger = System.getLogger(ServicePane.class.getName());
 
-    private TableModel serviceTable;
+    private final ControlPoint controlPoint;
 
-    private JButton subscribeButton;
+    private final Service service;
 
-    private JButton unsubscribeButton;
+    private final TableModel serviceTable;
+
+    private final JButton subscribeButton;
+
+    private final JButton unsubscribeButton;
 
     /** */
-    private ServiceSerdes serviceSerdes = Singleton.getInstance(ServiceSerdes.class);
+    private final ServiceSerdes serviceSerdes = Singleton.getInstance(ServiceSerdes.class);
 
     // Constructor
     public ServicePane(ControlPoint controlPoint, Service service) {
@@ -101,12 +106,13 @@ public class ServicePane extends JPanel {
     }
 
     // servicePerformed
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent event) {
             try {
                 if (event.getSource() == subscribeButton) {
                     boolean result;
-                    if (service.hasSID() == true) {
+                    if (service.hasSID()) {
                         String sid = service.getSID();
                         result = controlPoint.subscribe(service, sid, Subscription.INFINITE_VALUE);
                     } else {
@@ -118,10 +124,8 @@ public class ServicePane extends JPanel {
                     controlPoint.printConsole("unsubscribe : " + subRes);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };
 }
-
-/* */

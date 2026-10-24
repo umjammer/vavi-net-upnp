@@ -11,11 +11,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.JFrame;
 
 import vavi.net.upnp.UPnP;
-import vavi.util.Debug;
 
 
 /**
@@ -25,11 +26,14 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class AirconFrame extends JFrame {
+
+    private static final Logger logger = System.getLogger(AirconFrame.class.getName());
+
     private final static String TITLE = "CyberLink Sample Airconditoner";
 
-    private AirconDevice airconDev;
+    private final AirconDevice airconDev;
 
-    private AirconPane airconPane;
+    private final AirconPane airconPane;
 
     public AirconFrame() throws IOException {
         super(TITLE);
@@ -44,6 +48,17 @@ public class AirconFrame extends JFrame {
         getContentPane().add(airconPane, BorderLayout.CENTER);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // main
+        WindowListener windowListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent ev) {
+                try {
+                    airconDev.stop();
+                } catch (IOException e) {
+                    logger.log(Level.ERROR, e.getMessage(), e);
+                }
+            }
+        };
         addWindowListener(windowListener);
 
         pack();
@@ -61,20 +76,9 @@ public class AirconFrame extends JFrame {
     }
 
     // main
-    private WindowListener windowListener = new WindowAdapter() {
-        public void windowClosing(WindowEvent ev) {
-            try {
-                airconDev.stop();
-            } catch (IOException e) {
-Debug.printStackTrace(e);
-            }
-        }
-    };
-
-    // main
     public static void main(String[] args) throws Exception {
         UPnP.setProperty(UPnP.Flag.USE_ONLY_IPV4_ADDR, true);
         AirconFrame sampClock = new AirconFrame();
-Debug.println(sampClock);
+logger.log(Level.DEBUG, sampClock);
     }
 }

@@ -20,5 +20,3 @@ public interface ActionListener {
     /** */
     boolean actionControlReceived(Action action);
 }
-
-/* */

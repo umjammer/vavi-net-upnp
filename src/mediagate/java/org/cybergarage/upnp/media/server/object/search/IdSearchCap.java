@@ -22,18 +22,17 @@ public class IdSearchCap implements SearchCap {
         return SearchCriteria.ID;
     }
 
+    @Override
     public boolean compare(SearchCriteria SearchCri, ContentNode conNode) {
         String searchCriID = SearchCri.getValue();
         String conID = conNode.getID();
         if (searchCriID == null || conID == null) {
             return false;
         }
-        if (SearchCri.isEQ() == true) {
-            return (searchCriID.compareTo(conID) == 0) ? true : false;
+        if (SearchCri.isEQ()) {
+            return searchCriID.compareTo(conID) == 0;
         }
         return false;
 
     }
 }
-
-/* */

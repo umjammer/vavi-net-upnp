@@ -11,12 +11,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -26,6 +26,8 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class AirconPane extends JPanel {
+
+    private static final Logger logger = System.getLogger(AirconPane.class.getName());
 
     public AirconPane() {
         loadImage();
@@ -41,7 +43,7 @@ public class AirconPane extends JPanel {
         try {
             panelmage = ImageIO.read(f);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -49,15 +51,12 @@ public class AirconPane extends JPanel {
         return panelmage;
     }
 
-
     //	Background
 
     private void initPanel() {
         BufferedImage panelmage = getPaneImage();
-        setPreferredSize(new Dimension(panelmage.getWidth(),
-                                       panelmage.getHeight()));
+        setPreferredSize(new Dimension(panelmage.getWidth(), panelmage.getHeight()));
     }
-
 
     //	LightDevice
 
@@ -71,14 +70,13 @@ public class AirconPane extends JPanel {
         return airconDev;
     }
 
-
     //	Font
 
     private final static String DEFAULT_FONT_NAME = "Lucida Console";
     private final static int DEFAULT_TIME_FONT_SIZE = 8;
     private Font timeFont = null;
 
-    private Font getFont(Graphics g, int size) {
+    private static Font getFont(Graphics g, int size) {
         Font font = g.getFont();
         if (font != null) {
             return font;
@@ -93,7 +91,6 @@ public class AirconPane extends JPanel {
         return timeFont;
     }
 
-
     // paint
 
     private void drawInfo(Graphics g) {
@@ -102,7 +99,7 @@ public class AirconPane extends JPanel {
         g.setFont(getFont(g));
 
         // power
-        if (dev.isOn() == true) {
+        if (dev.isOn()) {
             g.setColor(Color.YELLOW);
         } else {
             g.setColor(Color.LIGHT_GRAY);
@@ -110,13 +107,13 @@ public class AirconPane extends JPanel {
 
         g.fillRect(5, 50, 20, 5);
 
-        // tempture
+        // temperature
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(250, 50, 40, 10);
 
-        if (dev.isOn() == true) {
+        if (dev.isOn()) {
             g.setColor(Color.BLACK);
-            g.drawString(String.valueOf(dev.getTempture()), 280, 59);
+            g.drawString(String.valueOf(dev.getTemperature()), 280, 59);
         }
     }
 
@@ -129,6 +126,7 @@ public class AirconPane extends JPanel {
         g.drawImage(getPaneImage(), 0, 0, null);
     }
 
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawPanelImage(g);

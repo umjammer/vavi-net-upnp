@@ -16,5 +16,3 @@ public interface SearchCap {
     /** */
     boolean compare(SearchCriteria searchCriteria, ContentNode contentNode);
 }
-
-/* */

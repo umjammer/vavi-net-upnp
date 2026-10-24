@@ -8,13 +8,11 @@ package org.cybergarage.upnp.media.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.cybergarage.upnp.media.server.object.Format;
 
@@ -23,7 +21,6 @@ import vavi.net.upnp.Device;
 import vavi.net.upnp.Service;
 import vavi.net.upnp.UPnP;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -32,6 +29,8 @@ import vavi.util.Debug;
  * @version	10/22/03 first revision.
  */
 public class MediaServer extends Device {
+
+    private static final Logger logger = System.getLogger(MediaServer.class.getName());
 
     /** Constants */
     public static final String DEVICE_TYPE = "urn:schemas-upnp-org:device:MediaServer:1";
@@ -89,8 +88,7 @@ public class MediaServer extends Device {
         connectionManagerService.setQueryListener(getConnectionManager().getQueryListener());
     }
 
-    /** */
-    protected void finalize() throws Throwable {
+    protected void disoise() throws Throwable {
         stop();
     }
 
@@ -143,33 +141,29 @@ public class MediaServer extends Device {
         return Util.getInterface();
     }
 
-    /** HttpRequestListner */
-    private HttpRequestListener httpRequestListner = new HttpRequestListener() { 
-        public void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            String uri = request.getRequestURI();
-Debug.println("uri = " + uri);
-    
-            if (uri.startsWith(ContentDirectory.CONTENT_EXPORT_URI)) {
-                getContentDirectory().doService(request, response);
-                return;
-            }
-    
-            // TODO いまいちやぞ、子供に親の仕様を強いるなんて...
-            MediaServer.super.httpRequestListener.doService(request, response);
+    /** HttpRequestListener */
+    private final HttpRequestListener httpRequestListener = (request, response) -> {
+        String uri = request.getRequestURI();
+logger.log(Level.DEBUG, "uri = " + uri);
+
+        if (uri.startsWith(ContentDirectory.CONTENT_EXPORT_URI)) {
+            getContentDirectory().doService(request, response);
+            return;
         }
+
+        // TODO That's not a good idea. Forcing your child to conform to your standards isn't a good idea...
+        MediaServer.super.httpRequestListener.doService(request, response);
     };
 
     /** */
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    /** */
     @Override
     public void start() throws IOException {
         super.start();
         executorService.execute(getContentDirectory().getHandler());
     }
 
-    /** */
     @Override
     public void stop() throws IOException {
         executorService.shutdown();
@@ -180,5 +174,3 @@ Debug.println("uri = " + uri);
     public void update() {
     }
 }
-
-/* */

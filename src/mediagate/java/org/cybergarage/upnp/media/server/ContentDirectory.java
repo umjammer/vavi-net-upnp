@@ -9,17 +9,19 @@ package org.cybergarage.upnp.media.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.cybergarage.upnp.media.server.action.BrowseAction;
 import org.cybergarage.upnp.media.server.action.SearchAction;
 import org.cybergarage.upnp.media.server.object.ContentNode;
@@ -35,13 +37,11 @@ import org.cybergarage.upnp.media.server.object.search.TitleSearchCap;
 import org.cybergarage.upnp.media.server.object.sort.DCDateComparator;
 import org.cybergarage.upnp.media.server.object.sort.DCTitleComparator;
 import org.cybergarage.upnp.media.server.object.sort.UPnPClassComparator;
-
 import vavi.net.upnp.Action;
 import vavi.net.upnp.Argument;
 import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.event.QueryListener;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -57,12 +57,14 @@ import vavi.util.StringUtil;
  *          OutOfMemory exception. <br>
  *          04/05/04 - Added getFormatMimeTypes(), Deleted getFormat() and
  *          getNFormats() for C++ porting. <br>
- *          04/27/04 - Changed getContentExportURL() usint the string ID. <br>
- *          06/20/04 - Changed contentExportRequestRecieved() to set the
+ *          04/27/04 - Changed getContentExportURL() using the string ID. <br>
+ *          06/20/04 - Changed contentExportRequestReceived() to set the
  *          ConnectionInfo. <br>
  *          08/07/04 - Implemented for GetSearchCapabilities request.
  */
 public class ContentDirectory extends HttpServlet {
+
+    private static final Logger logger = System.getLogger(ContentDirectory.class.getName());
 
     // Constants
 
@@ -167,14 +169,14 @@ public class ContentDirectory extends HttpServlet {
 
     // Container/Item Node
 
-    private ContainerNode createContainerNode() {
+    private static ContainerNode createContainerNode() {
         ContainerNode node = new ContainerNode();
         return node;
     }
 
     // Format
 
-    private List<Format> formatList = new ArrayList<>();
+    private final List<Format> formatList = new ArrayList<>();
 
     public void addPlugIn(Format format) {
         formatList.add(format);
@@ -182,7 +184,7 @@ public class ContentDirectory extends HttpServlet {
 
     /** */
     public Format getFormat(File file) {
-Debug.println("formatList: " + formatList.size());
+logger.log(Level.DEBUG, "formatList: " + formatList.size());
         for (Format format : formatList) {
             if (format.equals(file)) {
                 return format;
@@ -210,7 +212,7 @@ Debug.println("formatList: " + formatList.size());
 //    }
 
     // SortCap
-    private List<Comparator<ContentNode>> sortCapList = new ArrayList<>();
+    private final List<Comparator<ContentNode>> sortCapList = new ArrayList<>();
 
     public void addSortCap(Comparator<ContentNode> sortCap) {
         sortCapList.add(sortCap);
@@ -251,7 +253,7 @@ Debug.println("formatList: " + formatList.size());
     }
 
     // SearchCap
-    private List<SearchCap> searchCapList = new ArrayList<>();
+    private final List<SearchCap> searchCapList = new ArrayList<>();
 
     public void addSearchCap(SearchCap searchCap) {
         searchCapList.add(searchCap);
@@ -296,7 +298,7 @@ Debug.println("formatList: " + formatList.size());
 
     // Directory
 
-    private List<Directory> directryList = new ArrayList<>();
+    private final List<Directory> directryList = new ArrayList<>();
 
     private List<Directory> getDirectoryList() {
         return directryList;
@@ -309,7 +311,7 @@ Debug.println("formatList: " + formatList.size());
         directryList.add(dir);
         rootNode.addContentNode(dir);
 
-        // Update SysteUpdateID
+        // Update SystemUpdateID
         updateSystemUpdateID();
 
         return true;
@@ -323,7 +325,7 @@ Debug.println("formatList: " + formatList.size());
         directryList.remove(dirNode);
         rootNode.removeChild(dirNode);
 
-        // Update SysteUpdateID
+        // Update SystemUpdateID
         updateSystemUpdateID();
 
         return true;
@@ -344,42 +346,45 @@ Debug.println("formatList: " + formatList.size());
     }
 
     /** ActionListener */
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public boolean actionControlReceived(Action action) {
             // action.print();
 
             String actionName = action.getName();
 
-            if (actionName.equals(BROWSE) == true) {
-                BrowseAction browseAct = new BrowseAction(action);
-                return browseActionReceived(browseAct);
-            }
+            switch (actionName) {
+                case BROWSE -> {
+                    BrowseAction browseAct = new BrowseAction(action);
+                    return browseActionReceived(browseAct);
+                }
+                case SEARCH -> {
+                    SearchAction searchAct = new SearchAction(action);
+                    return searchActionReceived(searchAct);
+                }
 
-            if (actionName.equals(SEARCH) == true) {
-                SearchAction searchAct = new SearchAction(action);
-                return searchActionReceived(searchAct);
-            }
 
-            // @id,@parentID,dc:title,dc:date,upnp:class,res@protocolInfo
-            if (actionName.equals(GET_SEARCH_CAPABILITIES) == true) {
-                Argument searchCapsArg = action.getArgument(SEARCH_CAPS);
-                String searchCapsStr = getSearchCapabilities();
-                searchCapsArg.setValue(searchCapsStr);
-                return true;
-            }
+                // @id,@parentID,dc:title,dc:date,upnp:class,res@protocolInfo
+                case GET_SEARCH_CAPABILITIES -> {
+                    Argument searchCapsArg = action.getArgument(SEARCH_CAPS);
+                    String searchCapsStr = getSearchCapabilities();
+                    searchCapsArg.setValue(searchCapsStr);
+                    return true;
+                }
 
-            // dc:title,dc:date,upnp:class
-            if (actionName.equals(GET_SORT_CAPABILITIES) == true) {
-                Argument sortCapsArg = action.getArgument(SORT_CAPS);
-                String sortCapsStr = getSortCapabilities();
-                sortCapsArg.setValue(sortCapsStr);
-                return true;
-            }
 
-            if (actionName.equals(GET_SYSTEM_UPDATE_ID) == true) {
-                Argument idArg = action.getArgument(ID);
-                idArg.setValue(String.valueOf(getSystemUpdateID()));
-                return true;
+                // dc:title,dc:date,upnp:class
+                case GET_SORT_CAPABILITIES -> {
+                    Argument sortCapsArg = action.getArgument(SORT_CAPS);
+                    String sortCapsStr = getSortCapabilities();
+                    sortCapsArg.setValue(sortCapsStr);
+                    return true;
+                }
+                case GET_SYSTEM_UPDATE_ID -> {
+                    Argument idArg = action.getArgument(ID);
+                    idArg.setValue(String.valueOf(getSystemUpdateID()));
+                    return true;
+                }
             }
 
             return false;
@@ -407,17 +412,17 @@ Debug.println("formatList: " + formatList.size());
 
             action.getArgument(BrowseAction.RESULT).setValue(result);
             action.getArgument(BrowseAction.NUMBER_RETURNED).setValue(String.valueOf(1));
-            action.getArgument(BrowseAction.TOTAL_MACHES).setValue(String.valueOf(1));
+            action.getArgument(BrowseAction.TOTAL_MATCHES).setValue(String.valueOf(1));
             action.getArgument(BrowseAction.UPDATE_ID).setValue(String.valueOf(getSystemUpdateID()));
 
-            Debug.println(StringUtil.paramString(action));
+            logger.log(Level.DEBUG, StringUtil.paramString(action));
 
             return true;
         }
     };
 
     // Browse (DirectChildren/Sort)
-    private void sortContentNodeList(ContentNode conNode[], Comparator<ContentNode> sortCap, boolean ascSeq) {
+    private static void sortContentNodeList(ContentNode[] conNode, Comparator<ContentNode> sortCap, boolean ascSeq) {
         // Selection Sort
         int nConNode = conNode.length;
         for (int i = 0; i < (nConNode - 1); i++) {
@@ -435,7 +440,7 @@ Debug.println("formatList: " + formatList.size());
         }
     }
 
-    private String[] getSortCriteriaArray(String sortCriteria) {
+    private static String[] getSortCriteriaArray(String sortCriteria) {
         List<String> sortCriList = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(sortCriteria, ", ");
         while (st.hasMoreTokens()) {
@@ -455,7 +460,7 @@ Debug.println("formatList: " + formatList.size());
             return contentNodeList;
 
         int nChildNodes = contentNodeList.size();
-        ContentNode conNode[] = new ContentNode[nChildNodes];
+        ContentNode[] conNode = new ContentNode[nChildNodes];
         for (int n = 0; n < nChildNodes; n++)
             conNode[n] = contentNodeList.get(n);
 
@@ -463,7 +468,7 @@ Debug.println("formatList: " + formatList.size());
         int nSortCrit = sortCritList.length;
         for (int n = 0; n < nSortCrit; n++) {
             String sortStr = sortCritList[n];
-            Debug.println("[" + n + "] = " + sortStr);
+            logger.log(Level.DEBUG, "[" + n + "] = " + sortStr);
             boolean ascSeq = true;
             char firstSortChar = sortStr.charAt(0);
             if (firstSortChar == '-')
@@ -473,14 +478,12 @@ Debug.println("formatList: " + formatList.size());
             Comparator<ContentNode> sortCap = getSortCap(sortStr);
             if (sortCap == null)
                 continue;
-            Debug.println("  ascSeq = " + ascSeq);
-            Debug.println("  sortCap = " + sortCap.toString());
+            logger.log(Level.DEBUG, "  ascSeq = " + ascSeq);
+            logger.log(Level.DEBUG, "  sortCap = " + sortCap);
             sortContentNodeList(conNode, sortCap, ascSeq);
         }
 
-        List<ContentNode> sortedContentNodeList = new ArrayList<>();
-        for (int n = 0; n < nChildNodes; n++)
-            sortedContentNodeList.add(conNode[n]);
+        List<ContentNode> sortedContentNodeList = new ArrayList<>(Arrays.asList(conNode).subList(0, nChildNodes));
         return sortedContentNodeList;
     }
 
@@ -520,14 +523,14 @@ Debug.println("formatList: " + formatList.size());
         String result = didlLite.toString();
         action.setResult(result);
         action.setNumberReturned(numberReturned);
-        action.setTotalMaches(nChildNodes);
+        action.setTotalMatches(nChildNodes);
         action.setUpdateID(getSystemUpdateID());
 
         return true;
     }
 
     // Search
-    private List<SearchCriteria> getSearchCriteriaList(String searchStr) {
+    private static List<SearchCriteria> getSearchCriteriaList(String searchStr) {
         List<SearchCriteria> searchList = new ArrayList<>();
 
         if (searchStr == null)
@@ -585,11 +588,11 @@ Debug.println("formatList: " + formatList.size());
         for (n = 0; n < searchCriCnt; n++) {
             SearchCriteria currSearchCri = searchCriList.get(n);
             if (n < (searchCriCnt - 1)) {
-                if (currSearchCri.isLogicalAND() == true) {
+                if (currSearchCri.isLogicalAND()) {
                     SearchCriteria nextSearchCri = searchCriList.get(n + 1);
                     boolean currResult = currSearchCri.getResult();
                     boolean nextResult = nextSearchCri.getResult();
-                    boolean logicalAND = (currResult & nextResult) ? true : false;
+                    boolean logicalAND = currResult & nextResult;
                     nextSearchCri.setResult(logicalAND);
                     continue;
                 }
@@ -602,7 +605,7 @@ Debug.println("formatList: " + formatList.size());
         int orSearchCriCnt = orSearchCriList.size();
         for (n = 0; n < orSearchCriCnt; n++) {
             SearchCriteria searchCri = searchCriList.get(n);
-            if (searchCri.getResult() == true)
+            if (searchCri.getResult())
                 return true;
         }
 
@@ -623,8 +626,8 @@ Debug.println("formatList: " + formatList.size());
     }
 
     private boolean searchActionReceived(SearchAction action) {
-        String contaierID = action.getContainerID();
-        ContentNode node = findContentNodeByID(contaierID);
+        String containerID = action.getContainerID();
+        ContentNode node = findContentNodeByID(containerID);
         if (node == null)
             return false;
 
@@ -670,8 +673,9 @@ Debug.println("formatList: " + formatList.size());
     }
 
     /** QueryListener */
-    private QueryListener queryListener = new QueryListener() {
+    private final QueryListener queryListener = new QueryListener() {
         /** */
+        @Override
         public boolean queryControlReceived(StateVariable stateVariable) {
             return false;
         }
@@ -687,7 +691,7 @@ Debug.println("formatList: " + formatList.size());
         Enumeration<?> paramList = request.getParameterNames();
         while (paramList.hasMoreElements()) {
             String name = (String) paramList.nextElement();
-Debug.println("[" + name + "] = " + request.getParameterValues(name));
+logger.log(Level.DEBUG, "[" + name + "] = " + Arrays.toString(request.getParameterValues(name)));
         }
 
         // Getting item ID
@@ -698,12 +702,11 @@ Debug.println("[" + name + "] = " + request.getParameterValues(name));
         if (node == null) {
             throw new ServletException(""); // TODO add message
         }
-        if (!(node instanceof ItemNode)) {
+        if (!(node instanceof ItemNode itemNode)) {
             throw new ServletException(""); // TODO add message
         }
 
         // Return item content
-        ItemNode itemNode = (ItemNode) node;
 
         long contentLen = itemNode.getContentLength();
         String contentType = itemNode.getMimeType();
@@ -764,40 +767,38 @@ Debug.println("[" + name + "] = " + request.getParameterValues(name));
     }
 
     /** */
-    private Runnable handler = new Runnable() {
-        public void run() {
-Debug.println("+++ ContentDirectory server started");
-            MediaServer mediaServer = getMediaServer();
-            StateVariable systemUpdateId = mediaServer.getStateVariable(SYSTEM_UPDATE_ID);
+    private final Runnable handler = () -> {
+logger.log(Level.DEBUG, "+++ ContentDirectory server started");
+        MediaServer mediaServer = getMediaServer();
+        StateVariable systemUpdateId = mediaServer.getStateVariable(SYSTEM_UPDATE_ID);
 
-            int lastSystemUpdateId = 0;
-            long lastContentUpdateTime = System.currentTimeMillis();
+        int lastSystemUpdateId = 0;
+        long lastContentUpdateTime = System.currentTimeMillis();
 
-            while (true) {
+        while (true) {
+            try {
+                Thread.sleep(getSystemUpdateIDInterval());
+            } catch (InterruptedException e) {
+            }
+
+            // Update SystemUpdateID
+            int currentSystemUpdateId = getSystemUpdateID();
+            if (lastSystemUpdateId != currentSystemUpdateId) {
                 try {
-                    Thread.sleep(getSystemUpdateIDInterval());
-                } catch (InterruptedException e) {
+                    systemUpdateId.setValue(String.valueOf(currentSystemUpdateId));
+                    lastSystemUpdateId = currentSystemUpdateId;
+                } catch (Exception e) {
+                    e.printStackTrace(System.err);
                 }
+            }
 
-                // Update SystemUpdateID
-                int currentSystemUpdateId = getSystemUpdateID();
-                if (lastSystemUpdateId != currentSystemUpdateId) {
-                    try {
-                        systemUpdateId.setValue(String.valueOf(currentSystemUpdateId));
-                        lastSystemUpdateId = currentSystemUpdateId;
-                    } catch (Exception e) {
-                        e.printStackTrace(System.err);
-                    }
+            // Update Content Directory
+            long currentTime = System.currentTimeMillis();
+            if (getContentUpdateInterval() < (currentTime - lastContentUpdateTime)) {
+                for (int n = 0; n < getDirectoryList().size(); n++) {
+                    getDirectoryList().get(n).update();
                 }
-
-                // Update Content Directory
-                long currentTime = System.currentTimeMillis();
-                if (getContentUpdateInterval() < (currentTime - lastContentUpdateTime)) {
-                    for (int n = 0; n < getDirectoryList().size(); n++) {
-                        getDirectoryList().get(n).update();
-                    }
-                    lastContentUpdateTime = currentTime;
-                }
+                lastContentUpdateTime = currentTime;
             }
         }
     };
@@ -817,5 +818,3 @@ Debug.println("+++ ContentDirectory server started");
         return handler;
     }
 }
-
-/* */

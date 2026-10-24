@@ -44,5 +44,3 @@ public class Property extends BaseElement {
         return value;
     }
 }
-
-/* */

@@ -37,9 +37,8 @@ public class GIFFormat extends ImageIOFormat {
     // Abstract Methods
 
     public boolean equals(Object object) {
-        if (object instanceof File) {
-            File file = (File) object;
-//Debug.println("file: " + file);
+        if (object instanceof File file) {
+            //logger.log(Level.DEBUG, "file: " + file);
             String headerID = Header.getIDString(file, 3);
             if (headerID.startsWith("GIF") == true) {
                 return true;
@@ -48,10 +47,12 @@ public class GIFFormat extends ImageIOFormat {
         return false;
     }
 
+    @Override
     public FormatObject createObject(File file) {
         return new GIFFormat(file);
     }
 
+    @Override
     public String getMimeType() {
         return "image/gif";
     }

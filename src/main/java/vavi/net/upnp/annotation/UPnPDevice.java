@@ -6,13 +6,11 @@
 
 package vavi.net.upnp.annotation;
 
+import java.lang.System.Logger;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -34,7 +32,7 @@ public @interface UPnPDevice {
         }
 
         /** */
-        private static Log logger = LogFactory.getLog(Util.class); 
+        private static final Logger logger = System.getLogger(Util.class.getName());
 
         /** */
         public static String getDescription(Object bean) {
@@ -47,5 +45,3 @@ public @interface UPnPDevice {
         }
     }
 }
-
-/* */

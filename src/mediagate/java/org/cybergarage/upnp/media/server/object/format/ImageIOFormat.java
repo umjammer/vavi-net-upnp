@@ -7,6 +7,8 @@
 package org.cybergarage.upnp.media.server.object.format;
 
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +25,6 @@ import org.cybergarage.upnp.media.server.object.FormatObject;
 import org.cybergarage.upnp.media.server.object.item.ItemNode;
 
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -33,9 +34,11 @@ import vavi.util.Debug;
  */
 public abstract class ImageIOFormat extends Header implements Format, FormatObject {
 
+    private static final Logger logger = System.getLogger(ImageIOFormat.class.getName());
+
     // Member
 
-    private File imgFile;
+    private final File imgFile;
 
     private ImageReader imgReader;
 
@@ -50,7 +53,7 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
         imgFile = file;
 
         Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(Header.getSuffix(file));
-        if (readers.hasNext() == false) {
+        if (!readers.hasNext()) {
             return;
         }
         imgReader = readers.next();
@@ -58,17 +61,19 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
             ImageInputStream stream = ImageIO.createImageInputStream(file);
             imgReader.setInput(stream);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
     // Abstract Methods
 
+    @Override
     public String getMediaClass() {
         return "object.item.imageItem.photo";
     }
 
     // TODO check owner document
+    @Override
     public List<Attr> getAttributeList() {
         List<Attr> attrList = new ArrayList<>();
         Document document = Util.getDocumentBuilder().newDocument();
@@ -77,7 +82,7 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
             // Resolution (Width x Height)
             int imgWidth = imgReader.getWidth(0);
             int imgHeight = imgReader.getHeight(0);
-            String resStr = Integer.toString(imgWidth) + "x" + Integer.toString(imgHeight);
+            String resStr = imgWidth + "x" + imgHeight;
             Attr resAttr = document.createAttribute(ItemNode.RESOLUTION);
             resAttr.setValue(resStr);
             attrList.add(resAttr);
@@ -88,12 +93,13 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
             sizeStr.setValue(Long.toString(fsize));
             attrList.add(sizeStr);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
         }
 
         return attrList;
     }
 
+    @Override
     public String getTitle() {
         String fname = imgFile.getName();
         int idx = fname.lastIndexOf(".");
@@ -105,6 +111,7 @@ public abstract class ImageIOFormat extends Header implements Format, FormatObje
         return title;
     }
 
+    @Override
     public String getCreator() {
         return "";
     }

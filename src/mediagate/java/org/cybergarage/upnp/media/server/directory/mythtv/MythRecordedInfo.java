@@ -8,11 +8,11 @@
 package org.cybergarage.upnp.media.server.directory.mythtv;
 
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import vavi.util.Debug;
 
 
 /**
@@ -21,6 +21,8 @@ import vavi.util.Debug;
  * @version 02/11/04 first revision.
  */
 public class MythRecordedInfo {
+
+    private static final Logger logger = System.getLogger(MythRecordedInfo.class.getName());
 
     // Constructor
 
@@ -166,8 +168,8 @@ public class MythRecordedInfo {
     // print
 
     public void print() {
-        Debug.println("title = " + getTitle());
-        Debug.println("subTitle = " + getSubTitle());
-        Debug.println("file = " + getFile());
+        logger.log(Level.DEBUG, "title = " + getTitle());
+        logger.log(Level.DEBUG, "subTitle = " + getSubTitle());
+        logger.log(Level.DEBUG, "file = " + getFile());
     }
 }

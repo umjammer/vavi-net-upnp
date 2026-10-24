@@ -7,12 +7,13 @@
 package vavi.net.upnp.ssdp;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import vavi.net.upnp.ControlPoint;
-import vavi.util.Debug;
 
 
 /**
@@ -25,8 +26,10 @@ import vavi.util.Debug;
  */
 public class SearchResponseReceiver {
 
+    private static final Logger logger = System.getLogger(SearchResponseReceiver.class.getName());
+
     /** */
-    private HttpUnicastSocket httpUnicastSocket;
+    private final HttpUnicastSocket httpUnicastSocket;
 
     /** */
     public HttpUnicastSocket getHttpUnicastSocket() {
@@ -64,10 +67,11 @@ public class SearchResponseReceiver {
     }
 
     /** */
-    private Runnable responseReceiver = new Runnable() {
+    private final Runnable responseReceiver = new Runnable() {
+        @Override
         public void run() {
             try {
-Debug.println("+++ ResponseReceiver started");
+logger.log(Level.DEBUG, "+++ ResponseReceiver started");
         
                 while (true) {
                     Thread.yield();
@@ -76,13 +80,13 @@ Debug.println("+++ ResponseReceiver started");
                         SsdpRequest packet = httpUnicastSocket.receive();
                         searchResponseReceived(packet);
                     } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             } finally {
-Debug.println("--- ResponseReceiver stopped");
+logger.log(Level.DEBUG, "--- ResponseReceiver stopped");
             }
         }
     };
@@ -99,5 +103,3 @@ Debug.println("--- ResponseReceiver stopped");
         controlPoint.performSearchResponseListener(packet);
     }
 }
-
-/** */

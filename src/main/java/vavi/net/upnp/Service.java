@@ -8,6 +8,8 @@ package vavi.net.upnp;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,6 @@ import vavi.net.upnp.gena.Subscriber;
 import vavi.net.upnp.ssdp.SSDP;
 import vavi.net.upnp.ssdp.SsdpRequest;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -40,7 +41,7 @@ import vavi.util.Singleton;
  *          constant instead of "serviceId". <br>
  *          06/17/03 Added notifyAllStateVariables(). <br>
  *          09/03/03 Giordano Sassaroli <sassarol@cefriel.it> <br>
- *          Problem : The device does not accepts request for services when
+ *          Problem : The device does not accept request for services when
  *          control or subscription urls are absolute <br>
  *          Error : device methods, when requests are received, search for
  *          services that have a controlUrl (or eventSubUrl) equal to the
@@ -82,9 +83,12 @@ import vavi.util.Singleton;
  *          getDescriptionURL() <br>
  *          03/31/05 Added getSCPDData(). <br>
  *          04/25/05 Thanks for Mikael Hakman <mhakman@dkab.net> <br>
- *                   Changed getSCPDData() to add a XML declaration at first line. <br>
+ *                   Changed getSCPDData() to add an XML declaration at first line. <br>
  */
 public class Service {
+
+    private static final Logger logger = System.getLogger(Service.class.getName());
+
     /** xmlns */
     public static final String XMLNS = "urn:schemas-upnp-org:service-1-0";
 
@@ -133,7 +137,7 @@ public class Service {
      * Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/03/03)
      * @param url must not be null
      */
-    private boolean isURL(String referenceUrl, String url) {
+    private static boolean isURL(String referenceUrl, String url) {
 
         if (url.equals(referenceUrl)) {
             return true;
@@ -195,14 +199,14 @@ public class Service {
     }
 
     /** */
-    private static ScpdSerdes scpdSerdes = Singleton.getInstance(ScpdSerdes.class);
+    private static final ScpdSerdes scpdSerdes = Singleton.getInstance(ScpdSerdes.class);
 
     /** TODO tricky! */
     public void readSCPD(URL url) throws IOException {
         Document document = Util.getDocumentBuilder().newDocument();
         scpdSerdes.deserialize(url.openStream(), document);
         this.scpdNode = document;
-//System.out.println("-------- " + url + " --------");
+//logger.log(Level.DEBUG, "-------- " + url + " --------");
 //PrettyPrinter pp = new PrettyPrinter(System.out);
 //pp.print(scpdNode);
     }
@@ -213,7 +217,7 @@ public class Service {
     }
 
     /** */
-    private List<Action> actionList = new ArrayList<>();
+    private final List<Action> actionList = new ArrayList<>();
 
     /** actionList */
     public List<Action> getActionList() {
@@ -233,7 +237,7 @@ public class Service {
     }
 
     /** */
-    private List<StateVariable> stateVariableList = new ArrayList<>();
+    private final List<StateVariable> stateVariableList = new ArrayList<>();
 
     /** serviceStateTable */
     public List<StateVariable> getStateVariableList() {
@@ -289,7 +293,7 @@ public class Service {
     }
 
     /** SubscriberList */
-    private List<Subscriber> subscriberList = new ArrayList<>();
+    private final List<Subscriber> subscriberList = new ArrayList<>();
 
     /** */
     public List<Subscriber> getSubscriberList() {
@@ -309,13 +313,13 @@ public class Service {
 
     /** Subscription */
     public void addSubscriber(Subscriber subscriber) {
-Debug.println("+++ ADD subscriber: " + eventSubURL + ": " + subscriber.getSID());
+logger.log(Level.DEBUG, "+++ ADD subscriber: " + eventSubURL + ": " + subscriber.getSID());
         subscriberList.add(subscriber);
     }
 
     /** */
     public void removeSubscriber(Subscriber subscriber) {
-Debug.println("--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID());
+logger.log(Level.DEBUG, "--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID());
         subscriberList.remove(subscriber);
     }
 
@@ -352,7 +356,7 @@ Debug.println("--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID
 
     /** */
     public boolean hasSID() {
-        return sid != null && sid.length() > 0;
+        return sid != null && !sid.isEmpty();
     }
 
     /** */
@@ -418,7 +422,7 @@ Debug.println("--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID
         String ssdpST = request.getST();
 
         if (ssdpST == null) {
-Debug.println("ssdpST is null");
+logger.log(Level.DEBUG, "ssdpST is null");
             return;
         }
 
@@ -435,5 +439,3 @@ Debug.println("ssdpST is null");
         }
     }
 }
-
-/* */

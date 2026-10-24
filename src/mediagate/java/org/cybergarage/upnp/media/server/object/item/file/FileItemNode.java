@@ -7,15 +7,15 @@
 package org.cybergarage.upnp.media.server.object.item.file;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.nio.file.Files;
 
 import org.cybergarage.upnp.media.server.ContentDirectory;
 import org.cybergarage.upnp.media.server.object.Format;
 import org.cybergarage.upnp.media.server.object.item.ItemNode;
-
-import vavi.util.Debug;
 
 
 /**
@@ -24,6 +24,8 @@ import vavi.util.Debug;
  * @version 02/12/04 first revision.
  */
 public class FileItemNode extends ItemNode {
+
+    private static final Logger logger = System.getLogger(FileItemNode.class.getName());
 
     // Constructor
 
@@ -49,7 +51,7 @@ public class FileItemNode extends ItemNode {
             try {
                 itemFileTimeStamp = itemFile.lastModified();
             } catch (Exception e) {
-                Debug.println(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
         return itemFileTimeStamp;
@@ -69,24 +71,27 @@ public class FileItemNode extends ItemNode {
         try {
             fileByte = load(itemFile);
         } catch (IOException e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
         }
         return fileByte;
     }
 
+    @Override
     public long getContentLength() {
         return itemFile.length();
     }
 
+    @Override
     public InputStream getContentInputStream() {
         try {
-            return new FileInputStream(itemFile);
+            return Files.newInputStream(itemFile.toPath());
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
         }
         return null;
     }
 
+    @Override
     public String getMimeType() {
         ContentDirectory cdir = getContentDirectory();
         File itemFile = getFile();

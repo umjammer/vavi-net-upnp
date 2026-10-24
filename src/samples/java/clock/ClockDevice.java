@@ -9,9 +9,7 @@ package clock;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 import vavi.net.http.HttpRequestListener;
@@ -37,7 +35,7 @@ public class ClockDevice extends Device {
     /** */
     private final static String PRESENTATION_URI = "/presentation";
     /** */
-    private StateVariable time;
+    private final StateVariable time;
 
     /** */
     public ClockDevice() throws IOException {
@@ -59,57 +57,51 @@ public class ClockDevice extends Device {
     }
 
     /** ActionListener */
-    private ActionListener actionListener = new ActionListener() {
-        public boolean actionControlReceived(Action action) {
-            String actionName = action.getName();
-            if (actionName.equals("GetTime")) {
-                Clock clock = Clock.getInstance();
-                String dateString = clock.getDateString();
-                Argument timeArgument = action.getArgument("CurrentTime");
-                timeArgument.setValue(dateString);
-                return true;
-            } else if (actionName.equals("SetTime")) {
-                Argument timeArgument = action.getArgument("NewTime");
-                String newTime = timeArgument.getValue();
-                Argument resultArgument = action.getArgument("Result");
-                resultArgument.setValue("Not implemented (" + newTime + ")");
-                return true;
-            }
+    private final ActionListener actionListener = action -> {
+        String actionName = action.getName();
+        if (actionName.equals("GetTime")) {
+            Clock clock = Clock.getInstance();
+            String dateString = clock.getDateString();
+            Argument timeArgument = action.getArgument("CurrentTime");
+            timeArgument.setValue(dateString);
+            return true;
+        } else if (actionName.equals("SetTime")) {
+            Argument timeArgument = action.getArgument("NewTime");
+            String newTime = timeArgument.getValue();
+            Argument resultArgument = action.getArgument("Result");
+            resultArgument.setValue("Not implemented (" + newTime + ")");
+            return true;
+        }
+        return false;
+    };
+
+    /** QueryListener */
+    private final QueryListener queryListener = stateVariable -> {
+        try {
+            Clock clock = Clock.getInstance();
+            stateVariable.setValue(clock.getDateString());
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
             return false;
         }
     };
 
-    /** QueryListener */
-    private QueryListener queryListener = new QueryListener() {
-        public boolean queryControlReceived(StateVariable stateVariable) {
-            try {
-                Clock clock = Clock.getInstance();
-                stateVariable.setValue(clock.getDateString());
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace(System.err);
-                return false;
-            }
+    /** HttpRequestListener */
+    private final HttpRequestListener httpRequestListener = (request, response) -> {
+        String uri = request.getRequestURI();
+        if (!uri.startsWith(PRESENTATION_URI)) {
+            // TODO ??????????A?q????e??d?l????????...
+            ClockDevice.super.httpRequestListener.doService(request, response);
+            return;
         }
-    };
 
-    /** HttpRequestListner */
-    private HttpRequestListener httpRequestListner = new HttpRequestListener() { 
-        public void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            String uri = request.getRequestURI();
-            if (!uri.startsWith(PRESENTATION_URI)) {
-                // TODO ���܂����₼�A�q���ɐe�̎d�l�뭂���Ȃ��...
-                ClockDevice.super.httpRequestListener.doService(request, response);
-                return;
-            }
-    
-            Clock clock = Clock.getInstance();
-            String contents = "<HTML><BODY><H1>" + clock.toString() +
-                              "</H1></BODY></HTML>";
-    
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getOutputStream().print(contents);
-        }
+        Clock clock = Clock.getInstance();
+        String contents = "<HTML><BODY><H1>" + clock +
+                          "</H1></BODY></HTML>";
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getOutputStream().print(contents);
     };
 
     /** update */
@@ -123,5 +115,3 @@ public class ClockDevice extends Device {
         }
     }
 }
-
-/* */

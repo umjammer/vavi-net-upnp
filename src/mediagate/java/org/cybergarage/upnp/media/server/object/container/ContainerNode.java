@@ -49,7 +49,7 @@ public class ContainerNode extends ContentNode {
         setChildCount(getChildNodes().getLength());
     }
 
-    // chiledCount
+    // childCount
     public void setChildCount(int id) {
         setAttribute(CHILD_COUNT, String.valueOf(id));
     }
@@ -67,5 +67,3 @@ public class ContainerNode extends ContentNode {
         return Integer.parseInt(getAttribute(SEARCHABLE));
     }
 }
-
-/* */

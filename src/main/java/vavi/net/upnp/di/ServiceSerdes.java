@@ -7,11 +7,13 @@
 package vavi.net.upnp.di;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPathConstants;
@@ -29,7 +31,6 @@ import vavi.net.upnp.Service;
 import vavi.net.upnp.StateVariable;
 import vavi.net.util.Serdes;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -41,11 +42,13 @@ import vavi.util.Singleton;
  */
 public class ServiceSerdes extends Singleton implements Serdes<Service, Node, Node> {
 
-    /** */
-    private static ActionSerdes actionSerdes = Singleton.getInstance(ActionSerdes.class); 
+    private static final Logger logger = System.getLogger(ServiceSerdes.class.getName());
 
     /** */
-    private static StateVariableSerdes stateVariableSerdes = Singleton.getInstance(StateVariableSerdes.class); 
+    private static final ActionSerdes actionSerdes = Singleton.getInstance(ActionSerdes.class);
+
+    /** */
+    private static final StateVariableSerdes stateVariableSerdes = Singleton.getInstance(StateVariableSerdes.class);
 
     /**
      * only device node
@@ -53,23 +56,24 @@ public class ServiceSerdes extends Singleton implements Serdes<Service, Node, No
      * /root/device/serviceList/service
      * </pre> 
      */
+    @Override
     public void serialize(Service service, Node serviceNode) throws IOException {
         Document document = serviceNode.getOwnerDocument();
 
         //
-        Node node = document.createElement("serviceType");
+        Node node = document.createElementNS(Device.XMLNS, "serviceType");
         node.setTextContent(service.getServiceType());
         serviceNode.appendChild(node);
-        node = document.createElement("serviceId");
+        node = document.createElementNS(Device.XMLNS, "serviceId");
         node.setTextContent(service.getServiceID());
         serviceNode.appendChild(node);
-        node = document.createElement("SCPDURL");
+        node = document.createElementNS(Device.XMLNS, "SCPDURL");
         node.setTextContent(service.getSCPDURL());
         serviceNode.appendChild(node);
-        node = document.createElement("controlURL");
+        node = document.createElementNS(Device.XMLNS, "controlURL");
         node.setTextContent(service.getControlURL());
         serviceNode.appendChild(node);
-        node = document.createElement("eventSubURL");
+        node = document.createElementNS(Device.XMLNS, "eventSubURL");
         node.setTextContent(service.getEventSubURL());
         serviceNode.appendChild(node);
 
@@ -81,7 +85,7 @@ public class ServiceSerdes extends Singleton implements Serdes<Service, Node, No
 //      serviceNode.setUserData("serviceData", service.getServiceData(), null); // TODO handler?
     }
 
-    /** */
+    @Override
     public void deserialize(Node serviceNode, Service service) throws IOException {
         try {
             //
@@ -94,12 +98,12 @@ public class ServiceSerdes extends Singleton implements Serdes<Service, Node, No
             // scpd
             Node scdpNode = getSCPDNode(service);
             if (scdpNode == null) {
-Debug.println("could not get scpd");
+logger.log(Level.DEBUG, "could not get scpd");
                 return; // TODO just return ?
             }
 
             // /scpd//actionList
-            final String ACTION_XPATH = ".//" + Service.XMLNS + ":" + "actionList" + "/" + Service.XMLNS + ":" + "action";
+            final String ACTION_XPATH = ".//" + SerdesUtil.prefix(Service.XMLNS) + ":" + "actionList" + "/" + SerdesUtil.prefix(Service.XMLNS) + ":" + "action";
             NodeList actionNodes = (NodeList) SerdesUtil.getXPath().evaluate(ACTION_XPATH, scdpNode, XPathConstants.NODESET);
             for (int n = 0; n < actionNodes.getLength(); n++) {
                 Node actionNode = actionNodes.item(n);
@@ -107,12 +111,12 @@ Debug.println("could not get scpd");
                 Action action = new Action();
                 action.setService(service);
                 actionSerdes.deserialize(actionNode, action);
-//Debug.println("Action[" + n + "]: " + action.getName() + ", " + action.getArgumentList().size());
+//logger.log(Level.DEBUG, "Action[" + n + "]: " + action.getName() + ", " + action.getArgumentList().size());
                 service.getActionList().add(action);
             }
     
             // /scpd//serviceStateTable
-            final String STATE_VARIABLE_XPATH = ".//" + Service.XMLNS + ":" + "serviceStateTable" + "/" + Service.XMLNS + ":" + "stateVariable";
+            final String STATE_VARIABLE_XPATH = ".//" + SerdesUtil.prefix(Service.XMLNS) + ":" + "serviceStateTable" + "/" + SerdesUtil.prefix(Service.XMLNS) + ":" + "stateVariable";
             NodeList stateVariableNodes = (NodeList) SerdesUtil.getXPath().evaluate(STATE_VARIABLE_XPATH, scdpNode, XPathConstants.NODESET);
             for (int n = 0; n < stateVariableNodes.getLength(); n++) {
                 Node stateVariableNode = stateVariableNodes.item(n);
@@ -120,7 +124,7 @@ Debug.println("could not get scpd");
                 StateVariable stateVariable = new StateVariable();
                 stateVariable.setService(service);
                 stateVariableSerdes.deserialize(stateVariableNode, stateVariable);
-//Debug.println("StateVariable[" + n + "]: " + stateVariable.getDataType() + " " + stateVariable.getName());
+//logger.log(Level.DEBUG, "StateVariable[" + n + "]: " + stateVariable.getDataType() + " " + stateVariable.getName());
                 service.getStateVariableList().add(stateVariable);
             }
     
@@ -129,32 +133,32 @@ Debug.println("could not get scpd");
         } catch (XPathExpressionException e) {
             throw new IllegalStateException(e);
         } catch (SAXException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e); // TODO
+            throw new IllegalArgumentException(e); // TODO
         }
     }
 
     /**
      * @throws IllegalStateException could not get scpd
      */
-    private Node getSCPDNode(Service service) throws IOException, SAXException {
+    private static Node getSCPDNode(Service service) throws IOException, SAXException {
         Node scpdNode = service.getSCPDNode();
         if (scpdNode != null) {
-Debug.println("TRY 0 OK: " + scpdNode);
+logger.log(Level.DEBUG, "TRY 0 OK: " + scpdNode);
             return scpdNode;
         }
 
         String scpdURLString = service.getSCPDURL();
         try {
             scpdNode = getSCPDNode(scpdURLString);
-//Debug.println("TRY 1 OK: " + scpdURLString);
+//logger.log(Level.DEBUG, "TRY 1 OK: " + scpdURLString);
         } catch (Exception e1) {
-//Debug.println("TRY 1 NG: " + scpdURLString);
+//logger.log(Level.DEBUG, "TRY 1 NG: " + scpdURLString);
             Device rootDevice = service.getDevice().getRootDevice();
             String urlBaseString = rootDevice.getURLBase();
-//Debug.println("urlBaseString 1: " + urlBaseString + ", " + rootDevice.getFriendlyName());
+//logger.log(Level.DEBUG, "urlBaseString 1: " + urlBaseString + ", " + rootDevice.getFriendlyName());
 
             // Thanks for Steven Yen (2003/09/03)
-            if (urlBaseString == null || urlBaseString.length() == 0) {
+            if (urlBaseString == null || urlBaseString.isEmpty()) {
                 String locationHost = "";
                 int locationPort = 80;
                 URL location = null;
@@ -163,10 +167,10 @@ Debug.println("TRY 0 OK: " + scpdNode);
                     locationHost = location.getHost();
                     locationPort = location.getPort();
                 } catch (MalformedURLException e) {
-//Debug.println(e);
+//logger.log(Level.DEBUG, e);
                 }
                 urlBaseString = "http://" + locationHost + ":" + locationPort;
-//Debug.println("urlBaseString 2: " + urlBaseString + ", " + StringUtil.paramString(rootDevice));
+//logger.log(Level.DEBUG, "urlBaseString 2: " + urlBaseString + ", " + StringUtil.paramString(rootDevice));
             }
 
             scpdURLString = Util.toRelativeURL(scpdURLString);
@@ -174,23 +178,23 @@ Debug.println("TRY 0 OK: " + scpdNode);
 
             try {
                 scpdNode = getSCPDNode(newScpdURLString);
-//Debug.println("TRY 2 OK: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 2 OK: " + newScpdURLString);
             } catch (IOException e2) {
-//Debug.println("TRY 2 NG: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 2 NG: " + newScpdURLString);
                 newScpdURLString = Util.getAbsoluteURL(urlBaseString, scpdURLString);
                 try {
                     scpdNode = getSCPDNode(newScpdURLString);
-//Debug.println("TRY 3 OK: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 3 OK: " + newScpdURLString);
                 } catch (IOException e3) {
-//Debug.println("TRY 3 NG: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 3 NG: " + newScpdURLString);
                     newScpdURLString = rootDevice.getDescriptionFilePath() + scpdURLString;
                     File file = null;
                     try {
                         file = new File(newScpdURLString);
                         scpdNode = getSCPDNode(file);
-//Debug.println("TRY 4 OK: " + file);
+//logger.log(Level.DEBUG, "TRY 4 OK: " + file);
                     } catch (IOException e4) {
-Debug.println("TRY 4 NG: " + file);
+logger.log(Level.DEBUG, "TRY 4 NG: " + file);
                         return null;
                     }
                 }
@@ -203,17 +207,15 @@ Debug.println("TRY 4 NG: " + file);
     }
 
     /** SCPD node */
-    private Node getSCPDNode(String urlString) throws SAXException, IOException {
+    private static Node getSCPDNode(String urlString) throws SAXException, IOException {
         URLConnection uc = new URL(urlString).openConnection();
         DocumentBuilder parser = Util.getDocumentBuilder();
         return parser.parse(uc.getInputStream());
     }
 
     /** */
-    private Node getSCPDNode(File file) throws SAXException, IOException {
+    private static Node getSCPDNode(File file) throws SAXException, IOException {
         DocumentBuilder parser = Util.getDocumentBuilder();
-        return parser.parse(new FileInputStream(file));
+        return parser.parse(Files.newInputStream(file.toPath()));
     }
 }
-
-/* */

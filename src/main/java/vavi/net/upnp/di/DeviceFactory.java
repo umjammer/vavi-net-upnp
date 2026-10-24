@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 import vavi.net.upnp.Device;
 import vavi.net.util.Serdes;
 import vavi.net.util.Util;
+import vavi.util.Singleton;
 
 
 /**
@@ -35,14 +36,14 @@ import vavi.net.util.Util;
  */
 public final class DeviceFactory {
     /** */
-    private static DeviceSerdes deviceSerdes = new DeviceSerdes();
+    private static final DeviceSerdes deviceSerdes = Singleton.getInstance(DeviceSerdes.class);
 
     /** */
     public static String toString(Device device) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             deviceSerdes.serialize(device, baos);
-            return new String(baos.toByteArray());
+            return baos.toString();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -57,12 +58,8 @@ public final class DeviceFactory {
 
             Document document = Util.getDocumentBuilder().parse(is);
 
-            return (Node) Serdes.SerdesUtil.getXPath().evaluate("//" + Device.XMLNS + ":" + "device", document, XPathConstants.NODE);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (SAXException e) {
-            throw new IllegalStateException(e);
-        } catch (XPathExpressionException e) {
+            return (Node) Serdes.SerdesUtil.getXPath().evaluate("//" + Serdes.SerdesUtil.prefix(Device.XMLNS) + ":" + "device", document, XPathConstants.NODE);
+        } catch (IOException | XPathExpressionException | SAXException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -79,10 +76,10 @@ public final class DeviceFactory {
         device.setHttpPort(Device.HTTP_DEFAULT_PORT);
 
         // Thanks for Oliver Newell (03/23/04)
-        if (device.hasUDN() == false) {
+        if (!device.hasUDN()) {
             device.setUDN("uuid:" + device.getUUID());
         }
-//Debug.println("url: " + url);
+//logger.log(Level.DEBUG, "url: " + url);
         InputStream is = new BufferedInputStream(url.openStream());
         deviceSerdes.deserialize(is, device);
     }
@@ -95,5 +92,3 @@ public final class DeviceFactory {
         inject(new File(fileName).toURI().toURL(), device);
     }
 }
-
-/* */

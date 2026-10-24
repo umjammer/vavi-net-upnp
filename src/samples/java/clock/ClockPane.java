@@ -13,12 +13,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -28,6 +28,8 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class ClockPane extends JPanel { // MouseListener
+
+    private static final Logger logger = System.getLogger(ClockPane.class.getName());
 
     public ClockPane() {
         loadImage();
@@ -44,7 +46,7 @@ public class ClockPane extends JPanel { // MouseListener
         try {
             panelmage = ImageIO.read(f);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -56,8 +58,7 @@ public class ClockPane extends JPanel { // MouseListener
 
     private void initPanel() {
         BufferedImage panelmage = getPaneImage();
-        setPreferredSize(new Dimension(panelmage.getWidth(),
-                                       panelmage.getHeight()));
+        setPreferredSize(new Dimension(panelmage.getWidth(), panelmage.getHeight()));
     }
 
     //	Font
@@ -71,7 +72,7 @@ public class ClockPane extends JPanel { // MouseListener
     private Font dateFont = null;
     private Font secondFont = null;
 
-    private Font getFont(Graphics g, int size) {
+    private static Font getFont(Graphics g, int size) {
         Font font = g.getFont();
         if (font != null) {
             return font;
@@ -166,6 +167,7 @@ public class ClockPane extends JPanel { // MouseListener
         g.drawImage(getPaneImage(), 0, 0, null);
     }
 
+    @Override
     public void paint(Graphics g) {
         clear(g);
         drawPanelImage(g);

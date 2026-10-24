@@ -22,5 +22,3 @@ public class DC {
 
     public static final String CREATOR = "dc:creator";
 }
-
-/* */

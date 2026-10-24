@@ -6,7 +6,7 @@
 
 package vavi.net.upnp.ssdp;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import vavi.net.http.Protocol;
 import vavi.net.upnp.Device;
@@ -30,5 +30,3 @@ public class SsdpResponse extends SsdpContext {
         setHeader("DATE", Protocol.Util.toDateString(System.currentTimeMillis()));
     }
 }
-
-/* */

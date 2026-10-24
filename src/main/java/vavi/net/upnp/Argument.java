@@ -83,7 +83,7 @@ public class Argument {
 
     /** */
     public boolean isInDirection() {
-        return direction == null ? false : direction.equalsIgnoreCase(IN);
+        return direction != null && direction.equalsIgnoreCase(IN);
     }
 
     /** */
@@ -124,5 +124,3 @@ public class Argument {
         return value;
     }
 }
-
-/* */

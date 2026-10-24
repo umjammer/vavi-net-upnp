@@ -99,43 +99,43 @@ public class SearchCriteria {
     }
 
     public boolean isEQ() {
-        return (operation.compareTo(EQ) == 0) ? true : false;
+        return operation.compareTo(EQ) == 0;
     }
 
     public boolean isNEQ() {
-        return (operation.compareTo(NEQ) == 0) ? true : false;
+        return operation.compareTo(NEQ) == 0;
     }
 
     public boolean isLT() {
-        return (operation.compareTo(LT) == 0) ? true : false;
+        return operation.compareTo(LT) == 0;
     }
 
     public boolean isLE() {
-        return (operation.compareTo(LE) == 0) ? true : false;
+        return operation.compareTo(LE) == 0;
     }
 
     public boolean isGT() {
-        return (operation.compareTo(GT) == 0) ? true : false;
+        return operation.compareTo(GT) == 0;
     }
 
     public boolean isGE() {
-        return (operation.compareTo(GE) == 0) ? true : false;
+        return operation.compareTo(GE) == 0;
     }
 
     public boolean isContains() {
-        return (operation.compareTo(CONTAINS) == 0) ? true : false;
+        return operation.compareTo(CONTAINS) == 0;
     }
 
     public boolean isDoesNotContain() {
-        return (operation.compareTo(DOESNOTCONTAIN) == 0) ? true : false;
+        return operation.compareTo(DOESNOTCONTAIN) == 0;
     }
 
     public boolean isDerivedFrom() {
-        return (operation.compareTo(DERIVEDFROM) == 0) ? true : false;
+        return operation.compareTo(DERIVEDFROM) == 0;
     }
 
     public boolean isExists() {
-        return (operation.compareTo(EXISTS) == 0) ? true : false;
+        return operation.compareTo(EXISTS) == 0;
     }
 
     // value
@@ -151,11 +151,11 @@ public class SearchCriteria {
     }
 
     boolean isTrueValue() {
-        return (value.compareTo(TRUE) == 0) ? true : false;
+        return value.compareTo(TRUE) == 0;
     }
 
     boolean isFalseValue() {
-        return (value.compareTo(FALSE) == 0) ? true : false;
+        return value.compareTo(FALSE) == 0;
     }
 
     // Logic
@@ -171,11 +171,11 @@ public class SearchCriteria {
     }
 
     public boolean isLogicalAND() {
-        return (logic.compareTo(AND) == 0) ? true : false;
+        return logic.compareTo(AND) == 0;
     }
 
     public boolean isLogicalOR() {
-        return (logic.compareTo(OR) == 0) ? true : false;
+        return logic.compareTo(OR) == 0;
     }
 
     // Result
@@ -190,5 +190,3 @@ public class SearchCriteria {
         return result;
     }
 }
-
-/* */

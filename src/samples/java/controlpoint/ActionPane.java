@@ -7,9 +7,10 @@
 package controlpoint;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import vavi.net.upnp.Argument;
 import vavi.net.upnp.di.ActionSerdes;
 import vavi.net.upnp.soap.ActionResponse;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -38,16 +38,16 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class ActionPane extends JPanel {
-    private ControlPoint controlPoint;
 
-    private Action action;
+    private static final Logger logger = System.getLogger(ActionPane.class.getName());
 
-    private TableModel actionTable;
+    private final ControlPoint controlPoint;
 
-    private JButton actionButton;
+    private final Action action;
 
-    /** */
-    private ActionSerdes actionSerdes = Singleton.getInstance(ActionSerdes.class);
+    private final TableModel actionTable;
+
+    private final JButton actionButton;
 
     // Constructor
     public ActionPane(ControlPoint controlPoint, Action action) {
@@ -59,6 +59,8 @@ public class ActionPane extends JPanel {
         try {
             Document document = Util.getDocumentBuilder().newDocument();
             Node node = document.createElement("action");
+            /** */
+            ActionSerdes actionSerdes = Singleton.getInstance(ActionSerdes.class);
             actionSerdes.serialize(action, node);
 //System.err.println("-------- action");
 //PrettyPrinter pp = new PrettyPrinter(new PrintWriter(System.err));
@@ -78,6 +80,48 @@ public class ActionPane extends JPanel {
         actionButton = new JButton("Action");
         buttonPane.add(actionButton);
         add(buttonPane, BorderLayout.SOUTH);
+        // actionPerformed
+        ActionListener actionListener = event -> {
+            if (event.getSource() != actionButton) {
+                return;
+            }
+
+            List<Argument> inArgumentList = action.getInputArgumentList();
+            if (!inArgumentList.isEmpty()) {
+                ActionDialog dialog = new ActionDialog(controlPoint.getFrame(), action);
+                dialog.doModal();
+            }
+
+            String title = action.getName();
+            StringBuilder message = new StringBuilder();
+            try {
+                ActionResponse controlResponse = action.postActionRequest();
+                if (controlResponse.getStatus() == HttpURLConnection.HTTP_OK) {
+                    List<Argument> outArgumentList = action.getOutputArgumentList();
+                    int nArgs = outArgumentList.size();
+                    if (nArgs == 0) {
+                        message = new StringBuilder("(No response value)");
+                    }
+                    for (int n = 0; n < nArgs; n++) {
+                        Argument argument = outArgumentList.get(n);
+                        String name = argument.getName();
+                        String value = argument.getValue();
+                        message.append(name).append(" = ").append(value);
+                        if (n < (nArgs - 1)) {
+                            message.append(", ");
+                        }
+                    }
+                } else {
+                    message = new StringBuilder(controlResponse.getStatusMessage() + " (" + controlResponse.getStatus() + ")");
+                }
+            } catch (IOException e) {
+                logger.log(Level.ERROR, e.getMessage(), e);
+                message = new StringBuilder(e.getClass() + " (" + e.getMessage() + ")");
+            }
+
+            controlPoint.printConsole(title + " : " + message);
+            JOptionPane.showMessageDialog(ActionPane.this, message.toString(), title, JOptionPane.PLAIN_MESSAGE);
+        };
         actionButton.addActionListener(actionListener);
     }
 
@@ -94,50 +138,4 @@ public class ActionPane extends JPanel {
         return actionButton;
     }
 
-    // actionPerformed
-    private ActionListener actionListener = new ActionListener() {
-        public void actionPerformed(ActionEvent event) {
-            if (event.getSource() != actionButton) {
-                return;
-            }
-    
-            List<Argument> inArgumentList = action.getInputArgumentList();
-            if (inArgumentList.size() > 0) {
-                ActionDialog dialog = new ActionDialog(controlPoint.getFrame(), action);
-                dialog.doModal();
-            }
-    
-            String title = action.getName();
-            String message = "";
-            try {
-                ActionResponse controlResponse = action.postActionRequest();
-                if (controlResponse.getStatus() == HttpURLConnection.HTTP_OK) {
-                    List<Argument> outArgumentList = action.getOutputArgumentList();
-                    int nArgs = outArgumentList.size();
-                    if (nArgs == 0) {
-                        message = "(No response value)";
-                    }
-                    for (int n = 0; n < nArgs; n++) {
-                        Argument argument = outArgumentList.get(n);
-                        String name = argument.getName();
-                        String value = argument.getValue();
-                        message += (name + " = " + value);
-                        if (n < (nArgs - 1)) {
-                            message += ", ";
-                        }
-                    }
-                } else {
-                    message = controlResponse.getStatusMessage() + " (" + controlResponse.getStatus() + ")";
-                }
-            } catch (IOException e) {
-Debug.printStackTrace(e);
-                message = e.getClass() + " (" + e.getMessage() + ")";
-            }
-    
-            controlPoint.printConsole(title + " : " + message);
-            JOptionPane.showMessageDialog(ActionPane.this, message, title, JOptionPane.PLAIN_MESSAGE);
-        }
-    };
 }
-
-/* */

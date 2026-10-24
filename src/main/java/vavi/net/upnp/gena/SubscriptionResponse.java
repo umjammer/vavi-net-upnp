@@ -7,14 +7,15 @@
 package vavi.net.upnp.gena;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import vavi.net.http.HttpContext;
 import vavi.net.http.HttpProtocol;
 import vavi.net.upnp.UPnP;
 import vavi.net.upnp.UPnPStatus;
-import vavi.util.Debug;
 
 
 /**
@@ -26,6 +27,8 @@ import vavi.util.Debug;
  */
 public class SubscriptionResponse extends HttpContext {
 
+    private static final Logger logger = System.getLogger(SubscriptionResponse.class.getName());
+
     /** TODO not beautiful */
     private HttpServletResponse response;
 
@@ -36,11 +39,12 @@ public class SubscriptionResponse extends HttpContext {
             this.response = response;
             this.os = response.getOutputStream();
         } catch (IOException e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
     /** TODO not beautiful */
+    @Override
     public void setStatus(int status) {
         if (response != null) {
             response.setStatus(status);
@@ -51,6 +55,7 @@ public class SubscriptionResponse extends HttpContext {
     }
 
     /** TODO not beautiful */
+    @Override
     public void setHeader(String name, String value) {
         super.setHeader(name, value);
         if (response != null) {
@@ -71,7 +76,7 @@ public class SubscriptionResponse extends HttpContext {
                 response.setContentLength(0);
                 response.sendError(statusCode, UPnPStatus.valueOf(statusCode).toString());
             } catch (IOException e) { // TODO check
-                Debug.printStackTrace(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
         setStatus(statusCode);
@@ -119,5 +124,3 @@ public class SubscriptionResponse extends HttpContext {
         return Subscription.getTimeout(getHeader("TIMEOUT"));
     }
 }
-
-/* */

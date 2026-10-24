@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,8 +25,6 @@ import org.cybergarage.upnp.media.server.UPnP;
 import org.cybergarage.upnp.media.server.object.ContentNode;
 import org.cybergarage.upnp.media.server.object.DIDLLite;
 
-import vavi.util.Debug;
-
 
 /**
  * ItemNode.
@@ -33,6 +33,8 @@ import vavi.util.Debug;
  *          01/28/04 Added file and timestamp parameters.
  */
 public abstract class ItemNode extends ContentNode {
+
+    private static final Logger logger = System.getLogger(ItemNode.class.getName());
 
     // Constants
 
@@ -89,7 +91,7 @@ public abstract class ItemNode extends ContentNode {
             String dateStr = new SimpleDateFormat(DATE_FORMAT).format(date);
             setDate(dateStr);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
         }
     }
 
@@ -138,19 +140,18 @@ public abstract class ItemNode extends ContentNode {
     public void setResource(String url, String protocolInfo, List<Attr> attrList) {
         setProperty(DIDLLite.RES, url);
 
-        setPropertyAttribure(DIDLLite.RES, DIDLLite.RES_PROTOCOLINFO, protocolInfo);
+        setPropertyAttribute(DIDLLite.RES, DIDLLite.RES_PROTOCOLINFO, protocolInfo);
 
         int attrCnt = attrList.size();
-        for (int n = 0; n < attrCnt; n++) {
-            Attr attr = attrList.get(n);
+        for (Attr attr : attrList) {
             String name = attr.getName();
             String value = attr.getValue();
-            setPropertyAttribure(DIDLLite.RES, name, value);
+            setPropertyAttribute(DIDLLite.RES, name, value);
         }
     }
 
     public void setResource(String url, String protocolInfo) {
-        setResource(url, protocolInfo, new ArrayList<Attr>());
+        setResource(url, protocolInfo, new ArrayList<>());
     }
 
     // Abstract methods
@@ -165,19 +166,19 @@ public abstract class ItemNode extends ContentNode {
     //---- TODO check place
 
     /** */
-    protected static final byte[] load(String fileName) throws IOException {
+    protected static byte[] load(String fileName) throws IOException {
         FileInputStream fin = new FileInputStream(fileName);
         return load(fin);
     }
 
     /** */
-    protected static final byte[] load(File file) throws IOException {
+    protected static byte[] load(File file) throws IOException {
         FileInputStream fin = new FileInputStream(file);
         return load(fin);
     }
 
     /** */
-    protected static final byte[] load(FileInputStream fin) throws IOException {
+    protected static byte[] load(FileInputStream fin) throws IOException {
         byte[] readBuf = new byte[512 * 1024];
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -193,5 +194,3 @@ public abstract class ItemNode extends ContentNode {
         return bout.toByteArray();
     }
 }
-
-/* */

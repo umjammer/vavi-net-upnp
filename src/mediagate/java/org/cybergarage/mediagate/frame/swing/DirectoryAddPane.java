@@ -11,6 +11,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -20,8 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import vavi.util.Debug;
-
 
 /**
  * ContentPane.
@@ -30,9 +30,11 @@ import vavi.util.Debug;
  */
 public class DirectoryAddPane implements ActionListener {
 
+    private static final Logger logger = System.getLogger(DirectoryAddPane.class.getName());
+
     // Member
 
-    private Component parentComp;
+    private final Component parentComp;
 
     private JTextField nameText;
 
@@ -40,7 +42,7 @@ public class DirectoryAddPane implements ActionListener {
 
     private JButton dirButton;
 
-    // Constuctor
+    // Constructor
 
     public DirectoryAddPane(Component parent) {
         parentComp = parent;
@@ -102,6 +104,7 @@ public class DirectoryAddPane implements ActionListener {
 
     // ActionListener
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -111,6 +114,6 @@ public class DirectoryAddPane implements ActionListener {
         }
 
         Object srcObj = e.getSource();
-Debug.println(srcObj);
+logger.log(Level.DEBUG, srcObj);
     }
 }

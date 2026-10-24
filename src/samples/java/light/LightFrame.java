@@ -11,11 +11,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.JFrame;
 
 import vavi.net.upnp.UPnP;
-import vavi.util.Debug;
 
 
 /**
@@ -25,11 +26,14 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class LightFrame extends JFrame {
+
+    private static final Logger logger = System.getLogger(LightFrame.class.getName());
+
     private final static String TITLE = "CyberLink Sample Light";
 
-    private LightDevice lightDevice;
+    private final LightDevice lightDevice;
 
-    private LightPane lightPane;
+    private final LightPane lightPane;
 
     public LightFrame() throws IOException {
         super(TITLE);
@@ -60,12 +64,13 @@ public class LightFrame extends JFrame {
     }
 
     // main
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent ev) {
             try {
                 lightDevice.stop();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
             System.exit(0);
         }
@@ -75,6 +80,6 @@ Debug.printStackTrace(e);
     public static void main(String[] args) throws Exception {
         UPnP.setProperty(UPnP.Flag.USE_ONLY_IPV4_ADDR, true);
         LightFrame lightFrame = new LightFrame();
-Debug.println(lightFrame.getTitle());
+logger.log(Level.DEBUG, lightFrame.getTitle());
     }
 }

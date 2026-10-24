@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpProtocol;
 import vavi.net.upnp.Action;
@@ -61,7 +61,7 @@ public class ActionRequest extends ControlRequest {
     }
 
     /**
-     * Serializes {@link #actionName} and {@link argumentList}.
+     * Serializes {@link #actionName} and {@link #argumentList}.
      * @see #soapMessage
      * (for client)
      */
@@ -123,7 +123,7 @@ public class ActionRequest extends ControlRequest {
             }
     
         } catch (SOAPException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -138,12 +138,10 @@ public class ActionRequest extends ControlRequest {
     }
 
     /** */
-    private List<Argument> argumentList = new ArrayList<>();
+    private final List<Argument> argumentList = new ArrayList<>();
 
     /** */
     public List<Argument> getArgumentList() {
         return argumentList;
     }
 }
-
-/* */

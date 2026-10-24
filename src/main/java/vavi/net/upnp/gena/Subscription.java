@@ -41,7 +41,7 @@ public final class Subscription {
         if (time == Subscription.INFINITE_VALUE) {
             return Subscription.INFINITE_STRING;
         }
-        return Subscription.TIMEOUT_HEADER + Long.toString(time);
+        return Subscription.TIMEOUT_HEADER + time;
     }
 
     /** Timeout */
@@ -49,7 +49,7 @@ public final class Subscription {
         int minusIndex = headerValue.indexOf('-');
         long timeout;
         try {
-            String timeoutString = headerValue.substring(minusIndex + 1, headerValue.length());
+            String timeoutString = headerValue.substring(minusIndex + 1);
             timeout = Long.parseLong(timeoutString);
         } catch (NumberFormatException e) {
             timeout = Subscription.INFINITE_VALUE;
@@ -67,8 +67,6 @@ public final class Subscription {
         if (headerValue == null) {
             return "";
         }
-        return headerValue.substring(Subscription.PROTOCOL_UUID.length(), headerValue.length());
+        return headerValue.substring(Subscription.PROTOCOL_UUID.length());
     }
 }
-
-/* */

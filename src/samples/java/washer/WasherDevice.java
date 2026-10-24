@@ -7,6 +7,8 @@
 package washer;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +21,6 @@ import vavi.net.upnp.Service;
 import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.event.QueryListener;
-import vavi.util.Debug;
 
 
 /**
@@ -29,10 +30,13 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class WasherDevice extends Device {
+
+    private static final Logger logger = System.getLogger(WasherDevice.class.getName());
+
     /** */
-    private final static String DESCRIPTION_FILE_NAME = "washer/description/description.xml";
+    private final static String DESCRIPTION_FILE_NAME = "/washer/description/description.xml";
     /** */
-    private StateVariable stateVar;
+    private final StateVariable stateVar;
 
     /** */
     public WasherDevice() throws IOException {
@@ -73,7 +77,7 @@ public class WasherDevice extends Device {
         try {
             stateVar.setValue("Start");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
         panel.flipAnimationImage();
     }
@@ -87,7 +91,7 @@ public class WasherDevice extends Device {
         try {
             stateVar.setValue("Stop");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -97,13 +101,13 @@ public class WasherDevice extends Device {
         try {
             stateVar.setValue("Finish");
         } catch (IOException e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
     /** */
     public boolean isWashing() {
-        return washing == null ? false : !washing.isDone();
+        return washing != null && !washing.isDone();
     }
 
     /** */
@@ -115,7 +119,7 @@ public class WasherDevice extends Device {
         } else if (state.equals("0")) {
             stopWash();
         } else {
-            Debug.println("unknown state: " + state);
+            logger.log(Level.DEBUG, "unknown state: " + state);
         }
     }
 
@@ -125,7 +129,8 @@ public class WasherDevice extends Device {
     }
 
     /** ActionListener */
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
+        @Override
         public boolean actionControlReceived(Action action) {
             String actionName = action.getName();
     
@@ -154,24 +159,21 @@ public class WasherDevice extends Device {
     };
 
     /** QueryListener */
-    private QueryListener queryListener = new QueryListener() {
-        public boolean queryControlReceived(StateVariable stateVar) {
-            return false;
-        }
-    };
+    private final QueryListener queryListener = stateVar -> false;
 
     /** run */	
-    private static ExecutorService washingService = Executors.newSingleThreadExecutor();
+    private static final ExecutorService washingService = Executors.newSingleThreadExecutor();
 
     /** on/off */
     private Future<?> washing; 
 
     /** */
-    private Runnable washer = new Runnable() {
+    private final Runnable washer = new Runnable() {
+        @Override
         public void run() {
     
             try {
-Debug.println("+++ Washer started");
+logger.log(Level.DEBUG, "+++ Washer started");
                 int count = 0;
                 while (count < 20) {
                     panel.flipAnimationImage();
@@ -183,9 +185,9 @@ Debug.println("+++ Washer started");
                 finishWash();
                 panel.repaint();
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             } finally {
-Debug.println("--- Washer stopped");
+logger.log(Level.DEBUG, "--- Washer stopped");
             }
         }
     };
@@ -194,5 +196,3 @@ Debug.println("--- Washer stopped");
     public void update() {
     }
 }
-
-/* */

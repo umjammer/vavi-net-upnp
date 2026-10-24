@@ -21,7 +21,7 @@ import org.cybergarage.upnp.media.server.object.item.ItemNode;
 public class ContentTable extends AbstractTableModel {
 
     // Member
-    private String[] tableColum = {
+    private final String[] tableColum = {
         "title", "creator", "date", "size"
     };
 
@@ -42,26 +42,29 @@ public class ContentTable extends AbstractTableModel {
     }
 
     public boolean hasDirectory() {
-        return (directory == null) ? false : true;
+        return directory != null;
     }
 
     // ActionListener
+    @Override
     public int getColumnCount() {
 // Debug.message("getColumnCount = " + tableColum.length);
         return tableColum.length;
     }
 
+    @Override
     public int getRowCount() {
 // Debug.message("getRowCount = " + tableData.length);
-        if (hasDirectory() == false) {
+        if (!hasDirectory()) {
             return 0;
         }
         return getDirectory().getChildNodes().getLength();
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
 // Debug.message("getValueAt(" + row + "," + col + ") = " + tableData[row][col]);
-        if (hasDirectory() == false) {
+        if (!hasDirectory()) {
             return "";
         }
 
@@ -71,19 +74,16 @@ public class ContentTable extends AbstractTableModel {
         }
 
         ItemNode itemNode = (ItemNode) cnode;
-        switch (col) {
-        case 0:
-            return itemNode.getTitle();
-        case 1:
-            return itemNode.getCreator();
-        case 2:
-            return itemNode.getDate();
-        case 3:
-            return Long.toString(itemNode.getStorageUsed());
-        }
-        return "";
+        return switch (col) {
+            case 0 -> itemNode.getTitle();
+            case 1 -> itemNode.getCreator();
+            case 2 -> itemNode.getDate();
+            case 3 -> Long.toString(itemNode.getStorageUsed());
+            default -> "";
+        };
     }
 
+    @Override
     public String getColumnName(int col) {
 // Debug.message("getColumnName(" + col + ") = " + tableColum[col]);
         return tableColum[col];
@@ -94,5 +94,3 @@ public class ContentTable extends AbstractTableModel {
         setDirectory(dir);
     }
 }
-
-/* */

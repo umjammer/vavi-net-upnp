@@ -7,6 +7,8 @@
 package org.cybergarage.mediagate;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.prefs.Preferences;
 
 import org.cybergarage.mediagate.frame.MediaFrame;
@@ -23,8 +25,6 @@ import org.cybergarage.upnp.media.server.object.format.JPEGFormat;
 import org.cybergarage.upnp.media.server.object.format.MPEGFormat;
 import org.cybergarage.upnp.media.server.object.format.PNGFormat;
 
-import vavi.util.Debug;
-
 
 /**
  * MediaServer.
@@ -34,6 +34,8 @@ import vavi.util.Debug;
  * 10/22/03 first revision.
  */
 public class MediaGate {
+
+    private static final Logger logger = System.getLogger(MediaGate.class.getName());
 
     // Constants
     private final static int FILESYS_MODE = 0;
@@ -50,7 +52,7 @@ public class MediaGate {
             mediaServer = new MediaServer();
             setMode(mode);
 
-            boolean isFileSysMode = (mode == FILESYS_MODE) ? true : false;
+            boolean isFileSysMode = mode == FILESYS_MODE;
 
             switch (mode) {
             case FILESYS_MODE: {
@@ -73,7 +75,7 @@ public class MediaGate {
 
             mediaFrame = new SwingFrame(this, isFileSysMode);
         } catch (Exception e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -109,11 +111,11 @@ public class MediaGate {
             Preferences dirPref = getUserDirectoryPreferences();
             String[] dirName = dirPref.keys();
             int dirCnt = dirName.length;
-            for (int n = 0; n < dirCnt; n++) {
-                dirPref.remove(dirName[n]);
+            for (String s : dirName) {
+                dirPref.remove(s);
             }
         } catch (Exception e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -122,16 +124,16 @@ public class MediaGate {
             Preferences dirPref = getUserDirectoryPreferences();
             String[] dirName = dirPref.keys();
             int dirCnt = dirName.length;
-Debug.println("Loading Directories (" + dirCnt + ") ....");
+logger.log(Level.DEBUG, "Loading Directories (" + dirCnt + ") ....");
             for (int n = 0; n < dirCnt; n++) {
                 String name = dirName[n];
                 String path = dirPref.get(name, "");
                 FileDirectory fileDir = new FileDirectory(name, path);
                 getMediaServer().addContentDirectory(fileDir);
-Debug.println("[" + n + "] = " + name + "," + path);
+logger.log(Level.DEBUG, "[" + n + "] = " + name + "," + path);
             }
         } catch (Exception e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -144,15 +146,14 @@ Debug.println("[" + n + "] = " + name + "," + path);
             int dirCnt = conDir.getNDirectories();
             for (int n = 0; n < dirCnt; n++) {
                 Directory dir = conDir.getDirectory(n);
-                if (!(dir instanceof FileDirectory)) {
+                if (!(dir instanceof FileDirectory fileDir)) {
                     continue;
                 }
 
-                FileDirectory fileDir = (FileDirectory) dir;
                 dirPref.put(fileDir.getFriendlyName(), fileDir.getPath());
             }
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e);
         }
     }
 
@@ -196,9 +197,9 @@ Debug.println("[" + n + "] = " + name + "," + path);
     public static void main(String[] args) throws Exception {
 
         int mode = FILESYS_MODE;
-Debug.println("args = " + args.length);
+logger.log(Level.DEBUG, "args = " + args.length);
         for (int n = 0; n < args.length; n++) {
-Debug.println("  [" + n + "] = " + args[n]);
+logger.log(Level.DEBUG, "  [" + n + "] = " + args[n]);
             if (MYTHTV_OPT_STRING.compareTo(args[n]) == 0) {
                 mode = MYTHTV_MODE;
             }

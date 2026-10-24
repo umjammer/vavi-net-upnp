@@ -6,6 +6,8 @@
 
 package org.cybergarage.upnp.media.server.directory.mythtv;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.sql.SQLException;
 
 import org.cybergarage.upnp.media.server.Directory;
@@ -18,6 +20,8 @@ import org.cybergarage.upnp.media.server.object.item.mythtv.MythRecordedItemNode
  * @version 02/10/04 first revision.
  */
 public class MythDirectory extends Directory {
+
+    private static final Logger logger = System.getLogger(MythDirectory.class.getName());
 
     // Constants
     private final static String NAME = "MythTV";
@@ -41,19 +45,20 @@ public class MythDirectory extends Directory {
         return recNode;
     }
 
-    private MythRecordedInfo[] getCurrentRecordedInfos() {
+    private static MythRecordedInfo[] getCurrentRecordedInfos() {
         MythDAO mythdb = new MythDAO();
 
         MythRecordedInfo[] recInfo = null;
         try {
             recInfo = mythdb.getRecordedInfos();
         } catch (SQLException e) {
-            e.printStackTrace(); // TODO
+            logger.log(Level.ERROR, e.getMessage(), e); // TODO
         }
         return recInfo;
     }
 
     // update
+    @Override
     public void update() {
         boolean updateFlag = false;
 
@@ -63,17 +68,15 @@ public class MythDirectory extends Directory {
         int nCurrRecInfos = currRecInfo.length;
 
         // Checking Deleted Items
-        for (int i = 0; i < nAddedItems; i++) {
-            MythRecordedItemNode recItem = addedItemNode[i];
+        for (MythRecordedItemNode recItem : addedItemNode) {
             boolean hasRecItem = false;
-            for (int j = 0; j < nCurrRecInfos; j++) {
-                MythRecordedInfo recInfo = currRecInfo[j];
-                if (recItem.equals(recInfo) == true) {
+            for (MythRecordedInfo recInfo : currRecInfo) {
+                if (recItem.getRecordedInfo().equals(recInfo)) {
                     hasRecItem = true;
                     break;
                 }
             }
-            if (hasRecItem == true) {
+            if (hasRecItem) {
                 continue;
             }
             removeContentNode(recItem);
@@ -81,17 +84,15 @@ public class MythDirectory extends Directory {
         }
 
         // Checking Added Items
-        for (int j = 0; j < nCurrRecInfos; j++) {
-            MythRecordedInfo recInfo = currRecInfo[j];
+        for (MythRecordedInfo recInfo : currRecInfo) {
             boolean hasRecItem = false;
-            for (int i = 0; i < nAddedItems; i++) {
-                MythRecordedItemNode recItem = addedItemNode[i];
-                if (recItem.equals(recInfo) == true) {
+            for (MythRecordedItemNode recItem : addedItemNode) {
+                if (recItem.getRecordedInfo().equals(recInfo)) {
                     hasRecItem = true;
                     break;
                 }
             }
-            if (hasRecItem == true) {
+            if (hasRecItem) {
                 continue;
             }
 
@@ -108,16 +109,14 @@ public class MythDirectory extends Directory {
         int nContents = getChildNodes().getLength();
         setChildCount(nContents);
 
-        if (updateFlag == true) {
+        if (updateFlag) {
             getContentDirectory().updateSystemUpdateID();
         }
     }
 
     // main
     public static void main(String[] args) {
-        MythDirectory mythdir = new MythDirectory();
-        mythdir.update();
+        MythDirectory mythDir = new MythDirectory();
+        mythDir.update();
     }
 }
-
-/* */

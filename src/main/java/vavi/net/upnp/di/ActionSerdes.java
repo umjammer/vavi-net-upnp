@@ -31,22 +31,22 @@ import vavi.util.Singleton;
 public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node> {
 
     /** */
-    private static ArgumentSerdes argumentSerdes = Singleton.getInstance(ArgumentSerdes.class); 
+    private static final ArgumentSerdes argumentSerdes = Singleton.getInstance(ArgumentSerdes.class);
 
-    /** */
+    @Override
     public void serialize(Action action, Node actionNode) throws IOException {
         Document document = actionNode.getOwnerDocument();
 
         //
-        Node node = document.createElement("name");
+        Node node = document.createElementNS(Service.XMLNS, "name");
         node.setTextContent(action.getName());
         actionNode.appendChild(node);
 
         // argumentList
-        Node argumentListNode = document.createElement("argumentList");
+        Node argumentListNode = document.createElementNS(Service.XMLNS, "argumentList");
         actionNode.appendChild(argumentListNode);
         for (Argument argument : action.getArgumentList()) {
-            Node argumentNode = document.createElement("argument");
+            Node argumentNode = document.createElementNS(Service.XMLNS, "argument");
             argumentSerdes.serialize(argument, argumentNode);
             argumentListNode.appendChild(argumentNode);
         }
@@ -55,14 +55,14 @@ public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node
 //      actionNode.setUserData("actionData", action.getActionData(), null);
     }
 
-    /** */
+    @Override
     public void deserialize(Node actionNode, Action action) throws IOException {
         try {
             //
             action.setName(SerdesUtil.getChildNodeValue(actionNode, Service.XMLNS, "name"));
 
             // argumentList
-            final String ARGUMENT_XPATH = ".//" + Service.XMLNS + ":" + "argumentList" + "/" + Service.XMLNS + ":" + "argument";
+            final String ARGUMENT_XPATH = ".//" + SerdesUtil.prefix(Service.XMLNS) + ":" + "argumentList" + "/" + SerdesUtil.prefix(Service.XMLNS) + ":" + "argument";
             NodeList argumentNodes = (NodeList) SerdesUtil.getXPath().evaluate(ARGUMENT_XPATH, actionNode, XPathConstants.NODESET);
             for (int n = 0; n < argumentNodes.getLength(); n++) {
                 Node argumentNode = argumentNodes.item(n);
@@ -70,7 +70,7 @@ public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node
                 Argument argument = new Argument();
                 argument.setAction(action);
                 argumentSerdes.deserialize(argumentNode, argument);
-//Debug.println("Argument[" + n + "]: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getRelatedStateVariableName());
+//logger.log(Level.DEBUG, "Argument[" + n + "]: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getRelatedStateVariableName());
                 action.getArgumentList().add(argument);
             }
 
@@ -80,5 +80,3 @@ public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node
         }
     }
 }
-
-/* */

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:dlna="urn:schemas-dlna-org:device-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
+    <friendlyName>Living Room TV</friendlyName>
+    <manufacturer>vavi</manufacturer>
+    <manufacturerURL>http://example.com/</manufacturerURL>
+    <modelDescription>test renderer</modelDescription>
+    <modelName>TV-1</modelName>
+    <modelNumber>1</modelNumber>
+    <serialNumber>0001</serialNumber>
+    <UDN>uuid:00000000-0000-0000-0000-000000000001</UDN>
+    <dlna:X_DLNADOC>DMR-1.50</dlna:X_DLNADOC>
+    <iconList>
+      <icon>
+        <mimetype>image/png</mimetype>
+        <width>48</width>
+        <height>48</height>
+        <depth>24</depth>
+        <url>/icon.png</url>
+      </icon>
+    </iconList>
+    <serviceList>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:RenderingControl:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:RenderingControl</serviceId>
+        <SCPDURL>/RenderingControl.xml</SCPDURL>
+        <controlURL>/RenderingControl/control</controlURL>
+        <eventSubURL>/RenderingControl/event</eventSubURL>
+      </service>
+    </serviceList>
+    <deviceList>
+      <device>
+        <deviceType>urn:schemas-upnp-org:device:Basic:1</deviceType>
+        <friendlyName>Embedded</friendlyName>
+        <UDN>uuid:00000000-0000-0000-0000-000000000002</UDN>
+      </device>
+    </deviceList>
+  </device>
+</root>

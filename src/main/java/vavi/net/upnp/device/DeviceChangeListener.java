@@ -24,5 +24,3 @@ public interface DeviceChangeListener extends EventListener {
     /** */
     void deviceRemoved(Device device);
 }
-
-/* */

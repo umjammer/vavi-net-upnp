@@ -19,6 +19,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -36,8 +38,6 @@ import org.cybergarage.upnp.media.server.Directory;
 import org.cybergarage.upnp.media.server.MediaServer;
 import org.cybergarage.upnp.media.server.directory.file.FileDirectory;
 
-import vavi.util.Debug;
-
 
 /**
  * SwingFrame.
@@ -46,13 +46,15 @@ import vavi.util.Debug;
  */
 public class SwingFrame extends MediaFrame implements ActionListener, ListSelectionListener {
 
+    private static final Logger logger = System.getLogger(SwingFrame.class.getName());
+
     // Static Constants
 
-    public static String TITLE = "Cyber Media Gate";
+    public static final String TITLE = "Cyber Media Gate";
 
-    private static GraphicsDevice graphDevice;
+    private static final GraphicsDevice graphDevice;
 
-    private static GraphicsConfiguration graphGC;
+    private static final GraphicsConfiguration graphGC;
 
     static {
         GraphicsEnvironment graphEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -66,19 +68,19 @@ public class SwingFrame extends MediaFrame implements ActionListener, ListSelect
 
     // Member
 
-    private DisplayMode orgDispMode;
+    private final DisplayMode orgDispMode;
 
-    private JFrame frame;
+    private final JFrame frame;
 
-    private DirectoryPane dirPane;
+    private final DirectoryPane dirPane;
 
-    private ContentPane conPane;
+    private final ContentPane conPane;
 
     private JButton addButton;
 
     private JButton delButton;
 
-    private JButton quitButton;
+    private final JButton quitButton;
 
     // Constructor
 
@@ -90,7 +92,7 @@ public class SwingFrame extends MediaFrame implements ActionListener, ListSelect
         orgDispMode = graphDevice.getDisplayMode();
 
         DisplayMode mode = new DisplayMode(FRAME_WIDTH, FRAME_HEIGHT, 32, DisplayMode.REFRESH_RATE_UNKNOWN);
-Debug.println(mode);
+logger.log(Level.DEBUG, mode);
         // Window Listener
         frame.addWindowListener(windowListener);
 
@@ -154,6 +156,7 @@ Debug.println(mode);
 
     // ActionListener
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         Object srcObj = ev.getSource();
 
@@ -165,7 +168,7 @@ Debug.println(mode);
             try {
                 exit();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     }
@@ -221,6 +224,7 @@ Debug.printStackTrace(e);
 
     // ListSelectionListener
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         // int selIdx = e.getLastIndex();
         int selIdx = dirPane.getList().getSelectedIndex();
@@ -230,17 +234,18 @@ Debug.printStackTrace(e);
 
         MediaServer mserver = getMediaGate().getMediaServer();
         Directory dir = mserver.getContentDirectory(selIdx);
-        Debug.println("valueChanged = " + dir.getFriendlyName());
+        logger.log(Level.DEBUG, "valueChanged = " + dir.getFriendlyName());
         conPane.update(dir);
     }
 
     // WindowListener
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent ev) {
             try {
                 exit();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };

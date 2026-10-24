@@ -36,9 +36,8 @@ public class PNGFormat extends ImageIOFormat {
     // Abstract Methods
 
     public boolean equals(Object object) {
-        if (object instanceof File) {
-            File file = (File) object;
-//Debug.println("file: " + file);
+        if (object instanceof File file) {
+            //logger.log(Level.DEBUG, "file: " + file);
             String headerID = Header.getIDString(file, 1, 3);
             if (headerID.startsWith("PNG")) {
                 return true;
@@ -47,10 +46,12 @@ public class PNGFormat extends ImageIOFormat {
         return false;
     }
 
+    @Override
     public FormatObject createObject(File file) {
         return new PNGFormat(file);
     }
 
+    @Override
     public String getMimeType() {
         return "image/png";
     }

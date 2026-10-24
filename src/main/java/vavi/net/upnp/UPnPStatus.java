@@ -33,9 +33,9 @@ public enum UPnPStatus {
     /** */
     ACTION_FAILED(501, "Action Failed");
     /** Member */
-    private int code;
+    private final int code;
     /** */
-    private String description;
+    private final String description;
     /** */
     UPnPStatus(int code, String description) {
         this.code = code;
@@ -59,5 +59,3 @@ public enum UPnPStatus {
         throw new IllegalArgumentException(String.valueOf(code));
     }
 }
-
-/* */

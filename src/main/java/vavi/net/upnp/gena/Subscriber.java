@@ -67,7 +67,7 @@ public class Subscriber {
             deliveryPath = url.getPath();
             deliveryPort = url.getPort();
         } catch (MalformedURLException e) {
-            throw (RuntimeException) new IllegalArgumentException().initCause(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -158,7 +158,7 @@ public class Subscriber {
             return;
         }
         notifyCount++;
-//Debug.println("notifyCount: " + notifyCount);
+//logger.log(Level.DEBUG, "notifyCount: " + notifyCount);
     }
 
     /** renew */
@@ -191,5 +191,3 @@ public class Subscriber {
         return true;
     }
 }
-
-/* */

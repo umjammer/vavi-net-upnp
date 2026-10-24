@@ -37,7 +37,7 @@ public class HttpUnicastSocket {
     /** */
     private DatagramSocket ssdpUnicastSocket = null;
 
-    /** */
+//    /** */
 //  private MulticastSocket ssdpUniSock = null;
 
     /** */
@@ -58,7 +58,7 @@ public class HttpUnicastSocket {
         open(bindPort);
     }
 
-    protected void finalize() {
+    protected void dispose() {
         close();
     }
 
@@ -70,7 +70,7 @@ public class HttpUnicastSocket {
     }
 
     public String getLocalAddress() {
-        if (0 < localAddress.length()) {
+        if (!localAddress.isEmpty()) {
             return localAddress;
         }
         return ssdpUnicastSocket.getLocalAddress().getHostAddress();
@@ -89,9 +89,9 @@ public class HttpUnicastSocket {
 
         // Bind only using the port without the interface address. (2003/12/12)
         InetSocketAddress bindSock = new InetSocketAddress(bindPort);
-        ssdpUnicastSocket = new DatagramSocket(null);
-        ssdpUnicastSocket.setReuseAddress(true);
-        ssdpUnicastSocket.bind(bindSock);
+        // don't reuse the address, search responses are unicast and delivered to only one of the sockets sharing the port.
+        // the caller retries with another port when binding fails.
+        ssdpUnicastSocket = new DatagramSocket(bindSock);
 
         setLocalAddress(bindAddress);
     }
@@ -101,9 +101,9 @@ public class HttpUnicastSocket {
         close();
 
         InetSocketAddress bindSock = new InetSocketAddress(bindPort);
-        ssdpUnicastSocket = new DatagramSocket(null);
-        ssdpUnicastSocket.setReuseAddress(true);
-        ssdpUnicastSocket.bind(bindSock);
+        // don't reuse the address, search responses are unicast and delivered to only one of the sockets sharing the port.
+        // the caller retries with another port when binding fails.
+        ssdpUnicastSocket = new DatagramSocket(bindSock);
     }
 
     /** close */
@@ -121,7 +121,7 @@ public class HttpUnicastSocket {
         InetAddress inetAddress = InetAddress.getByName(address);
         DatagramPacket datagramPacket = new DatagramPacket(message, message.length, inetAddress, port);
         ssdpUnicastSocket.send(datagramPacket);
-//Debug.println(">>>> SENT (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + new String(message));
+//logger.log(Level.DEBUG, ">>>> SENT (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + new String(message));
     }
 
     /** receive */
@@ -135,7 +135,7 @@ public class HttpUnicastSocket {
 //      String localHost = ((InetSocketAddress) ssdpUnicastSocket.getLocalSocketAddress()).getHostName();
         int localPort = ((InetSocketAddress) ssdpUnicastSocket.getLocalSocketAddress()).getPort();
         SsdpRequest receivedPacket = new SsdpRequest(datagramPacket, getLocalAddress(), localPort);
-//Debug.println("<<<< RECEIVED (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + recvPacket);
+//logger.log(Level.DEBUG, "<<<< RECEIVED (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + recvPacket);
         receivedPacket.setLastModified(System.currentTimeMillis());
 
         return receivedPacket;
@@ -183,5 +183,3 @@ public class HttpUnicastSocket {
         send(ssdpAddress, SSDP.PORT, baos.toByteArray());
     }
 }
-
-/* */

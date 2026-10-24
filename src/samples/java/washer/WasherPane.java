@@ -34,11 +34,11 @@ public class WasherPane extends JPanel {
     }
 
     /** */
-    private final static String WASHER_PANEL_IMAGE = "/images/washer.jpg";
+    private final static String WASHER_PANEL_IMAGE = "/washer/images/washer.jpg";
     /** */
-    private final static String WASHER_ANIM_IMAGE1 = "/images/washeron1.jpg";
+    private final static String WASHER_ANIM_IMAGE1 = "/washer/images/washeron1.jpg";
     /** */
-    private final static String WASHER_ANIM_IMAGE2 = "/images/washeron2.jpg";
+    private final static String WASHER_ANIM_IMAGE2 = "/washer/images/washeron2.jpg";
     /** */
     private BufferedImage panelImage;
     /** */

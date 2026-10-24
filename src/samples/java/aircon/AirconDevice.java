@@ -33,7 +33,7 @@ public class AirconDevice extends Device {
     private static final Logger logger = System.getLogger(AirconDevice.class.getName());
 
     /** */
-    private final static String DESCRIPTION_FILE_NAME = "aircon/description/description.xml";
+    private final static String DESCRIPTION_FILE_NAME = "/aircon/description/description.xml";
     /** */
     private final StateVariable tempVar;
 

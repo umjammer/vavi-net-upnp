@@ -53,9 +53,9 @@ public class TvPane extends JPanel { // MouseListener
     }
 
     // Background
-    private final static String TV_PANEL_IMAGE = "/images/tv.jpg";
+    private final static String TV_PANEL_IMAGE = "/tv/images/tv.jpg";
 
-    private final static String TV_ON_IMAGE = "/images/tvon.jpg";
+    private final static String TV_ON_IMAGE = "/tv/images/tvon.jpg";
 
     private BufferedImage panelImage;
 

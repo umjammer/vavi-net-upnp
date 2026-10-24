@@ -34,7 +34,7 @@ public class WasherDevice extends Device {
     private static final Logger logger = System.getLogger(WasherDevice.class.getName());
 
     /** */
-    private final static String DESCRIPTION_FILE_NAME = "washer/description/description.xml";
+    private final static String DESCRIPTION_FILE_NAME = "/washer/description/description.xml";
     /** */
     private final StateVariable stateVar;
 

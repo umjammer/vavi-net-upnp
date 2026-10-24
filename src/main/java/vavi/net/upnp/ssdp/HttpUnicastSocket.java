@@ -89,9 +89,9 @@ public class HttpUnicastSocket {
 
         // Bind only using the port without the interface address. (2003/12/12)
         InetSocketAddress bindSock = new InetSocketAddress(bindPort);
-        ssdpUnicastSocket = new DatagramSocket(null);
-        ssdpUnicastSocket.setReuseAddress(true);
-        ssdpUnicastSocket.bind(bindSock);
+        // don't reuse the address, search responses are unicast and delivered to only one of the sockets sharing the port.
+        // the caller retries with another port when binding fails.
+        ssdpUnicastSocket = new DatagramSocket(bindSock);
 
         setLocalAddress(bindAddress);
     }
@@ -101,9 +101,9 @@ public class HttpUnicastSocket {
         close();
 
         InetSocketAddress bindSock = new InetSocketAddress(bindPort);
-        ssdpUnicastSocket = new DatagramSocket(null);
-        ssdpUnicastSocket.setReuseAddress(true);
-        ssdpUnicastSocket.bind(bindSock);
+        // don't reuse the address, search responses are unicast and delivered to only one of the sockets sharing the port.
+        // the caller retries with another port when binding fails.
+        ssdpUnicastSocket = new DatagramSocket(bindSock);
     }
 
     /** close */

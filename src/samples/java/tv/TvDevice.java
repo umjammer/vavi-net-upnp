@@ -36,7 +36,7 @@ public class TvDevice {
 
     private static final Logger logger = System.getLogger(TvDevice.class.getName());
 
-    private final static String DESCRIPTION_FILE_NAME = "tv/description/description.xml";
+    private final static String DESCRIPTION_FILE_NAME = "/tv/description/description.xml";
 
     private final static String CLOCK_DEVICE_TYPE = "urn:schemas-upnp-org:device:clock:1";
     private final static String CLOCK_SERVICE_TYPE = "urn:schemas-upnp-org:service:timer:1";

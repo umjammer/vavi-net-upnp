@@ -3,11 +3,17 @@
 [![CodeQL](https://github.com/umjammer/cyberlink4java2/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/cyberlink4java2/actions/workflows/codeql-analysis.yml)
 ![Java](https://img.shields.io/badge/Java-8-b07219)
 
-# UPnP Library with Annotation
+# vavi-net-upnp
+
+UPnP Library with Annotation
 
 [Original](http://www.cybergarage.org/oss/iot/cybergarage-upnp/)
 
-## Before
+## Install
+
+## Usage
+
+### Before
 
 mostly boilerplate
 
@@ -79,7 +85,7 @@ public class LightDevice extends Device {
 }
 ```
 
-## After
+### After
 
 pojo w/ annotation
 
@@ -116,3 +122,7 @@ public class Light {
 
         device.start();
 ```
+
+## References
+
+## TODO

@@ -8,6 +8,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-net-upnp</artifactId>
+
   <packaging>jar</packaging>
   <name>Cyberlink for Java</name>
   <organization>
@@ -23,33 +24,102 @@
     <url>https://github.com/umjammer/cyberlink4java2/issues</url>
   </issueManagement>
 
+  <profiles>
+    <profile>
+      <!-- mvn -P light2 antrun:run -Dinfile='file' -->
+      <id>light2</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- GOOD: fork: OK, test jars: OK, user args, default args: OK -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.2.0</version>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <java classname="light2.LightUPnPApp" fork="true">
+                  <classpath>
+                    <path refid="maven.compile.classpath"/>
+                    <path refid="maven.test.classpath"/>
+                  </classpath>
+                  <jvmarg value="-Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties"/>
+                </java>
+              </target>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.16.0</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>UTF-8</encoding>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
+            <id>generate-sources</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>add-source</goal>
             </goals>
             <configuration>
               <sources>
-                <source>src/main/mediagate</source>
-                <source>src/main/samples</source>
+                <source>src/mediagate/java</source>
               </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-test-sources</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/samples/java</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/mediagate/resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-test-resources</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/samples/resources</directory>
+                </resource>
+              </resources>
             </configuration>
           </execution>
         </executions>
@@ -57,7 +127,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M7</version>
+        <version>3.6.0</version>
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
@@ -74,8 +144,9 @@
       <url>https://jitpack.io</url>
     </repository>
     <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/umjammer/*</url>
+      <id>maven_central</id>
+      <name>Maven Central</name>
+      <url>https://repo.maven.apache.org/maven2/</url>
     </repository>
   </repositories>
 
@@ -84,7 +155,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.2</version>
+        <version>6.1.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -93,55 +164,63 @@
 
   <dependencies>
   	<dependency>
-  		<groupId>javax.servlet</groupId>
-  		<artifactId>servlet-api</artifactId>
-  		<version>2.5</version>
+  		<groupId>jakarta.servlet</groupId>
+  		<artifactId>jakarta.servlet-api</artifactId>
+  		<version>6.1.0</version>
   	</dependency>
 
   	<dependency>
       <groupId>com.github.umjammer</groupId>
-  		<artifactId>vavi-commons</artifactId>
-      <version>1.1.9</version>
+      <artifactId>vavi-commons</artifactId>
+      <version>1.1.25</version>
   	</dependency>
 
   	<dependency>
       <groupId>com.github.umjammer</groupId>
   		<artifactId>vavi-commons-net</artifactId>
-  		<version>1.0.3</version>
+  		<version>1.0.10</version>
   	</dependency>
 
     <dependency>
       <groupId>jakarta.xml.ws</groupId>
       <artifactId>jakarta.xml.ws-api</artifactId>
-      <version>4.0.0</version>
-  	</dependency>
+      <version>4.0.3</version>
+    </dependency>
     <dependency>
       <groupId>com.sun.xml.ws</groupId>
       <artifactId>jaxws-rt</artifactId>
-      <version>4.0.1</version>
+      <version>4.0.5</version>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.woodstox</groupId>
+          <artifactId>woodstox-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   	<dependency>
-  		<groupId>commons-logging</groupId>
-  		<artifactId>commons-logging</artifactId>
-  		<version>1.1.1</version>
-  	</dependency>
-  	<dependency>
   		<groupId>commons-dbutils</groupId>
   		<artifactId>commons-dbutils</artifactId>
-  		<version>1.1</version>
+  		<version>1.8.1</version>
   	</dependency>
   	<dependency>
       <groupId>com.github.umjammer</groupId>
   		<artifactId>vavi-commons-sandbox</artifactId>
-  		<version>0.4.2</version>
+  		<version>0.4.10</version>
   	</dependency>
   	<dependency>
-  		<groupId>vavi</groupId>
-  		<artifactId>vavi-util-screenscraping</artifactId>
-      <version>1.0.12-SNAPSHOT</version>
+      <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
+      <artifactId>vavi-util-screenscraping</artifactId>
+      <version>1.0.20</version>
   	</dependency>
+
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf</artifactId>
+      <version>3.7.2</version>
+      <scope>runtime</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -157,6 +236,6 @@
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-commons</artifactId>
       <scope>test</scope>
-  	</dependency>
+    </dependency>
   </dependencies>
 </project>

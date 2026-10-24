@@ -8,13 +8,13 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-net-upnp</artifactId>
+  <version>1.1.1</version>
 
   <packaging>jar</packaging>
   <name>Cyberlink for Java</name>
   <organization>
     <name>vavi</name>
   </organization>
-  <version>1.1.0</version>
   <url>https://github.com/umjammer/cyberlink4java2</url>
   <description/>
   <scm>

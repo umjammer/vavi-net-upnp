@@ -61,19 +61,19 @@ public class ServiceSerdes extends Singleton implements Serdes<Service, Node, No
         Document document = serviceNode.getOwnerDocument();
 
         //
-        Node node = document.createElement("serviceType");
+        Node node = document.createElementNS(Device.XMLNS, "serviceType");
         node.setTextContent(service.getServiceType());
         serviceNode.appendChild(node);
-        node = document.createElement("serviceId");
+        node = document.createElementNS(Device.XMLNS, "serviceId");
         node.setTextContent(service.getServiceID());
         serviceNode.appendChild(node);
-        node = document.createElement("SCPDURL");
+        node = document.createElementNS(Device.XMLNS, "SCPDURL");
         node.setTextContent(service.getSCPDURL());
         serviceNode.appendChild(node);
-        node = document.createElement("controlURL");
+        node = document.createElementNS(Device.XMLNS, "controlURL");
         node.setTextContent(service.getControlURL());
         serviceNode.appendChild(node);
-        node = document.createElement("eventSubURL");
+        node = document.createElementNS(Device.XMLNS, "eventSubURL");
         node.setTextContent(service.getEventSubURL());
         serviceNode.appendChild(node);
 
@@ -103,7 +103,7 @@ logger.log(Level.DEBUG, "could not get scpd");
             }
 
             // /scpd//actionList
-            final String ACTION_XPATH = ".//" + Service.XMLNS + ":" + "actionList" + "/" + Service.XMLNS + ":" + "action";
+            final String ACTION_XPATH = ".//" + SerdesUtil.prefix(Service.XMLNS) + ":" + "actionList" + "/" + SerdesUtil.prefix(Service.XMLNS) + ":" + "action";
             NodeList actionNodes = (NodeList) SerdesUtil.getXPath().evaluate(ACTION_XPATH, scdpNode, XPathConstants.NODESET);
             for (int n = 0; n < actionNodes.getLength(); n++) {
                 Node actionNode = actionNodes.item(n);
@@ -116,7 +116,7 @@ logger.log(Level.DEBUG, "could not get scpd");
             }
     
             // /scpd//serviceStateTable
-            final String STATE_VARIABLE_XPATH = ".//" + Service.XMLNS + ":" + "serviceStateTable" + "/" + Service.XMLNS + ":" + "stateVariable";
+            final String STATE_VARIABLE_XPATH = ".//" + SerdesUtil.prefix(Service.XMLNS) + ":" + "serviceStateTable" + "/" + SerdesUtil.prefix(Service.XMLNS) + ":" + "stateVariable";
             NodeList stateVariableNodes = (NodeList) SerdesUtil.getXPath().evaluate(STATE_VARIABLE_XPATH, scdpNode, XPathConstants.NODESET);
             for (int n = 0; n < stateVariableNodes.getLength(); n++) {
                 Node stateVariableNode = stateVariableNodes.item(n);

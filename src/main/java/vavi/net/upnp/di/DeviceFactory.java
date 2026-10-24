@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 import vavi.net.upnp.Device;
 import vavi.net.util.Serdes;
 import vavi.net.util.Util;
+import vavi.util.Singleton;
 
 
 /**
@@ -35,7 +36,7 @@ import vavi.net.util.Util;
  */
 public final class DeviceFactory {
     /** */
-    private static final DeviceSerdes deviceSerdes = new DeviceSerdes();
+    private static final DeviceSerdes deviceSerdes = Singleton.getInstance(DeviceSerdes.class);
 
     /** */
     public static String toString(Device device) {
@@ -57,7 +58,7 @@ public final class DeviceFactory {
 
             Document document = Util.getDocumentBuilder().parse(is);
 
-            return (Node) Serdes.SerdesUtil.getXPath().evaluate("//" + Device.XMLNS + ":" + "device", document, XPathConstants.NODE);
+            return (Node) Serdes.SerdesUtil.getXPath().evaluate("//" + Serdes.SerdesUtil.prefix(Device.XMLNS) + ":" + "device", document, XPathConstants.NODE);
         } catch (IOException | XPathExpressionException | SAXException e) {
             throw new IllegalStateException(e);
         }

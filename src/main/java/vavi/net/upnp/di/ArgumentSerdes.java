@@ -30,13 +30,13 @@ public class ArgumentSerdes extends Singleton implements Serdes<Argument, Node, 
         Document document = argumentNode.getOwnerDocument();
 
         //
-        Node node = document.createElement("name");
+        Node node = document.createElementNS(Service.XMLNS, "name");
         node.setTextContent(argument.getName());
         argumentNode.appendChild(node);
-        node = document.createElement("direction");
+        node = document.createElementNS(Service.XMLNS, "direction");
         node.setTextContent(argument.getDirection());
         argumentNode.appendChild(node);
-        node = document.createElement("relatedStateVariable");
+        node = document.createElementNS(Service.XMLNS, "relatedStateVariable");
         node.setTextContent(argument.getRelatedStateVariableName());
         argumentNode.appendChild(node);
 

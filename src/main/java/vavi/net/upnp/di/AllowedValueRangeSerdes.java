@@ -28,13 +28,13 @@ public class AllowedValueRangeSerdes extends Singleton implements Serdes<Allowed
     public void serialize(AllowedValueRange allowedValueRange, Node allowdValueRangeNode) {
         Document document = allowdValueRangeNode.getOwnerDocument();
 
-        Node node = document.createElement("minimum");
+        Node node = document.createElementNS(Service.XMLNS, "minimum");
         node.setTextContent(allowedValueRange.getMinimum());
         allowdValueRangeNode.appendChild(node);
-        node = document.createElement("maximum");
+        node = document.createElementNS(Service.XMLNS, "maximum");
         node.setTextContent(allowedValueRange.getMaximum());
         allowdValueRangeNode.appendChild(node);
-        node = document.createElement("step");
+        node = document.createElementNS(Service.XMLNS, "step");
         node.setTextContent(allowedValueRange.getStep());
         allowdValueRangeNode.appendChild(node);
     }

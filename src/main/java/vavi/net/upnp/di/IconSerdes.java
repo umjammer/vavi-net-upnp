@@ -30,19 +30,19 @@ public class IconSerdes extends Singleton implements Serdes<Icon, Node, Node> {
         Document document = iconNode.getOwnerDocument();
 
         //
-        Node node = document.createElement("url");
+        Node node = document.createElementNS(Device.XMLNS, "url");
         node.setTextContent(icon.getURL());
         iconNode.appendChild(node);
-        node = document.createElement("depth");
+        node = document.createElementNS(Device.XMLNS, "depth");
         node.setTextContent(icon.getDepth());
         iconNode.appendChild(node);
-        node = document.createElement("height");
+        node = document.createElementNS(Device.XMLNS, "height");
         node.setTextContent(icon.getHeight());
         iconNode.appendChild(node);
-        node = document.createElement("width");
+        node = document.createElementNS(Device.XMLNS, "width");
         node.setTextContent(icon.getWidth());
         iconNode.appendChild(node);
-        node = document.createElement("mimetype");
+        node = document.createElementNS(Device.XMLNS, "mimetype");
         node.setTextContent(icon.getMimeType());
         iconNode.appendChild(node);
     }

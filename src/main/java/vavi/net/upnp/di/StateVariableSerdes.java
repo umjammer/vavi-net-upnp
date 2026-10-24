@@ -40,25 +40,25 @@ public class StateVariableSerdes extends Singleton implements Serdes<StateVariab
 
         //
         ((Element) stateVariableNode).setAttribute("sendEvents", stateVariable.isSendEvents() ? StateVariable.SENDEVENTS_YES : StateVariable.SENDEVENTS_NO);
-        Node node = document.createElement("name");
+        Node node = document.createElementNS(Service.XMLNS, "name");
         node.setTextContent(stateVariable.getName());
         stateVariableNode.appendChild(node);
-        node = document.createElement("dataType");
+        node = document.createElementNS(Service.XMLNS, "dataType");
         node.setTextContent(stateVariable.getDataType());
         stateVariableNode.appendChild(node);
 
         // allowedValueList
-        Node allowedValueListNode = document.createElement("allowedValueList");
+        Node allowedValueListNode = document.createElementNS(Service.XMLNS, "allowedValueList");
         stateVariableNode.appendChild(allowedValueListNode);
         for (String allowedValue : stateVariable.getAllowedValueList()) {
-            Node allowedValueNode = document.createElement("allowedValue");
+            Node allowedValueNode = document.createElementNS(Service.XMLNS, "allowedValue");
             allowedValueNode.setTextContent(allowedValue);
             allowedValueListNode.appendChild(allowedValueNode);
         }
 
         // allowedValueRenge
         if (stateVariable.getAllowedValueRange() != null) {
-            Node allowedValueRangeNode = document.createElement("allowedValueRange");
+            Node allowedValueRangeNode = document.createElementNS(Service.XMLNS, "allowedValueRange");
             allowedValueRangeSerdes.serialize(stateVariable.getAllowedValueRange(), allowedValueRangeNode);
             stateVariableNode.appendChild(allowedValueListNode);
         }
@@ -76,7 +76,7 @@ public class StateVariableSerdes extends Singleton implements Serdes<StateVariab
             stateVariable.setDataType(SerdesUtil.getChildNodeValue(node, Service.XMLNS, "dataType"));
 
             // allowedValueList
-            final String ALLOWED_VALUE_XPATH = ".//" + Service.XMLNS + ":" + "allowedValueList" + "/" + Service.XMLNS + ":" + "allowedValue";
+            final String ALLOWED_VALUE_XPATH = ".//" + SerdesUtil.prefix(Service.XMLNS) + ":" + "allowedValueList" + "/" + SerdesUtil.prefix(Service.XMLNS) + ":" + "allowedValue";
             NodeList valueNodes = (NodeList) SerdesUtil.getXPath().evaluate(ALLOWED_VALUE_XPATH, node, XPathConstants.NODESET);
             for (int n = 0; n < valueNodes.getLength(); n++) {
                 Node valueNode = valueNodes.item(n);
@@ -86,7 +86,7 @@ public class StateVariableSerdes extends Singleton implements Serdes<StateVariab
             }
 
             // allowedValueRange
-            final String ALLOWED_VALUE_RANGE_XPATH = ".//" + Service.XMLNS + ":" + "allowedValueRange";
+            final String ALLOWED_VALUE_RANGE_XPATH = ".//" + SerdesUtil.prefix(Service.XMLNS) + ":" + "allowedValueRange";
             Node valueRangeNode = (Node) SerdesUtil.getXPath().evaluate(ALLOWED_VALUE_RANGE_XPATH, node, XPathConstants.NODE);
             if (valueRangeNode != null) {
                 AllowedValueRange allowedValueRange = new AllowedValueRange();

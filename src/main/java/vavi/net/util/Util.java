@@ -213,22 +213,21 @@ e.printStackTrace(System.err);
 
     //----
 
-    /** DOM */
-    private static DocumentBuilder db;
-
-    static {
+    /** DOM, a DocumentBuilder is not thread safe */
+    private static final ThreadLocal<DocumentBuilder> db = ThreadLocal.withInitial(() -> {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         try {
-            db = dbf.newDocumentBuilder();
+            return dbf.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
 logger.log(Level.ERROR, e);
+            throw new IllegalStateException(e);
         }
-    }
+    });
 
-    /** DOM */
+    /** DOM, for the current thread */
     public static DocumentBuilder getDocumentBuilder() {
-        return db;
+        return db.get();
     }
 }
 

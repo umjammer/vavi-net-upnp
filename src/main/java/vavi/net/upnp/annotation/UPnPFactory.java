@@ -191,8 +191,8 @@ Debug.println("@UPnPAction: not setter/getter" + method.getName());
      * String to Object conversion on setter method.
      *
      * @param bean bean
-     * @param value value が null or empty の場合、
-     *        設定先がプリミティブなら 0, false、ラッパークラスならば null
+     * @param value If value is null or empty, the value is set to 0 or
+     *             false if the target is a primitive, or null if it is a wrapper class.
      */
     private static void invokeSetterMethodByString(Method method, Object bean, String value) throws Exception {
         Class<?> fieldClass = method.getParameterTypes()[0];

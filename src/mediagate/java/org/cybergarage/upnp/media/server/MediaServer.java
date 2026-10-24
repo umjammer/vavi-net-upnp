@@ -149,7 +149,7 @@ Debug.println("uri = " + uri);
             return;
         }
 
-        // TODO いまいちやぞ、子供に親の仕様を強いるなんて...
+        // TODO That's not a good idea. Forcing your child to conform to your standards isn't a good idea...
         MediaServer.super.httpRequestListener.doService(request, response);
     };
 

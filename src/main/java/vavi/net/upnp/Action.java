@@ -43,7 +43,7 @@ import vavi.util.Debug;
  */
 public class Action {
 
-    /** 所属するサービス */
+    /** Services to which this belongs */
     private Service service;
 
     public Service getService() {
@@ -68,10 +68,10 @@ public class Action {
         return name;
     }
 
-    /** 引数のリスト */
+    /** List of arguments */
     protected List<Argument> argumentList = new ArrayList<>();
 
-    /** 引数のリストを取得します。 */
+    /** Gets a list of arguments. */
     public List<Argument> getArgumentList() {
         return argumentList;
     }

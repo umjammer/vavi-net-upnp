@@ -683,8 +683,8 @@ Debug.println("called against not root");
     }
 
     /**
-     * {@link Service#getSID()} が uuid の購読中のサービスを取得します。
-     * {@link #childDevices} からも検索します。 
+     * {@link Service#getSID()} retrieves the service currently subscribed to by the specified UUID.
+     * We will also search using {@link #childDevices}.
      * @return null when not found
      */
     public Service getSubscriberService(String uuid) {
@@ -1173,7 +1173,7 @@ Debug.println("bad callback url: " + callback);
 //Debug.println(response);
             HttpUtil.postResponse(response);
 
-            // TODO ここでエラーが起きると上記レスポンス + エラーレスポンスになる
+            // TODO If an error occurs here, the above response will be followed by an error response.
             service.doNotifyAll();
         }
 

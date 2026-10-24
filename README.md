@@ -1,4 +1,4 @@
-[![Release](https://jitpack.io/v/umjammer/vavi-net-upnp.svg)](https://jitpack.io/#umjammer/vavi-net-upmp)
+[![Release](https://jitpack.io/v/umjammer/vavi-net-upnp.svg)](https://jitpack.io/#umjammer/vavi-net-upnp)
 [![Java CI](https://github.com/umjammer/vavi-net-upnp/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/vavi-net-upnp/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/umjammer/vavi-net-upnp/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-net-upnp/actions/workflows/codeql-analysis.yml)
 ![Java](https://img.shields.io/badge/Java-17-b07219)

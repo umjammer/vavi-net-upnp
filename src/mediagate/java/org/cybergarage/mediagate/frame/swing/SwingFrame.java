@@ -19,6 +19,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -36,8 +38,6 @@ import org.cybergarage.upnp.media.server.Directory;
 import org.cybergarage.upnp.media.server.MediaServer;
 import org.cybergarage.upnp.media.server.directory.file.FileDirectory;
 
-import vavi.util.Debug;
-
 
 /**
  * SwingFrame.
@@ -46,9 +46,11 @@ import vavi.util.Debug;
  */
 public class SwingFrame extends MediaFrame implements ActionListener, ListSelectionListener {
 
+    private static final Logger logger = System.getLogger(SwingFrame.class.getName());
+
     // Static Constants
 
-    public static String TITLE = "Cyber Media Gate";
+    public static final String TITLE = "Cyber Media Gate";
 
     private static final GraphicsDevice graphDevice;
 
@@ -90,7 +92,7 @@ public class SwingFrame extends MediaFrame implements ActionListener, ListSelect
         orgDispMode = graphDevice.getDisplayMode();
 
         DisplayMode mode = new DisplayMode(FRAME_WIDTH, FRAME_HEIGHT, 32, DisplayMode.REFRESH_RATE_UNKNOWN);
-Debug.println(mode);
+logger.log(Level.DEBUG, mode);
         // Window Listener
         frame.addWindowListener(windowListener);
 
@@ -166,7 +168,7 @@ Debug.println(mode);
             try {
                 exit();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     }
@@ -232,7 +234,7 @@ Debug.printStackTrace(e);
 
         MediaServer mserver = getMediaGate().getMediaServer();
         Directory dir = mserver.getContentDirectory(selIdx);
-        Debug.println("valueChanged = " + dir.getFriendlyName());
+        logger.log(Level.DEBUG, "valueChanged = " + dir.getFriendlyName());
         conPane.update(dir);
     }
 
@@ -243,7 +245,7 @@ Debug.printStackTrace(e);
             try {
                 exit();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };

@@ -8,6 +8,8 @@ package vavi.net.upnp;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,6 @@ import vavi.net.upnp.gena.Subscriber;
 import vavi.net.upnp.ssdp.SSDP;
 import vavi.net.upnp.ssdp.SsdpRequest;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -85,6 +86,9 @@ import vavi.util.Singleton;
  *                   Changed getSCPDData() to add an XML declaration at first line. <br>
  */
 public class Service {
+
+    private static final Logger logger = System.getLogger(Service.class.getName());
+
     /** xmlns */
     public static final String XMLNS = "urn:schemas-upnp-org:service-1-0";
 
@@ -202,7 +206,7 @@ public class Service {
         Document document = Util.getDocumentBuilder().newDocument();
         scpdSerdes.deserialize(url.openStream(), document);
         this.scpdNode = document;
-//System.out.println("-------- " + url + " --------");
+//logger.log(Level.DEBUG, "-------- " + url + " --------");
 //PrettyPrinter pp = new PrettyPrinter(System.out);
 //pp.print(scpdNode);
     }
@@ -309,13 +313,13 @@ public class Service {
 
     /** Subscription */
     public void addSubscriber(Subscriber subscriber) {
-Debug.println("+++ ADD subscriber: " + eventSubURL + ": " + subscriber.getSID());
+logger.log(Level.DEBUG, "+++ ADD subscriber: " + eventSubURL + ": " + subscriber.getSID());
         subscriberList.add(subscriber);
     }
 
     /** */
     public void removeSubscriber(Subscriber subscriber) {
-Debug.println("--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID());
+logger.log(Level.DEBUG, "--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID());
         subscriberList.remove(subscriber);
     }
 
@@ -418,7 +422,7 @@ Debug.println("--- DELETE subscriber: " + eventSubURL + ": " + subscriber.getSID
         String ssdpST = request.getST();
 
         if (ssdpST == null) {
-Debug.println("ssdpST is null");
+logger.log(Level.DEBUG, "ssdpST is null");
             return;
         }
 

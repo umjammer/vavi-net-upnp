@@ -7,6 +7,8 @@
 package vavi.net.upnp.soap;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -15,7 +17,6 @@ import vavi.net.upnp.ControlPoint;
 import vavi.net.upnp.Device;
 import vavi.net.upnp.Service;
 import vavi.net.upnp.gena.Subscription;
-import vavi.util.Debug;
 
 
 /**
@@ -26,6 +27,9 @@ import vavi.util.Debug;
  * @version 07/07/04 first revision.
  */
 public class SubscriberRenewer {
+
+    private static final Logger logger = System.getLogger(SubscriberRenewer.class.getName());
+
     /** */
     private final static long INTERVAL = 120;
 
@@ -56,19 +60,19 @@ public class SubscriberRenewer {
     /** Thread */
     private final Runnable subscriberRenewer = () -> {
         try {
-Debug.println("+++ SubscriberRenewer started");
+logger.log(Level.DEBUG, "+++ SubscriberRenewer started");
             while (true) {
                 try {
                     try { Thread.sleep(INTERVAL * 1000); } catch (InterruptedException e) {}
                     renewSubscriberService();
                 } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
         } finally {
-Debug.println("--- SubscriberRenewer stopped");
+logger.log(Level.DEBUG, "--- SubscriberRenewer stopped");
         }
     };
 
@@ -92,7 +96,7 @@ Debug.println("--- SubscriberRenewer stopped");
             }
 
             String sid = service.getSID();
-            if (controlPoint.subscribe(service, sid, timeout) == false) { // means "renewed ?"
+            if (!controlPoint.subscribe(service, sid, timeout)) { // means "renewed ?"
                 controlPoint.subscribe(service, timeout);
             }
         }

@@ -6,6 +6,8 @@
 
 package org.cybergarage.upnp.media.server.directory.mythtv;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.sql.SQLException;
 
 import org.cybergarage.upnp.media.server.Directory;
@@ -18,6 +20,8 @@ import org.cybergarage.upnp.media.server.object.item.mythtv.MythRecordedItemNode
  * @version 02/10/04 first revision.
  */
 public class MythDirectory extends Directory {
+
+    private static final Logger logger = System.getLogger(MythDirectory.class.getName());
 
     // Constants
     private final static String NAME = "MythTV";
@@ -48,7 +52,7 @@ public class MythDirectory extends Directory {
         try {
             recInfo = mythdb.getRecordedInfos();
         } catch (SQLException e) {
-            e.printStackTrace(); // TODO
+            logger.log(Level.ERROR, e.getMessage(), e); // TODO
         }
         return recInfo;
     }
@@ -67,12 +71,12 @@ public class MythDirectory extends Directory {
         for (MythRecordedItemNode recItem : addedItemNode) {
             boolean hasRecItem = false;
             for (MythRecordedInfo recInfo : currRecInfo) {
-                if (recItem.equals(recInfo)) {
+                if (recItem.getRecordedInfo().equals(recInfo)) {
                     hasRecItem = true;
                     break;
                 }
             }
-            if (hasRecItem == true) {
+            if (hasRecItem) {
                 continue;
             }
             removeContentNode(recItem);
@@ -83,12 +87,12 @@ public class MythDirectory extends Directory {
         for (MythRecordedInfo recInfo : currRecInfo) {
             boolean hasRecItem = false;
             for (MythRecordedItemNode recItem : addedItemNode) {
-                if (recItem.equals(recInfo)) {
+                if (recItem.getRecordedInfo().equals(recInfo)) {
                     hasRecItem = true;
                     break;
                 }
             }
-            if (hasRecItem == true) {
+            if (hasRecItem) {
                 continue;
             }
 
@@ -105,14 +109,14 @@ public class MythDirectory extends Directory {
         int nContents = getChildNodes().getLength();
         setChildCount(nContents);
 
-        if (updateFlag == true) {
+        if (updateFlag) {
             getContentDirectory().updateSystemUpdateID();
         }
     }
 
     // main
     public static void main(String[] args) {
-        MythDirectory mythdir = new MythDirectory();
-        mythdir.update();
+        MythDirectory mythDir = new MythDirectory();
+        mythDir.update();
     }
 }

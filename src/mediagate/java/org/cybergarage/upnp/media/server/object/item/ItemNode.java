@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,8 +25,6 @@ import org.cybergarage.upnp.media.server.UPnP;
 import org.cybergarage.upnp.media.server.object.ContentNode;
 import org.cybergarage.upnp.media.server.object.DIDLLite;
 
-import vavi.util.Debug;
-
 
 /**
  * ItemNode.
@@ -33,6 +33,8 @@ import vavi.util.Debug;
  *          01/28/04 Added file and timestamp parameters.
  */
 public abstract class ItemNode extends ContentNode {
+
+    private static final Logger logger = System.getLogger(ItemNode.class.getName());
 
     // Constants
 
@@ -89,7 +91,7 @@ public abstract class ItemNode extends ContentNode {
             String dateStr = new SimpleDateFormat(DATE_FORMAT).format(date);
             setDate(dateStr);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
         }
     }
 

@@ -8,6 +8,8 @@ package aircon;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 
 
@@ -18,7 +20,6 @@ import vavi.net.upnp.Service;
 import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.event.QueryListener;
-import vavi.util.Debug;
 
 
 /**
@@ -28,6 +29,9 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class AirconDevice extends Device {
+
+    private static final Logger logger = System.getLogger(AirconDevice.class.getName());
+
     /** */
     private final static String DESCRIPTION_FILE_NAME = "aircon/description/description.xml";
     /** */
@@ -100,7 +104,7 @@ public class AirconDevice extends Device {
                 stateVar.setValue(getPowerState());
                 return true;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.ERROR, e.getMessage(), e);
                 return false;
             }
         };
@@ -144,7 +148,7 @@ public class AirconDevice extends Device {
         } else if (state.equals("0")) {
             off();
         } else {
-            Debug.println("illegal state: " + state);
+            logger.log(Level.DEBUG, "illegal state: " + state);
         }
     }
 
@@ -172,7 +176,7 @@ public class AirconDevice extends Device {
         try {
             tempVar.setValue(String.valueOf(temperature));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 

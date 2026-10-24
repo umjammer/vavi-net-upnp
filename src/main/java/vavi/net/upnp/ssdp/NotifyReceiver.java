@@ -7,13 +7,14 @@
 package vavi.net.upnp.ssdp;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import vavi.net.upnp.ControlPoint;
-import vavi.util.Debug;
 
 
 /**
@@ -27,6 +28,9 @@ import vavi.util.Debug;
  *                   Added a multicast filter using the SSDP pakcet. <br>
  */
 public class NotifyReceiver {
+
+    private static final Logger logger = System.getLogger(NotifyReceiver.class.getName());
+
     /** */
     private HttpMulticastSocket httpMulticastSocket;
 
@@ -62,7 +66,7 @@ public class NotifyReceiver {
     /** */
     private final Runnable notifyReceiver = () -> {
         try {
-Debug.println("+++ NotifyReceiver started: " + SSDP.PORT);
+logger.log(Level.DEBUG, "+++ NotifyReceiver started: " + SSDP.PORT);
     
             while (true) {
                 Thread.yield();
@@ -74,19 +78,19 @@ Debug.println("+++ NotifyReceiver started: " + SSDP.PORT);
                     InetAddress multicastAddress = httpMulticastSocket.getMulticastInetAddress();
                     InetAddress packetAddress = request.getHostInetAddress();
                     if (!multicastAddress.equals(packetAddress)) {
-Debug.println("Invalidate Multicast Received: " + multicastAddress + ", " + packetAddress);
+logger.log(Level.DEBUG, "Invalidate Multicast Received: " + multicastAddress + ", " + packetAddress);
                         continue;
                     }
 
                     notifyReceived(request);
                 } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
         } finally {
-Debug.println("--- NotifyReceiver stopped");
+logger.log(Level.DEBUG, "--- NotifyReceiver stopped");
         }
     };
 

@@ -9,7 +9,7 @@ package vavi.net.upnp.soap;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import vavi.net.http.HttpProtocol;
 import vavi.net.upnp.Service;

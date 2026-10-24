@@ -16,6 +16,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -29,6 +31,9 @@ import javax.swing.JPanel;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class RemoteControllerPane extends JPanel {
+
+    private static final Logger logger = System.getLogger(RemoteControllerPane.class.getName());
+
     private final static int IMAGE_BORDER_SIZE = 20;
 
     /** Constructor */
@@ -129,7 +134,7 @@ public class RemoteControllerPane extends JPanel {
                 try {
                     device.tvPowerOn();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
             if (lightPowerRect.contains(x, y)) {
@@ -137,7 +142,7 @@ public class RemoteControllerPane extends JPanel {
                 try {
                     device.lightPowerOn();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
             if (airconPowerRect.contains(x, y)) {
@@ -145,7 +150,7 @@ public class RemoteControllerPane extends JPanel {
                 try {
                     device.airconPowerOn();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
             if (airconUpRect.contains(x, y)) {
@@ -153,7 +158,7 @@ public class RemoteControllerPane extends JPanel {
                 try {
                     device.airconTempUp();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
             if (airconDownRect.contains(x, y)) {
@@ -161,7 +166,7 @@ public class RemoteControllerPane extends JPanel {
                 try {
                     device.airconTempDown();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
             if (washerStartRect.contains(x, y)) {
@@ -169,7 +174,7 @@ public class RemoteControllerPane extends JPanel {
                 try {
                     device.washerStart();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
             if (washerStopRect.contains(x, y)) {
@@ -177,7 +182,7 @@ public class RemoteControllerPane extends JPanel {
                 try {
                     device.washerStop();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
         }

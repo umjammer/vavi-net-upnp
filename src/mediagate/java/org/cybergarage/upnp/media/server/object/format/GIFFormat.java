@@ -38,7 +38,7 @@ public class GIFFormat extends ImageIOFormat {
 
     public boolean equals(Object object) {
         if (object instanceof File file) {
-            //Debug.println("file: " + file);
+            //logger.log(Level.DEBUG, "file: " + file);
             String headerID = Header.getIDString(file, 3);
             if (headerID.startsWith("GIF") == true) {
                 return true;

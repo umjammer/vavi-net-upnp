@@ -10,11 +10,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -24,6 +24,8 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class WasherPane extends JPanel {
+
+    private static final Logger logger = System.getLogger(WasherPane.class.getName());
 
     /** */
     public WasherPane() {
@@ -53,7 +55,7 @@ public class WasherPane extends JPanel {
             anim1Image = ImageIO.read(washer.WasherFrame.class.getResource(WASHER_ANIM_IMAGE1));
             anim2Image = ImageIO.read(washer.WasherFrame.class.getResource(WASHER_ANIM_IMAGE2));
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 

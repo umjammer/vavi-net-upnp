@@ -6,7 +6,8 @@
 
 package vavi.net.upnp.ssdp;
 
-import vavi.util.Debug;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 
 /**
@@ -18,6 +19,8 @@ import vavi.util.Debug;
  *          05/13/03 Added constants for IPv6. <br>
  */
 public class SSDP {
+
+    private static final Logger logger = System.getLogger(SSDP.class.getName());
 
     // Constants
     public static final int PORT = 1900;
@@ -81,7 +84,7 @@ public class SSDP {
             String mxString = new String(cacheCont.getBytes(), index + 1, cacheCont.length() - (index + 1));
             mx = Integer.parseInt(mxString);
         } catch (NumberFormatException e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e);
         }
         return mx;
     }

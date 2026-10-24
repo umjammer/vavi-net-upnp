@@ -11,6 +11,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -20,8 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import vavi.util.Debug;
-
 
 /**
  * ContentPane.
@@ -29,6 +29,8 @@ import vavi.util.Debug;
  * @version 01/28/04 first revision.
  */
 public class DirectoryAddPane implements ActionListener {
+
+    private static final Logger logger = System.getLogger(DirectoryAddPane.class.getName());
 
     // Member
 
@@ -112,6 +114,6 @@ public class DirectoryAddPane implements ActionListener {
         }
 
         Object srcObj = e.getSource();
-Debug.println(srcObj);
+logger.log(Level.DEBUG, srcObj);
     }
 }

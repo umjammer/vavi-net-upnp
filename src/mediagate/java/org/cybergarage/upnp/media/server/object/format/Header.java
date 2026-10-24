@@ -10,9 +10,9 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
-
-import vavi.util.Debug;
 
 
 /**
@@ -21,6 +21,8 @@ import vavi.util.Debug;
  * @version 12/04/03 first revision.
  */
 public abstract class Header {
+
+    private static final Logger logger = System.getLogger(Header.class.getName());
 
     // Header ID
 
@@ -39,7 +41,7 @@ public abstract class Header {
             dataIn.close();
         } catch (EOFException eofe) {
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
         return header;
     }
@@ -60,7 +62,7 @@ public abstract class Header {
         try {
             return getID(Files.newInputStream(file.toPath()), headerSize);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
             return new byte[0];
         }
     }
@@ -69,7 +71,7 @@ public abstract class Header {
         try {
             return getIDString(Files.newInputStream(file.toPath()), headerOffset, headerSize);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
             return "";
         }
     }

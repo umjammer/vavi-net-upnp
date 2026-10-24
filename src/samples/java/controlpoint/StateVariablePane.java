@@ -11,6 +11,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 
 import javax.swing.JButton;
@@ -26,7 +28,6 @@ import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.di.StateVariableSerdes;
 import vavi.net.upnp.soap.QueryResponse;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -37,6 +38,9 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class StateVariablePane extends JPanel {
+
+    private static final Logger logger = System.getLogger(StateVariablePane.class.getName());
+
     private final ControlPoint controlPoint;
 
     private final StateVariable stateVariable;
@@ -112,10 +116,10 @@ public class StateVariablePane extends JPanel {
                     message = queryResponse.getStatusMessage() + " (" + queryResponse.getStatus() + ")";
                 }
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 message = e.getClass() + " (" + e.getMessage() + ")";
             } catch (IllegalStateException e) {
-Debug.printStackTrace(e.getCause());
+logger.log(Level.ERROR, e.getCause().getMessage(), e.getCause());
                 message = e.getCause().getClass() + " (" + e.getCause().getMessage() + ")";
             }
 

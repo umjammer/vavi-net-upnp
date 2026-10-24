@@ -158,7 +158,7 @@ public class Subscriber {
             return;
         }
         notifyCount++;
-//Debug.println("notifyCount: " + notifyCount);
+//logger.log(Level.DEBUG, "notifyCount: " + notifyCount);
     }
 
     /** renew */

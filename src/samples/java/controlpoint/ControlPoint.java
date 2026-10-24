@@ -28,7 +28,7 @@ public class ControlPoint extends vavi.net.upnp.ControlPoint {
 
     private final static String TITLE = "CyberLink Sample Control Point";
 
-    public static int DEFAULT_WIDTH = 640;
+    public static final int DEFAULT_WIDTH = 640;
 
     public final static int DEFAULT_HEIGHT = 480;
 
@@ -91,9 +91,9 @@ public class ControlPoint extends vavi.net.upnp.ControlPoint {
     private final NotifyListener notifyListener = new NotifyListener() {
         @Override
         public void deviceNotifyReceived(SsdpRequest packet) {
-//System.out.println("-------- request: SSDP");
-//System.out.println(packet.toString());
-//System.out.println("--------");
+//logger.log(Level.DEBUG, "-------- request: SSDP");
+//logger.log(Level.DEBUG, packet.toString());
+//logger.log(Level.DEBUG, "--------");
             if (packet.isDiscover()) {
                 String st = packet.getST();
                 printConsole("ssdp:discover : ST = " + st);

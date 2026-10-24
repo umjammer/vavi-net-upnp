@@ -10,25 +10,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
-
 import vavi.net.upnp.Device;
 import vavi.net.upnp.Icon;
 import vavi.net.upnp.Service;
 import vavi.net.upnp.UPnP;
 import vavi.net.util.Serdes;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 import vavi.xml.util.PrettyPrinter;
 
@@ -40,6 +37,8 @@ import vavi.xml.util.PrettyPrinter;
  * @version 0.00 050920 nsano initial version <br>
  */
 public class DeviceSerdes extends Singleton implements Serdes<Device, InputStream, OutputStream> {
+
+    private static final Logger logger = System.getLogger(DeviceSerdes.class.getName());
 
     /** */
     private static final ServiceSerdes serviceSerdes = Singleton.getInstance(ServiceSerdes.class);
@@ -168,14 +167,14 @@ public class DeviceSerdes extends Singleton implements Serdes<Device, InputStrea
         try {
             //
             final String ELEM_XPATH = "/" + Device.XMLNS + ":" + "root" + "/" + Device.XMLNS + ":" + "device";
-Debug.println("ELEM_XPATH: " + ELEM_XPATH);
+logger.log(Level.DEBUG, "ELEM_XPATH: " + ELEM_XPATH);
             Node deviceNode = (Node) SerdesUtil.getXPath().evaluate(ELEM_XPATH, document, XPathConstants.NODE);
             if (deviceNode == null) {
 new PrettyPrinter(System.err).print(document);
                 throw new IllegalArgumentException("no root device node");
             }
             copyPropertiesInternal(deviceNode, device);
-Debug.println(Level.FINER, "Device [root]: " + device.getFriendlyName());
+logger.log(Level.DEBUG, "Device [root]: " + device.getFriendlyName());
             // TODO check
             final String DEVICE_LIST_XPATH = ".//" + Device.XMLNS + ":" + "deviceList" + "/" + Device.XMLNS + ":" + "device";
             NodeList childDeviceNodes = (NodeList) SerdesUtil.getXPath().evaluate(DEVICE_LIST_XPATH, deviceNode, XPathConstants.NODESET);
@@ -186,7 +185,7 @@ Debug.println(Level.FINER, "Device [root]: " + device.getFriendlyName());
                 childDevice.setParentDevice(device);
                 copyPropertiesInternal(childDeviceNode, childDevice);
                 device.getChildDevices().add(childDevice);
-Debug.println(Level.FINER, "Device [" + n + "]: " + childDevice.getFriendlyName());
+logger.log(Level.DEBUG, "Device [" + n + "]: " + childDevice.getFriendlyName());
             }
         } catch (XPathExpressionException e) {
             throw new IllegalStateException(e);

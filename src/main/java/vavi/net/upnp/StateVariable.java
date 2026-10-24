@@ -7,6 +7,8 @@
 package vavi.net.upnp;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,6 @@ import vavi.net.upnp.gena.Subscriber;
 import vavi.net.upnp.soap.QueryRequest;
 import vavi.net.upnp.soap.QueryResponse;
 import vavi.net.util.SoapUtil;
-import vavi.util.Debug;
 
 
 /**
@@ -48,6 +49,8 @@ import vavi.util.Debug;
  *          <br>
  */
 public class StateVariable {
+
+    private static final Logger logger = System.getLogger(StateVariable.class.getName());
 
     /** parent */
     private Service service;
@@ -118,7 +121,7 @@ public class StateVariable {
         this.value = value;
 
         if (service == null) {
-Debug.println("no service");
+logger.log(Level.DEBUG, "no service");
             return; // for dummy variable
         }
 
@@ -126,7 +129,7 @@ Debug.println("no service");
         if (sendEvents) {
             doNotify();
         } else {
-Debug.println("not sendEvents");
+logger.log(Level.DEBUG, "not sendEvents");
         }
     }
 
@@ -207,7 +210,7 @@ Debug.println("not sendEvents");
             String statusMessage = UPnPStatus.valueOf(statusCode).toString();
             response.setStatusMessage(statusMessage);
         } catch (IllegalArgumentException e) {
-Debug.print("undefined upnp status: " + statusCode);
+logger.log(Level.DEBUG, "undefined upnp status: " + statusCode);
         }
         if (statusCode == HttpURLConnection.HTTP_OK) {
             this.value = response.getValue();

@@ -9,6 +9,8 @@ package controlpoint;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 import java.util.List;
 
@@ -26,7 +28,6 @@ import vavi.net.upnp.Argument;
 import vavi.net.upnp.di.ActionSerdes;
 import vavi.net.upnp.soap.ActionResponse;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -37,6 +38,9 @@ import vavi.util.Singleton;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class ActionPane extends JPanel {
+
+    private static final Logger logger = System.getLogger(ActionPane.class.getName());
+
     private final ControlPoint controlPoint;
 
     private final Action action;
@@ -111,7 +115,7 @@ public class ActionPane extends JPanel {
                     message = new StringBuilder(controlResponse.getStatusMessage() + " (" + controlResponse.getStatus() + ")");
                 }
             } catch (IOException e) {
-                Debug.printStackTrace(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
                 message = new StringBuilder(e.getClass() + " (" + e.getMessage() + ")");
             }
 

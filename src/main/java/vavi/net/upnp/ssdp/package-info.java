@@ -5,3 +5,5 @@
  *  <li>separate FooSocket</li>
  * </ul>
  */
+
+package vavi.net.upnp.ssdp;

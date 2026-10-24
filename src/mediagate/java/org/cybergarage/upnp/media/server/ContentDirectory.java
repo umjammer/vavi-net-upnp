@@ -9,6 +9,8 @@ package org.cybergarage.upnp.media.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,11 +18,10 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.cybergarage.upnp.media.server.action.BrowseAction;
 import org.cybergarage.upnp.media.server.action.SearchAction;
 import org.cybergarage.upnp.media.server.object.ContentNode;
@@ -36,13 +37,11 @@ import org.cybergarage.upnp.media.server.object.search.TitleSearchCap;
 import org.cybergarage.upnp.media.server.object.sort.DCDateComparator;
 import org.cybergarage.upnp.media.server.object.sort.DCTitleComparator;
 import org.cybergarage.upnp.media.server.object.sort.UPnPClassComparator;
-
 import vavi.net.upnp.Action;
 import vavi.net.upnp.Argument;
 import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.event.QueryListener;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -64,6 +63,8 @@ import vavi.util.StringUtil;
  *          08/07/04 - Implemented for GetSearchCapabilities request.
  */
 public class ContentDirectory extends HttpServlet {
+
+    private static final Logger logger = System.getLogger(ContentDirectory.class.getName());
 
     // Constants
 
@@ -183,7 +184,7 @@ public class ContentDirectory extends HttpServlet {
 
     /** */
     public Format getFormat(File file) {
-Debug.println("formatList: " + formatList.size());
+logger.log(Level.DEBUG, "formatList: " + formatList.size());
         for (Format format : formatList) {
             if (format.equals(file)) {
                 return format;
@@ -414,7 +415,7 @@ Debug.println("formatList: " + formatList.size());
             action.getArgument(BrowseAction.TOTAL_MATCHES).setValue(String.valueOf(1));
             action.getArgument(BrowseAction.UPDATE_ID).setValue(String.valueOf(getSystemUpdateID()));
 
-            Debug.println(StringUtil.paramString(action));
+            logger.log(Level.DEBUG, StringUtil.paramString(action));
 
             return true;
         }
@@ -467,7 +468,7 @@ Debug.println("formatList: " + formatList.size());
         int nSortCrit = sortCritList.length;
         for (int n = 0; n < nSortCrit; n++) {
             String sortStr = sortCritList[n];
-            Debug.println("[" + n + "] = " + sortStr);
+            logger.log(Level.DEBUG, "[" + n + "] = " + sortStr);
             boolean ascSeq = true;
             char firstSortChar = sortStr.charAt(0);
             if (firstSortChar == '-')
@@ -477,8 +478,8 @@ Debug.println("formatList: " + formatList.size());
             Comparator<ContentNode> sortCap = getSortCap(sortStr);
             if (sortCap == null)
                 continue;
-            Debug.println("  ascSeq = " + ascSeq);
-            Debug.println("  sortCap = " + sortCap);
+            logger.log(Level.DEBUG, "  ascSeq = " + ascSeq);
+            logger.log(Level.DEBUG, "  sortCap = " + sortCap);
             sortContentNodeList(conNode, sortCap, ascSeq);
         }
 
@@ -690,7 +691,7 @@ Debug.println("formatList: " + formatList.size());
         Enumeration<?> paramList = request.getParameterNames();
         while (paramList.hasMoreElements()) {
             String name = (String) paramList.nextElement();
-Debug.println("[" + name + "] = " + Arrays.toString(request.getParameterValues(name)));
+logger.log(Level.DEBUG, "[" + name + "] = " + Arrays.toString(request.getParameterValues(name)));
         }
 
         // Getting item ID
@@ -767,7 +768,7 @@ Debug.println("[" + name + "] = " + Arrays.toString(request.getParameterValues(n
 
     /** */
     private final Runnable handler = () -> {
-Debug.println("+++ ContentDirectory server started");
+logger.log(Level.DEBUG, "+++ ContentDirectory server started");
         MediaServer mediaServer = getMediaServer();
         StateVariable systemUpdateId = mediaServer.getStateVariable(SYSTEM_UPDATE_ID);
 

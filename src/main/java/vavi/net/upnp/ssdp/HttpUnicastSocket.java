@@ -58,8 +58,7 @@ public class HttpUnicastSocket {
         open(bindPort);
     }
 
-    @Override
-    protected void finalize() {
+    protected void dispose() {
         close();
     }
 
@@ -122,7 +121,7 @@ public class HttpUnicastSocket {
         InetAddress inetAddress = InetAddress.getByName(address);
         DatagramPacket datagramPacket = new DatagramPacket(message, message.length, inetAddress, port);
         ssdpUnicastSocket.send(datagramPacket);
-//Debug.println(">>>> SENT (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + new String(message));
+//logger.log(Level.DEBUG, ">>>> SENT (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + new String(message));
     }
 
     /** receive */
@@ -136,7 +135,7 @@ public class HttpUnicastSocket {
 //      String localHost = ((InetSocketAddress) ssdpUnicastSocket.getLocalSocketAddress()).getHostName();
         int localPort = ((InetSocketAddress) ssdpUnicastSocket.getLocalSocketAddress()).getPort();
         SsdpRequest receivedPacket = new SsdpRequest(datagramPacket, getLocalAddress(), localPort);
-//Debug.println("<<<< RECEIVED (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + recvPacket);
+//logger.log(Level.DEBUG, "<<<< RECEIVED (unicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + recvPacket);
         receivedPacket.setLastModified(System.currentTimeMillis());
 
         return receivedPacket;

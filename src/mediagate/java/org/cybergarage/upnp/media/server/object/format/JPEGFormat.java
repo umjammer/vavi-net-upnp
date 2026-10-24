@@ -42,7 +42,7 @@ public class JPEGFormat extends ImageIOFormat {
 
     public boolean equals(Object object) {
         if (object instanceof File file) {
-            //Debug.println("file: " + file);
+            //logger.log(Level.DEBUG, "file: " + file);
             byte[] headerID = Header.getID(file, 2);
             int header1 = headerID[0] & 0xff;
             int header2 = headerID[1] & 0xff;

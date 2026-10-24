@@ -7,6 +7,8 @@
 package org.cybergarage.upnp.media.server.directory.file;
 
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +21,6 @@ import org.cybergarage.upnp.media.server.object.Format;
 import org.cybergarage.upnp.media.server.object.FormatObject;
 import org.cybergarage.upnp.media.server.object.item.file.FileItemNode;
 
-import vavi.util.Debug;
-
 
 /**
  * FileDirectory
@@ -28,6 +28,8 @@ import vavi.util.Debug;
  * @version	021004	first revision.
  */
 public class FileDirectory extends Directory {
+
+    private static final Logger logger = System.getLogger(FileDirectory.class.getName());
 
     // Constructor
     public FileDirectory(String name, String path) {
@@ -85,7 +87,7 @@ public class FileDirectory extends Directory {
             long fileSize = file.length();
             itemNode.setStorageUsed(fileSize);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
 
         // ProtocolInfo

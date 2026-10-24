@@ -6,6 +6,8 @@
 
 package vavi.net.upnp.device;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -14,7 +16,6 @@ import java.util.concurrent.Future;
 
 import vavi.net.upnp.ControlPoint;
 import vavi.net.upnp.Device;
-import vavi.util.Debug;
 
 
 /**
@@ -25,6 +26,8 @@ import vavi.util.Debug;
  * @version 01/05/04 first revision.
  */
 public class Disposer {
+
+    private static final Logger logger = System.getLogger(Disposer.class.getName());
 
     /** Member */
     private final ControlPoint controlPoint;
@@ -64,7 +67,7 @@ public class Disposer {
     /** Thread */
     private final Runnable disposer = () -> {
         try {
-Debug.println("+++ Disposer started");
+logger.log(Level.DEBUG, "+++ Disposer started");
             long monitorInterval = expiredDeviceMonitoringInterval * 1000;
 
             while (true) {
@@ -72,9 +75,9 @@ Debug.println("+++ Disposer started");
                 removeExpiredDevices();
             }
         } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
         } finally {
-Debug.println("--- Disposer stopped");
+logger.log(Level.DEBUG, "--- Disposer stopped");
         }
     };
 
@@ -83,7 +86,7 @@ Debug.println("--- Disposer stopped");
         List<Device> copiedDeviceList = new ArrayList<>(controlPoint.getDeviceList());
         for (Device device : copiedDeviceList) {
             if (device.isExpired()) {
-Debug.println("Expired device: " + device.getFriendlyName());
+logger.log(Level.DEBUG, "Expired device: " + device.getFriendlyName());
                 controlPoint.getDeviceList().remove(device);
             }
         }

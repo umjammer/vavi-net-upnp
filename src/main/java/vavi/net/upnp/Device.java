@@ -12,6 +12,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import vavi.net.http.HttpRequestListener;
 import vavi.net.http.HttpServer;
@@ -50,7 +52,6 @@ import vavi.net.upnp.ssdp.SsdpRequest;
 import vavi.net.upnp.ssdp.SsdpResponse;
 import vavi.net.util.SoapUtil;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -127,6 +128,9 @@ import vavi.util.StringUtil;
  *          sub devices. <br>
  */
 public class Device {
+
+    private static final Logger logger = System.getLogger(Device.class.getName());
+
     /** xmlns */
     public static final String XMLNS = "urn:schemas-upnp-org:device-1-0";
 
@@ -262,9 +266,9 @@ public class Device {
         if (descriptionURL == null) {
             return "";
         }
-//Debug.println("getPath: " + descriptionURL.getPath());
-//Debug.println("getFile: " + descriptionURL.getFile());
-//Debug.println("return: " + descriptionURL.getPath().substring(0, descriptionURL.getPath().lastIndexOf('/')));
+//logger.log(Level.DEBUG, "getPath: " + descriptionURL.getPath());
+//logger.log(Level.DEBUG, "getFile: " + descriptionURL.getFile());
+//logger.log(Level.DEBUG, "return: " + descriptionURL.getPath().substring(0, descriptionURL.getPath().lastIndexOf('/')));
         return descriptionURL.getPath().substring(0, descriptionURL.getPath().lastIndexOf('/'));
     }
 
@@ -351,7 +355,7 @@ public class Device {
         if (isRootDevice()) {
             this.urlBase = urlBase;
         } else {
-Debug.println("called against not root");
+logger.log(Level.DEBUG, "called against not root");
         }
     }
 
@@ -363,7 +367,7 @@ Debug.println("called against not root");
         if (isRootDevice()) {
             return urlBase;
         } else {
-Debug.println("called against not root");
+logger.log(Level.DEBUG, "called against not root");
             return "";
         }
     }
@@ -834,7 +838,7 @@ Debug.println("called against not root");
         String host = request.getRemoteHost();
         int port = request.getRemotePort();
         HttpUnicastSocket httpUnicastSocket = new HttpUnicastSocket();
-//Debug.print(response);
+//logger.log(Level.DEBUG, response);
 
         int ssdpCount = getSSDPAnnounceCount();
         for (int i = 0; i < ssdpCount; i++) {
@@ -891,11 +895,11 @@ Debug.println("called against not root");
     }
 
     /** TODO protected ? */
-    protected SearchListener searchListener = request -> {
+    protected final SearchListener searchListener = request -> {
         try {
             deviceSearchResponse(request);
         } catch (IOException e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     };
 
@@ -921,12 +925,12 @@ Debug.println("called against not root");
 
         Device rootDevice = getRootDevice();
         assert rootDevice != null : "no root device";
-//Debug.println("***\n" + DeviceFactory.toString(rootDevice));
+//logger.log(Level.DEBUG, "***\n" + DeviceFactory.toString(rootDevice));
         return DeviceFactory.toString(rootDevice).getBytes();
     }
 
     /** TODO protect ? */
-    protected HttpRequestListener httpRequestListener = new HttpRequestListener() {
+    protected final HttpRequestListener httpRequestListener = new HttpRequestListener() {
         @Override
         public void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             if (request.getMethod().equals("GET")) {
@@ -944,7 +948,7 @@ Debug.println("called against not root");
         /** GET */
         private void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             String uri = request.getRequestURI();
-Debug.print("--- DO GET: " + uri);
+logger.log(Level.DEBUG, "--- DO GET: " + uri);
             if (uri == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
@@ -1001,7 +1005,7 @@ Debug.print("--- DO GET: " + uri);
 
         /** POST (SOAP) */
         private void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-Debug.print("--- DO POST: " + request.getInputStream().available() + " bytes, " + request.getInputStream());
+logger.log(Level.DEBUG, "--- DO POST: " + request.getInputStream().available() + " bytes, " + request.getInputStream());
             if (request.getHeader("SOAPACTION") != null) {
                 soapActionReceived(request, response);
             } else {
@@ -1011,7 +1015,7 @@ Debug.print("--- DO POST: " + request.getInputStream().available() + " bytes, " 
 
         /** SUBSCRIBE/UNSUBSCRIBE */
         private void deviceEventSubscriptionReceived(SubscriptionRequest request, SubscriptionResponse response) throws ServletException, IOException {
-Debug.print("--- DO SUBSCRIBE/UNSUBSCRIBE: " + request.getRequestURI() + ": " + StringUtil.paramString(request.getHeaders()));
+logger.log(Level.DEBUG, "--- DO SUBSCRIBE/UNSUBSCRIBE: " + request.getRequestURI() + ": " + StringUtil.paramString(request.getHeaders()));
             response.setMethod(request.getMethod());
             // TODO check dup below
             response.setRemoteHost(request.getRemoteHost());
@@ -1025,7 +1029,7 @@ Debug.print("--- DO SUBSCRIBE/UNSUBSCRIBE: " + request.getRequestURI() + ": " + 
                 throw new ServletException("no service for: " + uri);
             }
             if (!request.hasCallback() && !request.hasSID()) {
-Debug.println("subscribe error: no sid and timeout");
+logger.log(Level.DEBUG, "subscribe error: no sid and timeout");
                 upnpBadSubscriptionReceived(request, response, HttpServletResponse.SC_PRECONDITION_FAILED);
                 return;
             }
@@ -1048,7 +1052,7 @@ Debug.println("subscribe error: no sid and timeout");
                 return;
             }
 
-Debug.println("subscribe error: illegal state");
+logger.log(Level.DEBUG, "subscribe error: illegal state");
             upnpBadSubscriptionReceived(request, response, HttpServletResponse.SC_PRECONDITION_FAILED);
         }
 
@@ -1060,13 +1064,13 @@ Debug.println("subscribe error: illegal state");
 
         /** SOAP action */
         private void soapActionReceived(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//Debug.print("input stream: " + request.getInputStream().available() + ", " + request.getInputStream());
+//logger.log(Level.DEBUG, "input stream: " + request.getInputStream().available() + ", " + request.getInputStream());
             String uri = request.getRequestURI();
             Service controlService = getServiceByControlURL(uri);
             if (controlService != null) {
                 deviceControlRequestReceived(request, response, controlService);
             } else {
-Debug.println("no such service for uri: " + uri);
+logger.log(Level.DEBUG, "no such service for uri: " + uri);
                 soapBadActionReceived(request, response);
             }
         }
@@ -1092,7 +1096,7 @@ Debug.println("no such service for uri: " + uri);
          * @throws IllegalStateException 
          */
         private static void deviceActionControlReceived(ActionRequest request, ActionResponse response, Service service) throws IOException {
-Debug.print("Action: " + request.getActionName());
+logger.log(Level.DEBUG, "Action: " + request.getActionName());
 
             Action action = service.getAction(request.getActionName());
             if (action == null) {
@@ -1120,7 +1124,7 @@ Debug.print("Action: " + request.getActionName());
          * @throws IllegalStateException 
          */
         private void deviceQueryControlReceived(QueryRequest request, QueryResponse response, Service service) throws IOException {
-Debug.print("Query: " + request.getVarName());
+logger.log(Level.DEBUG, "Query: " + request.getVarName());
 
             String varName = request.getVarName();
             if (service.getStateVariable(varName) == null) {
@@ -1153,7 +1157,7 @@ Debug.print("Query: " + request.getVarName());
             try {
                 new URL(callback);
             } catch (MalformedURLException e) {
-Debug.println("bad callback url: " + callback);
+logger.log(Level.DEBUG, "bad callback url: " + callback);
                 upnpBadSubscriptionReceived(request, response, HttpServletResponse.SC_PRECONDITION_FAILED);
                 return;
             }
@@ -1170,7 +1174,7 @@ Debug.println("bad callback url: " + callback);
             response.setStatus(HttpServletResponse.SC_OK);
             response.setSID(sid);
             response.setTimeout(timeout);
-//Debug.println(response);
+//logger.log(Level.DEBUG, response);
             HttpUtil.postResponse(response);
 
             // TODO If an error occurs here, the above response will be followed by an error response.
@@ -1182,7 +1186,7 @@ Debug.println("bad callback url: " + callback);
             String sid = request.getSID();
             Subscriber subscriber = service.getSubscriber(sid);
             if (subscriber == null) {
-Debug.println("no subscriber: " + sid);
+logger.log(Level.DEBUG, "no subscriber: " + sid);
                 upnpBadSubscriptionReceived(request, response, HttpServletResponse.SC_PRECONDITION_FAILED);
                 return;
             }
@@ -1202,7 +1206,7 @@ Debug.println("no subscriber: " + sid);
             String sid = request.getSID();
             Subscriber subscriber = service.getSubscriber(sid);
             if (subscriber == null) {
-Debug.println("no subscriber: " + sid);
+logger.log(Level.DEBUG, "no subscriber: " + sid);
                 upnpBadSubscriptionReceived(request, response, HttpServletResponse.SC_PRECONDITION_FAILED);
                 return;
             }
@@ -1259,8 +1263,8 @@ Debug.println("no subscriber: " + sid);
                 SearchReceiver searchReceiver = new SearchReceiver(bindAddress);
                 searchReceiverList.add(searchReceiver);
             } catch (IOException e) {
-//Debug.printStackTrace(e);
-Debug.println("cannot create socket: " + n + ": " + bindAddress + ": " + e.getMessage());
+//logger.log(Level.ERROR, e.getMessage(), e);
+logger.log(Level.DEBUG, "cannot create socket: " + n + ": " + bindAddress + ": " + e.getMessage());
             }
         }
         for (SearchReceiver searchReceiver : searchReceiverList) {

@@ -13,12 +13,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -28,6 +28,8 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class TvPane extends JPanel { // MouseListener
+
+    private static final Logger logger = System.getLogger(TvPane.class.getName());
 
     private final static int IMAGE_BORDER_SIZE = 20;
 
@@ -55,7 +57,7 @@ public class TvPane extends JPanel { // MouseListener
 
     private final static String TV_ON_IMAGE = "/images/tvon.jpg";
 
-    private BufferedImage panelmage;
+    private BufferedImage panelImage;
 
     private BufferedImage tvOnImage;
 
@@ -63,17 +65,17 @@ public class TvPane extends JPanel { // MouseListener
         URL f;
         try {
             f = TvPane.class.getResource(TV_PANEL_IMAGE);
-            panelmage = ImageIO.read(f);
+            panelImage = ImageIO.read(f);
             f = TvPane.class.getResource(TV_ON_IMAGE);
             tvOnImage = ImageIO.read(f);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
     // Background
     private void initPanel() {
-        setPreferredSize(new Dimension(panelmage.getWidth(), panelmage.getHeight()));
+        setPreferredSize(new Dimension(panelImage.getWidth(), panelImage.getHeight()));
     }
 
     // Font
@@ -165,7 +167,7 @@ public class TvPane extends JPanel { // MouseListener
     }
 
     private void drawPanelImage(Graphics g) {
-        g.drawImage(panelmage, 0, 0, null);
+        g.drawImage(panelImage, 0, 0, null);
     }
 
     @Override
@@ -174,7 +176,7 @@ public class TvPane extends JPanel { // MouseListener
         drawPanelImage(g);
 
         TvDevice tvDev = getDevice();
-        if (tvDev.isOn() == true) {
+        if (tvDev.isOn()) {
             drawTvImage(g);
             drawClockInfo(g);
         }

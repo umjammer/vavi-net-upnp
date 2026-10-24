@@ -8,6 +8,8 @@ package light;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 
 import vavi.net.upnp.Action;
@@ -17,7 +19,6 @@ import vavi.net.upnp.Service;
 import vavi.net.upnp.StateVariable;
 import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.event.QueryListener;
-import vavi.util.Debug;
 
 
 /**
@@ -27,6 +28,9 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class LightDevice extends Device {
+
+    private static final Logger logger = System.getLogger(LightDevice.class.getName());
+
     /** */
     private final static String DESCRIPTION_FILE_NAME = "light/description/description.xml";
     /** */
@@ -52,13 +56,13 @@ public class LightDevice extends Device {
         StateVariable powerState = powerArg.getRelatedStateVariable();
         List<String> allowList = powerState.getAllowedValueList();
         for (int n = 0; n < allowList.size(); n++) {
-//Debug.println("[" + n + "] = " + allowList.get(n));
+//logger.log(Level.DEBUG, "[" + n + "] = " + allowList.get(n));
         }
 
 //      AllowedValueRange allowRange = powerState.getAllowedValueRange();
-//Debug.println("maximum = " + allowRange.getMaximum());
-//Debug.println("minimum = " + allowRange.getMinimum());
-//Debug.println("step = " + allowRange.getStep());
+//logger.log(Level.DEBUG, "maximum = " + allowRange.getMaximum());
+//logger.log(Level.DEBUG, "minimum = " + allowRange.getMinimum());
+//logger.log(Level.DEBUG, "step = " + allowRange.getStep());
     }
 
     /** Component */
@@ -83,7 +87,7 @@ public class LightDevice extends Device {
         try {
             powerVar.setValue("on");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -93,7 +97,7 @@ public class LightDevice extends Device {
         try {
             powerVar.setValue("off");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -111,13 +115,13 @@ public class LightDevice extends Device {
         } else if (state.equals("0")) {
             off();
         } else {
-            Debug.println("unknown state: " + state);
+            logger.log(Level.DEBUG, "unknown state: " + state);
         }
     }
 
     /** */
     public String getPowerState() {
-        return onFlag == true ? "1" : "0";
+        return onFlag ? "1" : "0";
     }
 
     /** ActionListener */
@@ -156,7 +160,7 @@ public class LightDevice extends Device {
             stateVar.setValue(getPowerState());
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, e.getMessage(), e);
             return false;
         }
     };

@@ -78,7 +78,7 @@ public final class DeviceFactory {
         if (!device.hasUDN()) {
             device.setUDN("uuid:" + device.getUUID());
         }
-//Debug.println("url: " + url);
+//logger.log(Level.DEBUG, "url: " + url);
         InputStream is = new BufferedInputStream(url.openStream());
         deviceSerdes.deserialize(is, device);
     }

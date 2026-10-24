@@ -7,6 +7,8 @@
 package controlpoint;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 
 import javax.swing.JTree;
@@ -28,6 +30,9 @@ import vavi.net.upnp.StateVariable;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class TreeComponent extends JTree {
+
+    private static final Logger logger = System.getLogger(TreeComponent.class.getName());
+
     public TreeComponent(TreeNode root) {
         super(root);
         setRootNode(root);
@@ -60,7 +65,7 @@ public class TreeComponent extends JTree {
             ((DefaultTreeModel) getModel()).reload();
             repaint();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 

@@ -7,11 +7,14 @@
 package vavi.net.util;
 
 import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPMessage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 import vavi.net.http.HttpProtocol;
@@ -26,11 +29,13 @@ import vavi.net.http.HttpUtil;
  */
 public abstract class SOAPRequest extends HttpContext {
 
-    /** */
-    protected static MessageFactory messageFactory;
+    private static final Logger logger = System.getLogger(SOAPRequest.class.getName());
 
     /** */
-    protected static SOAPFactory soapFactory;
+    protected static final MessageFactory messageFactory;
+
+    /** */
+    protected static final SOAPFactory soapFactory;
 
     /** SOAP message */
     protected SOAPMessage soapMessage;
@@ -59,10 +64,10 @@ public abstract class SOAPRequest extends HttpContext {
     public SOAPRequest(HttpServletRequest request) {
         HttpUtil.copy(request, this);
         try {
-System.out.println("-------- request: " + is.available() + " bytes");
+logger.log(Level.DEBUG, "-------- request: " + is.available() + " bytes");
             soapMessage = SoapUtil.getSOAPMessage(headers, SoapUtil.getFixedInputStream(is));
 soapMessage.writeTo(System.out);
-System.out.println("\n--------");
+logger.log(Level.DEBUG, "\n--------");
         } catch (IOException e) {
             throw new IllegalStateException(e);
         } catch (SOAPException e) {

@@ -10,6 +10,8 @@ package org.cybergarage.upnp.media.server.object.item.mythtv;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,6 @@ import org.cybergarage.upnp.media.server.directory.mythtv.MythRecordedInfo;
 import org.cybergarage.upnp.media.server.object.item.ItemNode;
 
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -34,6 +35,8 @@ import vavi.util.Debug;
  *                   Added the size attribute to the protocolInfo.
  */
 public class MythRecordedItemNode extends ItemNode {
+
+    private static final Logger logger = System.getLogger(MythRecordedItemNode.class.getName());
 
     // Constants
 
@@ -79,7 +82,7 @@ public class MythRecordedItemNode extends ItemNode {
             fileSize = recFile.length();
             setStorageUsed(fileSize);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
 
         // ProtocolInfo
@@ -96,6 +99,7 @@ public class MythRecordedItemNode extends ItemNode {
 
     // equals
 
+    @Override
     public boolean equals(Object o) {
         MythRecordedInfo recInfo = getRecordedInfo();
         if ((o == null) || (recInfo == null)) {
@@ -112,7 +116,7 @@ public class MythRecordedItemNode extends ItemNode {
 
     public byte[] getContent() {
         File recFile = getRecordedInfo().getFile();
-        if (recFile.exists() == false) {
+        if (!recFile.exists()) {
             return new byte[0];
         }
 
@@ -120,7 +124,7 @@ public class MythRecordedItemNode extends ItemNode {
         try {
             fileByte = load(recFile);
         } catch (IOException e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
         }
         return fileByte;
     }
@@ -137,7 +141,7 @@ public class MythRecordedItemNode extends ItemNode {
             File recFile = getRecordedInfo().getFile();
             return Files.newInputStream(recFile.toPath());
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
         }
         return null;
     }

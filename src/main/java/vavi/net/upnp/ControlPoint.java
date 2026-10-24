@@ -7,15 +7,17 @@
 package vavi.net.upnp;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
 
 import vavi.net.http.HttpContext;
@@ -39,7 +41,6 @@ import vavi.net.upnp.ssdp.SsdpRequest;
 import vavi.net.upnp.ssdp.SsdpSearchRequest;
 import vavi.net.upnp.ssdp.SearchResponseReceiver;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -89,6 +90,9 @@ import vavi.util.StringUtil;
  *          03/30/05 Changed addDevice() to use Parser::parse(URL). <br>
  */
 public class ControlPoint {
+
+    private static final Logger logger = System.getLogger(ControlPoint.class.getName());
+
     /** */
     private final static int DEFAULT_EVENTSUB_PORT = 8058;
 
@@ -118,8 +122,7 @@ public class ControlPoint {
         this(DEFAULT_SSDP_PORT, DEFAULT_EVENTSUB_PORT);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
+    protected void dispose() throws Throwable {
         stop();
     }
 
@@ -175,11 +178,11 @@ public class ControlPoint {
         }
 
         String location = ssdpPacket.getLocation();
-Debug.println("Device location: " + location);
+logger.log(Level.DEBUG, "Device location: " + location);
         Device rootDevice = new Device();
         rootDevice.setSSDPPacket(ssdpPacket);
         DeviceFactory.inject(new URL(location), rootDevice);
-Debug.println("Device added: " + rootDevice.getFriendlyName());
+logger.log(Level.DEBUG, "Device added: " + rootDevice.getFriendlyName());
         deviceList.add(rootDevice);
 
         // Thanks for Oliver Newell (2004/10/16)
@@ -207,7 +210,7 @@ Debug.println("Device added: " + rootDevice.getFriendlyName());
                 return childDevice;
             }
         }
-Debug.println("no such device: " + name);
+logger.log(Level.DEBUG, "no such device: " + name);
         return null;
     }
 
@@ -331,7 +334,7 @@ Debug.println("no such device: " + name);
         String interfaceAddress = rootDevice.getSSDPPacket() == null ? "" : rootDevice.getSSDPPacket().getLocalHost();
         SubscriptionRequest request = new SubscriptionRequest();
         request.setSubscribeRequest(service, getEventSubCallbackURL(interfaceAddress), timeout);
-Debug.print(StringUtil.paramString(request));
+logger.log(Level.DEBUG, StringUtil.paramString(request));
 
         HttpContext responseContext  = HttpUtil.postRequest(request);
         SubscriptionResponse response = new SubscriptionResponse(responseContext);
@@ -349,11 +352,11 @@ Debug.print(StringUtil.paramString(request));
     public boolean subscribe(Service service, String uuid, long timeout) throws IOException {
         SubscriptionRequest request = new SubscriptionRequest();
         request.setRenewRequest(service, uuid, timeout);
-Debug.print(StringUtil.paramString(request));
+logger.log(Level.DEBUG, StringUtil.paramString(request));
 
         HttpContext responseContext  = HttpUtil.postRequest(request);
         SubscriptionResponse response = new SubscriptionResponse(responseContext);
-//Debug.print(response);
+//logger.log(Level.DEBUG, response);
         if (HttpUtil.isStatusCodeSucces(response.getStatus())) {
             service.setSID(response.getSID());
             service.setTimeout(response.getTimeout());
@@ -463,7 +466,7 @@ Debug.print(StringUtil.paramString(request));
     private final HttpRequestListener httpRequestListener = new HttpRequestListener() {
         @Override
         public void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//Debug.println(StringUtil.paramString(request));
+//logger.log(Level.DEBUG, StringUtil.paramString(request));
 
             // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/08/03)
             if (request.getMethod().equals("NOTIFY")) {
@@ -511,7 +514,7 @@ Debug.print(StringUtil.paramString(request));
                 httpServer.start();
                 break;
             } catch (IOException e) {
-//Debug.println(e);
+//logger.log(Level.DEBUG, e);
                 retryCount++;
                 httpPort++;
             }
@@ -530,7 +533,7 @@ Debug.print(StringUtil.paramString(request));
                 notifyReceiver.setControlPoint(this);
                 notifyReceiver.start();
             } catch (IOException e) {
-Debug.println("cannot create socket: " + n + ": " + bindAddress + ": " + e.getMessage());
+logger.log(Level.DEBUG, "cannot create socket: " + n + ": " + bindAddress + ": " + e.getMessage());
             }
         }
 

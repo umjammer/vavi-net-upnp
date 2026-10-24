@@ -70,7 +70,7 @@ public class ActionSerdes extends Singleton implements Serdes<Action, Node, Node
                 Argument argument = new Argument();
                 argument.setAction(action);
                 argumentSerdes.deserialize(argumentNode, argument);
-//Debug.println("Argument[" + n + "]: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getRelatedStateVariableName());
+//logger.log(Level.DEBUG, "Argument[" + n + "]: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getRelatedStateVariableName());
                 action.getArgumentList().add(argument);
             }
 

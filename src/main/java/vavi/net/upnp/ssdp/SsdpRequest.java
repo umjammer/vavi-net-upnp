@@ -45,7 +45,7 @@ public class SsdpRequest extends SsdpContext {
 
         this.data = new byte[datagramPacket.getLength()];
         System.arraycopy(datagramPacket.getData(), 0, data, 0, data.length);
-//Debug.println("ssdp packet:\n" + this);
+//logger.log(Level.DEBUG, "ssdp packet:\n" + this);
         InputStream is = new ByteArrayInputStream(data);
         try {
             is.mark(4);

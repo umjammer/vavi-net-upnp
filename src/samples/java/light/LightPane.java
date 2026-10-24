@@ -10,12 +10,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -25,6 +25,8 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class LightPane extends JPanel {
+
+    private static final Logger logger = System.getLogger(LightPane.class.getName());
 
     /** Images */
     private final static String LIGHT_ON_PANEL_IMAGE = "/light/images/lighton.jpg";
@@ -47,7 +49,7 @@ public class LightPane extends JPanel {
         try {
             panelmage = ImageIO.read(f);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 

@@ -7,19 +7,20 @@
 package vavi.net.upnp.soap;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 import vavi.net.upnp.UPnP;
 import vavi.net.upnp.UPnPStatus;
 import vavi.net.util.SOAPResponse;
 import vavi.net.util.SoapUtil;
-import vavi.util.Debug;
 
 
 /**
@@ -31,10 +32,12 @@ import vavi.util.Debug;
  */
 public class ControlResponse extends SOAPResponse {
 
-    /* */
+    private static final Logger logger = System.getLogger(ControlResponse.class.getName());
+
+    /** */
     public static final String FAULT_CODE = "Client";
 
-    /* */
+    /** */
     public static final String FAULT_STRING = "UPnPError";
 
     /**
@@ -152,19 +155,19 @@ public class ControlResponse extends SOAPResponse {
 
         String contentType = response.getHeader("content-type");
         if ("text/xml".equals(contentType)) {
-Debug.println("response is not xml: " + contentType);
+logger.log(Level.DEBUG, "response is not xml: " + contentType);
             return;
         }
 
         try {
             if (is == null || is.available() == 0) {
-Debug.println("response has no contents");
+logger.log(Level.DEBUG, "response has no contents");
                 return;
             }
 
-//System.out.println("-------- response: " + is.available() + " bytes");
+//logger.log(Level.DEBUG, "-------- response: " + is.available() + " bytes");
             soapMessage = SoapUtil.getSOAPMessage(headers, is);
-//System.out.println("\n--------");
+//logger.log(Level.DEBUG, "\n--------");
         } catch (IOException | SOAPException e) {
             throw new IllegalStateException(e);
         }
@@ -189,7 +192,7 @@ Debug.println("response has no contents");
 // PrettyPrinter pp = new PrettyPrinter(System.out);
 // pp.print(body);
 //} catch (IOException e) {
-// e.printStackTrace();
+// logger.log(Level.ERROR, e.getMessage(), e);
 //}
             SOAPElement faultNode = (SOAPElement) body.getChildElements(soapFactory.createName("Fault", "s", "http://schemas.xmlsoap.org/soap/envelope/")).next();
             SOAPElement detailNode = (SOAPElement) faultNode.getChildElements(soapFactory.createName("detail")).next();

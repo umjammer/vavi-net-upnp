@@ -7,6 +7,8 @@
 package org.cybergarage.upnp.media.server.object.format;
 
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,6 @@ import org.cybergarage.upnp.media.server.object.FormatObject;
 import org.cybergarage.upnp.media.server.object.item.ItemNode;
 
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -27,6 +28,8 @@ import vavi.util.Debug;
  * @version 02/02/04 first revision.
  */
 public class MPEGFormat implements Format, FormatObject {
+
+    private static final Logger logger = System.getLogger(MPEGFormat.class.getName());
 
     // Member
     private File mpegFile;
@@ -42,7 +45,7 @@ public class MPEGFormat implements Format, FormatObject {
     // Abstract Methods
     public boolean equals(Object object) {
         if (object instanceof File file) {
-            //Debug.println("file: " + file);
+            //logger.log(Level.DEBUG, "file: " + file);
             String ext = Header.getSuffix(file);
             if (ext == null) {
                 return false;
@@ -82,7 +85,7 @@ public class MPEGFormat implements Format, FormatObject {
             sizeStr.setTextContent(Long.toString(fsize));
             attrList.add(sizeStr);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
 
         return attrList;

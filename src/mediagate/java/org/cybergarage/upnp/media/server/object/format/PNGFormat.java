@@ -37,7 +37,7 @@ public class PNGFormat extends ImageIOFormat {
 
     public boolean equals(Object object) {
         if (object instanceof File file) {
-            //Debug.println("file: " + file);
+            //logger.log(Level.DEBUG, "file: " + file);
             String headerID = Header.getIDString(file, 1, 3);
             if (headerID.startsWith("PNG")) {
                 return true;

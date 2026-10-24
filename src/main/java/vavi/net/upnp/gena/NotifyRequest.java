@@ -6,19 +6,20 @@
 
 package vavi.net.upnp.gena;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.upnp.UPnP;
 import vavi.net.util.SOAPRequest;
-import vavi.util.Debug;
 
 
 /**
@@ -55,6 +56,9 @@ import vavi.util.Debug;
  *          ControlPoint <br>
  */
 public class NotifyRequest extends SOAPRequest {
+
+    private static final Logger logger = System.getLogger(NotifyRequest.class.getName());
+
     /** */
     private final static String XMLNS_PREFIX = "e";
 
@@ -102,14 +106,14 @@ public class NotifyRequest extends SOAPRequest {
             
             // "//body/propertyset"
             SOAPElement propertysetNode = soapFactory.createElement(PROPERTYSET, XMLNS_PREFIX, Subscription.XMLNS);
-//Debug.println(Thread.currentThread().getName() + ": " + propertysetNode.getOwnerDocument().hashCode());    
+//logger.log(Level.DEBUG, Thread.currentThread().getName() + ": " + propertysetNode.getOwnerDocument().hashCode());    
             // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (05/22/03)
             Enumeration<?> e = properties.propertyNames();
             while (e.hasMoreElements()) {
                 // "//body/propertyset/property"
                 SOAPElement propertyNode = soapFactory.createElement(PROPERTY);
 //              propertyNode.setPrefix(XMLNS_PREFIX);
-//Debug.println(Thread.currentThread().getName() + ": " + propertysetNode.getOwnerDocument().hashCode() + ", " + propertyNode.getOwnerDocument().hashCode());
+//logger.log(Level.DEBUG, Thread.currentThread().getName() + ": " + propertysetNode.getOwnerDocument().hashCode() + ", " + propertyNode.getOwnerDocument().hashCode());
 
                 // "//body/propertyset/property/VARNAME"
                 String varName = (String) e.nextElement();
@@ -118,7 +122,7 @@ public class NotifyRequest extends SOAPRequest {
                 varNameNode.addTextNode(value);
 //              varNameNode.setPrefix(XMLNS_PREFIX);
                 propertyNode.addChildElement(varNameNode);
-Debug.println("property: " + varName + " = " + value);
+logger.log(Level.DEBUG, "property: " + varName + " = " + value);
 
                 propertysetNode.addChildElement(propertyNode);
             }
@@ -159,7 +163,7 @@ Debug.println("property: " + varName + " = " + value);
                 SOAPElement varNameNode = (SOAPElement) propertyNode.getChildElements().next();
                 String varName = varNameNode.getElementName().getLocalName();
                 String value = varNameNode.getValue();
-//Debug.println("@@@@@ property: " + varName + "=" + value);
+//logger.log(Level.DEBUG, "@@@@@ property: " + varName + "=" + value);
                 properties.setProperty(varName, value == null ? "" : value);
             }
     

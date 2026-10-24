@@ -6,10 +6,12 @@
 
 package vavi.net.upnp.gena;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import vavi.net.http.HttpContext;
 import vavi.net.http.HttpProtocol;
@@ -18,7 +20,6 @@ import vavi.net.upnp.Device;
 import vavi.net.upnp.Service;
 import vavi.net.upnp.UPnP;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -51,6 +52,8 @@ import vavi.util.Debug;
  *          Fixed getSID() to loop between getSID() and hasSID();
  */
 public class SubscriptionRequest extends HttpContext {
+
+    private static final Logger logger = System.getLogger(SubscriptionRequest.class.getName());
 
     /** (for server) */
     public SubscriptionRequest(HttpServletRequest request) {
@@ -134,7 +137,7 @@ public class SubscriptionRequest extends HttpContext {
                     new URL(eventSubURL);
                     urlBaseString = eventSubURL;
                 } catch (MalformedURLException e) {
-                    Debug.println(e);
+                    logger.log(Level.ERROR, e);
                 }
             }
         }

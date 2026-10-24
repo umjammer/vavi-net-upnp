@@ -88,7 +88,7 @@ public class RemoteController extends ControlPoint {
         String newPowerState = powerState.equals("1") ? "0" : "1";
 
         Action setPowerAction = device.getAction("SetPower");
-//Debug.println("setPowerAction: " + setPowerAction.getArgumentList().size() + ", " + setPowerAction.hashCode());
+//logger.log(Level.DEBUG, "setPowerAction: " + setPowerAction.getArgumentList().size() + ", " + setPowerAction.hashCode());
         setPowerAction.getArgument("Power").setValue(newPowerState);
         setPowerAction.postActionRequest();
     }

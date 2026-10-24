@@ -10,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +27,6 @@ import org.cybergarage.upnp.media.server.object.FormatObject;
 import org.cybergarage.upnp.media.server.object.item.ItemNode;
 
 import vavi.net.util.Util;
-import vavi.util.Debug;
 
 
 /**
@@ -34,6 +35,8 @@ import vavi.util.Debug;
  * @version 12/03/03 first revision.
  */
 public class ID3Format extends Header implements Format, FormatObject {
+
+    private static final Logger logger = System.getLogger(ID3Format.class.getName());
 
     // Constants
     public final static String HEADER_ID = "ID3";
@@ -120,7 +123,7 @@ public class ID3Format extends Header implements Format, FormatObject {
             dataIn.close();
         } catch (EOFException eofe) {
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
             return false;
         }
         return true;
@@ -130,7 +133,7 @@ public class ID3Format extends Header implements Format, FormatObject {
         try {
             return loadHeader(Files.newInputStream(file.toPath()));
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
             return false;
         }
     }
@@ -217,7 +220,7 @@ public class ID3Format extends Header implements Format, FormatObject {
 
     public boolean equals(Object object) {
         if (object instanceof File file) {
-            //Debug.println("file: " + file);
+            //logger.log(Level.DEBUG, "file: " + file);
             String headerID = Header.getIDString(file, 3);
             if (headerID.startsWith(HEADER_ID)) {
                 return true;
@@ -290,19 +293,19 @@ public class ID3Format extends Header implements Format, FormatObject {
 
     public void print() {
         String headerStr = new String(header);
-        System.out.println("header = " + headerStr);
-        System.out.println("ID = " + getHeaderID());
-        System.out.println("Size = " + getHeaderSize());
-        System.out.println("isUnsynchronisation = " + isUnsynchronisation());
-        System.out.println("hasExtendedHeader = " + hasExtendedHeader());
-        System.out.println("isExperimental = " + isExperimental());
-        System.out.println("hasFooter = " + hasFooter());
+        logger.log(Level.DEBUG, "header = " + headerStr);
+        logger.log(Level.DEBUG, "ID = " + getHeaderID());
+        logger.log(Level.DEBUG, "Size = " + getHeaderSize());
+        logger.log(Level.DEBUG, "isUnsynchronisation = " + isUnsynchronisation());
+        logger.log(Level.DEBUG, "hasExtendedHeader = " + hasExtendedHeader());
+        logger.log(Level.DEBUG, "isExperimental = " + isExperimental());
+        logger.log(Level.DEBUG, "hasFooter = " + hasFooter());
 
         int frameCnt = frameList.size();
         for (int n = 0; n < frameCnt; n++) {
             ID3Frame frame = frameList.get(n);
-            System.out.println("[" + n + "] : " + frame.getID());
-            System.out.println("     " + Arrays.toString(frame.getData()));
+            logger.log(Level.DEBUG, "[" + n + "] : " + frame.getID());
+            logger.log(Level.DEBUG, "     " + Arrays.toString(frame.getData()));
         }
     }
 }

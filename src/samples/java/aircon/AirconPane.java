@@ -11,12 +11,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import vavi.util.Debug;
 
 
 /**
@@ -26,6 +26,8 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class AirconPane extends JPanel {
+
+    private static final Logger logger = System.getLogger(AirconPane.class.getName());
 
     public AirconPane() {
         loadImage();
@@ -41,7 +43,7 @@ public class AirconPane extends JPanel {
         try {
             panelmage = ImageIO.read(f);
         } catch (Exception e) {
-            Debug.println(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
@@ -49,15 +51,12 @@ public class AirconPane extends JPanel {
         return panelmage;
     }
 
-
     //	Background
 
     private void initPanel() {
         BufferedImage panelmage = getPaneImage();
-        setPreferredSize(new Dimension(panelmage.getWidth(),
-                                       panelmage.getHeight()));
+        setPreferredSize(new Dimension(panelmage.getWidth(), panelmage.getHeight()));
     }
-
 
     //	LightDevice
 
@@ -70,7 +69,6 @@ public class AirconPane extends JPanel {
     public AirconDevice getDevice() {
         return airconDev;
     }
-
 
     //	Font
 
@@ -92,7 +90,6 @@ public class AirconPane extends JPanel {
         }
         return timeFont;
     }
-
 
     // paint
 

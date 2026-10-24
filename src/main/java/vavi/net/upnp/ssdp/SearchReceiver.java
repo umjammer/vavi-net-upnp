@@ -7,6 +7,8 @@
 package vavi.net.upnp.ssdp;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -14,7 +16,6 @@ import java.util.concurrent.Future;
 import javax.swing.event.EventListenerList;
 
 import vavi.net.upnp.event.SearchListener;
-import vavi.util.Debug;
 
 
 /**
@@ -27,6 +28,9 @@ import vavi.util.Debug;
  *          05/28/03 Moved post() for SSDPSearchRequest to SSDPResponseSocketList. <br>
  */
 public class SearchReceiver {
+
+    private static final Logger logger = System.getLogger(SearchReceiver.class.getName());
+
     /** */
     private final HttpMulticastSocket httpMulticastSocket;
 
@@ -60,7 +64,7 @@ public class SearchReceiver {
         @Override
         public void run() {
             try {
-Debug.println("+++ SearchReceiver started");
+logger.log(Level.DEBUG, "+++ SearchReceiver started");
     
                 while (true) {
                     Thread.yield();
@@ -71,13 +75,13 @@ Debug.println("+++ SearchReceiver started");
                             performSearchListener(packet);
                         }
                     } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             } finally {
-Debug.println("--- SearchReceiver stopped");
+logger.log(Level.DEBUG, "--- SearchReceiver stopped");
             }
         }
     };

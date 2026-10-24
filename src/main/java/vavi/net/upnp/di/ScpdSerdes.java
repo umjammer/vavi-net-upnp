@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -32,6 +34,8 @@ import vavi.xml.util.PrettyPrinter;
  */
 public class ScpdSerdes extends Singleton implements Serdes<Node, InputStream, OutputStream> {
 
+    private static final Logger logger = System.getLogger(ScpdSerdes.class.getName());
+
     /**
      * scpd node
      * <pre>
@@ -52,7 +56,7 @@ public class ScpdSerdes extends Singleton implements Serdes<Node, InputStream, O
             DocumentBuilder parser = Util.getDocumentBuilder();
             Document scpdNode = parser.parse(is);
             ((Document) scpdNodeWrapper).adoptNode(scpdNode.getLastChild());
-System.out.println("--------");
+logger.log(Level.DEBUG, "--------");
 PrettyPrinter pp = new PrettyPrinter(System.out);
 pp.print(scpdNode);
         } catch (SAXException e) {

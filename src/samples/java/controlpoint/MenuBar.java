@@ -8,6 +8,8 @@ package controlpoint;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -27,23 +29,26 @@ import vavi.net.upnp.ssdp.SSDP;
  * TODO to be deprecated
  */
 public class MenuBar extends JMenuBar {
-    ControlPoint controlPoint;
 
-    JMenu fileMenu;
+    private static final Logger logger = System.getLogger(MenuBar.class.getName());
 
-    JMenu searchMenu;
+    final ControlPoint controlPoint;
 
-    JMenu logMenu;
+    final JMenu fileMenu;
 
-    JMenuItem quitItem;
+    final JMenu searchMenu;
 
-    JMenuItem searchRootDeviceItem;
+    final JMenu logMenu;
 
-    JMenuItem searchAllItem;
+    final JMenuItem quitItem;
 
-    JMenuItem clearItem;
+    final JMenuItem searchRootDeviceItem;
 
-    JCheckBoxMenuItem stopUpdate;
+    final JMenuItem searchAllItem;
+
+    final JMenuItem clearItem;
+
+    final JCheckBoxMenuItem stopUpdate;
 
     public MenuBar(ControlPoint controlPoint) {
         this.controlPoint = controlPoint;
@@ -75,45 +80,45 @@ public class MenuBar extends JMenuBar {
         logMenu.add(clearItem);
     }
 
-    Action quitAction = new AbstractAction() {
+    final Action quitAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent ev) {
             System.exit(0);
         }
     };
 
-    Action clearAction = new AbstractAction() {
+    final Action clearAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent ev) {
             controlPoint.clearConsole();
         }
     };
 
-    Action stopUpdateAction = new AbstractAction() {
+    final Action stopUpdateAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent ev) {
             controlPoint.setStopUpdate(stopUpdate.getState());
         }
     };
 
-    Action searchAction = new AbstractAction() {
+    final Action searchAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent ev) {
             try {
                 controlPoint.search("upnp:rootdevice", SSDP.DEFAULT_MSEARCH_MX);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };
 
-    Action searchAllAction = new AbstractAction() {
+    final Action searchAllAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent ev) {
             try {
                 controlPoint.search(SSDP.ALL_DEVICE, SSDP.DEFAULT_MSEARCH_MX);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };

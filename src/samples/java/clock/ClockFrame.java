@@ -11,13 +11,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
 
 import vavi.net.upnp.UPnP;
-import vavi.util.Debug;
 
 
 /**
@@ -27,6 +28,9 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class ClockFrame extends JFrame {
+
+    private static final Logger logger = System.getLogger(ClockFrame.class.getName());
+
     private final static String TITLE = "CyberLink Sample Clock";
 
     private final ClockDevice clockDev;
@@ -63,7 +67,7 @@ public class ClockFrame extends JFrame {
 
     private final Runnable handler = () -> {
         try {
-Debug.println("+++ Clock started");
+logger.log(Level.DEBUG, "+++ Clock started");
 
             while (true) {
                 getClockDevice().update();
@@ -71,9 +75,9 @@ Debug.println("+++ Clock started");
                 try { Thread.sleep(1000); } catch (InterruptedException e) {}
             }
         } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
         } finally {
-Debug.println("--- Clock stopped");
+logger.log(Level.DEBUG, "--- Clock stopped");
         }
     };
 
@@ -95,7 +99,7 @@ Debug.println("--- Clock stopped");
             try {
                 stop();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };
@@ -108,6 +112,6 @@ Debug.printStackTrace(e);
         sampClock.start();
 
         ClockDevice clockDev = sampClock.getClockDevice();
-Debug.println(clockDev);
+logger.log(Level.DEBUG, clockDev);
     }
 }

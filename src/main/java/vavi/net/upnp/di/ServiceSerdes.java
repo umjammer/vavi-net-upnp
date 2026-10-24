@@ -8,6 +8,8 @@ package vavi.net.upnp.di;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,7 +31,6 @@ import vavi.net.upnp.Service;
 import vavi.net.upnp.StateVariable;
 import vavi.net.util.Serdes;
 import vavi.net.util.Util;
-import vavi.util.Debug;
 import vavi.util.Singleton;
 
 
@@ -40,6 +41,8 @@ import vavi.util.Singleton;
  * @version 0.00 050921 nsano initial version <br>
  */
 public class ServiceSerdes extends Singleton implements Serdes<Service, Node, Node> {
+
+    private static final Logger logger = System.getLogger(ServiceSerdes.class.getName());
 
     /** */
     private static final ActionSerdes actionSerdes = Singleton.getInstance(ActionSerdes.class);
@@ -95,7 +98,7 @@ public class ServiceSerdes extends Singleton implements Serdes<Service, Node, No
             // scpd
             Node scdpNode = getSCPDNode(service);
             if (scdpNode == null) {
-Debug.println("could not get scpd");
+logger.log(Level.DEBUG, "could not get scpd");
                 return; // TODO just return ?
             }
 
@@ -108,7 +111,7 @@ Debug.println("could not get scpd");
                 Action action = new Action();
                 action.setService(service);
                 actionSerdes.deserialize(actionNode, action);
-//Debug.println("Action[" + n + "]: " + action.getName() + ", " + action.getArgumentList().size());
+//logger.log(Level.DEBUG, "Action[" + n + "]: " + action.getName() + ", " + action.getArgumentList().size());
                 service.getActionList().add(action);
             }
     
@@ -121,7 +124,7 @@ Debug.println("could not get scpd");
                 StateVariable stateVariable = new StateVariable();
                 stateVariable.setService(service);
                 stateVariableSerdes.deserialize(stateVariableNode, stateVariable);
-//Debug.println("StateVariable[" + n + "]: " + stateVariable.getDataType() + " " + stateVariable.getName());
+//logger.log(Level.DEBUG, "StateVariable[" + n + "]: " + stateVariable.getDataType() + " " + stateVariable.getName());
                 service.getStateVariableList().add(stateVariable);
             }
     
@@ -140,19 +143,19 @@ Debug.println("could not get scpd");
     private static Node getSCPDNode(Service service) throws IOException, SAXException {
         Node scpdNode = service.getSCPDNode();
         if (scpdNode != null) {
-Debug.println("TRY 0 OK: " + scpdNode);
+logger.log(Level.DEBUG, "TRY 0 OK: " + scpdNode);
             return scpdNode;
         }
 
         String scpdURLString = service.getSCPDURL();
         try {
             scpdNode = getSCPDNode(scpdURLString);
-//Debug.println("TRY 1 OK: " + scpdURLString);
+//logger.log(Level.DEBUG, "TRY 1 OK: " + scpdURLString);
         } catch (Exception e1) {
-//Debug.println("TRY 1 NG: " + scpdURLString);
+//logger.log(Level.DEBUG, "TRY 1 NG: " + scpdURLString);
             Device rootDevice = service.getDevice().getRootDevice();
             String urlBaseString = rootDevice.getURLBase();
-//Debug.println("urlBaseString 1: " + urlBaseString + ", " + rootDevice.getFriendlyName());
+//logger.log(Level.DEBUG, "urlBaseString 1: " + urlBaseString + ", " + rootDevice.getFriendlyName());
 
             // Thanks for Steven Yen (2003/09/03)
             if (urlBaseString == null || urlBaseString.isEmpty()) {
@@ -164,10 +167,10 @@ Debug.println("TRY 0 OK: " + scpdNode);
                     locationHost = location.getHost();
                     locationPort = location.getPort();
                 } catch (MalformedURLException e) {
-//Debug.println(e);
+//logger.log(Level.DEBUG, e);
                 }
                 urlBaseString = "http://" + locationHost + ":" + locationPort;
-//Debug.println("urlBaseString 2: " + urlBaseString + ", " + StringUtil.paramString(rootDevice));
+//logger.log(Level.DEBUG, "urlBaseString 2: " + urlBaseString + ", " + StringUtil.paramString(rootDevice));
             }
 
             scpdURLString = Util.toRelativeURL(scpdURLString);
@@ -175,23 +178,23 @@ Debug.println("TRY 0 OK: " + scpdNode);
 
             try {
                 scpdNode = getSCPDNode(newScpdURLString);
-//Debug.println("TRY 2 OK: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 2 OK: " + newScpdURLString);
             } catch (IOException e2) {
-//Debug.println("TRY 2 NG: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 2 NG: " + newScpdURLString);
                 newScpdURLString = Util.getAbsoluteURL(urlBaseString, scpdURLString);
                 try {
                     scpdNode = getSCPDNode(newScpdURLString);
-//Debug.println("TRY 3 OK: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 3 OK: " + newScpdURLString);
                 } catch (IOException e3) {
-//Debug.println("TRY 3 NG: " + newScpdURLString);
+//logger.log(Level.DEBUG, "TRY 3 NG: " + newScpdURLString);
                     newScpdURLString = rootDevice.getDescriptionFilePath() + scpdURLString;
                     File file = null;
                     try {
                         file = new File(newScpdURLString);
                         scpdNode = getSCPDNode(file);
-//Debug.println("TRY 4 OK: " + file);
+//logger.log(Level.DEBUG, "TRY 4 OK: " + file);
                     } catch (IOException e4) {
-Debug.println("TRY 4 NG: " + file);
+logger.log(Level.DEBUG, "TRY 4 NG: " + file);
                         return null;
                     }
                 }

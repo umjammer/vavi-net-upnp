@@ -11,13 +11,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
 
 import vavi.net.upnp.UPnP;
-import vavi.util.Debug;
 
 
 /**
@@ -27,7 +28,11 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class TvFrame extends JFrame {
+
+    private static final Logger logger = System.getLogger(TvFrame.class.getName());
+
     private final static String TITLE = "CyberLink Sample TV";
+
     private final TvDevice tvDev;
     private final TvPane tvPane;
 
@@ -58,8 +63,7 @@ public class TvFrame extends JFrame {
         return tvDev;
     }
 
-
-    //	run	
+    //	run
     private final ExecutorService timerThread = Executors.newSingleThreadExecutor();
 
     private final Runnable handler = new Runnable() {
@@ -67,16 +71,16 @@ public class TvFrame extends JFrame {
         public void run() {
     
             try {
-Debug.println("+++ timerThread started");
+logger.log(Level.DEBUG, "+++ timerThread started");
                 while (true) {
                     tvDev.setMessage("");
                     tvPane.repaint();
                     try { Thread.sleep(1000 * 5); } catch (InterruptedException e) {}
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             } finally {
-Debug.println("--- timerThread stopped");
+logger.log(Level.DEBUG, "--- timerThread stopped");
             }
         }
     };
@@ -101,7 +105,7 @@ Debug.println("--- timerThread stopped");
             try {
                 stop();
             } catch (IOException e) {
-                Debug.printStackTrace(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };

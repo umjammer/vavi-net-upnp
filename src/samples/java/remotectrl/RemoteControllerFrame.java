@@ -11,6 +11,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -18,7 +20,6 @@ import java.util.concurrent.Future;
 import javax.swing.JFrame;
 
 import vavi.net.upnp.UPnP;
-import vavi.util.Debug;
 
 
 /**
@@ -28,6 +29,9 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  */
 public class RemoteControllerFrame extends JFrame {
+
+    private static final Logger logger = System.getLogger(RemoteControllerFrame.class.getName());
+
     /** */
     private final static String TITLE = "CyberLink Sample Remote Controller";
 
@@ -77,15 +81,15 @@ public class RemoteControllerFrame extends JFrame {
         @Override
         public void run() {
             try {
-Debug.println("+++ RemoteController started");
+logger.log(Level.DEBUG, "+++ RemoteController started");
                 while (true) {
                     remoteControllerPane.repaint();
                     try { Thread.sleep(1000); } catch (InterruptedException e) {}
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             } finally {
-Debug.println("--- RemoteController stopped");
+logger.log(Level.DEBUG, "--- RemoteController stopped");
             }
         }
     };
@@ -109,7 +113,7 @@ Debug.println("--- RemoteController stopped");
             try {
                 stop();
             } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     };

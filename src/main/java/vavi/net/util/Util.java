@@ -7,6 +7,8 @@
 package vavi.net.util;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -14,14 +16,11 @@ import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.logging.Level;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import vavi.net.upnp.UPnP;
-import vavi.util.Debug;
 
 
 /**
@@ -30,6 +29,8 @@ import vavi.util.Debug;
  * @version 01/03/03 first revision.
  */
 public final class Util {
+
+    private static final Logger logger = System.getLogger(Util.class.getName());
 
     /** Network Interfaces */
     private static String ifAddress = "";
@@ -221,7 +222,7 @@ e.printStackTrace(System.err);
         try {
             db = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e);
         }
     }
 

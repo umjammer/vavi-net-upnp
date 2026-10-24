@@ -7,6 +7,8 @@
 package vavi.net.upnp;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,6 @@ import vavi.net.upnp.event.ActionListener;
 import vavi.net.upnp.soap.ActionRequest;
 import vavi.net.upnp.soap.ActionResponse;
 import vavi.net.util.SoapUtil;
-import vavi.util.Debug;
 
 
 /**
@@ -42,6 +43,8 @@ import vavi.util.Debug;
  *          UPnPStatus. <br>
  */
 public class Action {
+
+    private static final Logger logger = System.getLogger(Action.class.getName());
 
     /** Services to which this belongs */
     private Service service;
@@ -69,7 +72,7 @@ public class Action {
     }
 
     /** List of arguments */
-    protected List<Argument> argumentList = new ArrayList<>();
+    protected final List<Argument> argumentList = new ArrayList<>();
 
     /** Gets a list of arguments. */
     public List<Argument> getArgumentList() {
@@ -84,12 +87,12 @@ public class Action {
                 if (argument.getName().equals(targetArgument.getName())) {
                     found = true;
                     argument.setValue(targetArgument.getValue());
-Debug.println("Argument updated: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getValue());
+logger.log(Level.DEBUG, "Argument updated: " + argument.getName() + ", " + argument.getDirection() + ", " + argument.getValue());
                 }
             }
             if (!found) { // TODO need?
                 argumentList.add(targetArgument);
-Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgument.getDirection() + ", " + targetArgument.getValue());
+logger.log(Level.DEBUG, "Argument added: " + targetArgument.getName() + ", " + targetArgument.getDirection() + ", " + targetArgument.getValue());
             }
         }
     }
@@ -162,7 +165,7 @@ Debug.println("Argument added: " + targetArgument.getName() + ", " + targetArgum
     public ActionResponse postActionRequest() throws IOException {
         // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (08/30/03)
         ActionRequest request = new ActionRequest(this);
-Debug.print(">>>> REQUEST: " + request.getSOAPAction());
+logger.log(Level.DEBUG, ">>>> REQUEST: " + request.getSOAPAction());
         HttpContext httpContext = SoapUtil.postSoapRequest(request);
         ActionResponse response = new ActionResponse(httpContext);
 
@@ -174,7 +177,7 @@ Debug.print(">>>> REQUEST: " + request.getSOAPAction());
             response.setStatusMessage(statusMessage);
         } catch (IllegalArgumentException e) {
             response.setStatusMessage(httpContext.getStatusMessage());
-Debug.print("undefined upnp status: " + statusCode);
+logger.log(Level.DEBUG, "undefined upnp status: " + statusCode);
         }
         if (HttpUtil.isStatusCodeSucces(statusCode)) {
             updateArguments(response.getArgumentList());

@@ -7,9 +7,9 @@
 package vavi.net.util;
 
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import vavi.net.http.HttpContext;
 
@@ -23,10 +23,10 @@ import vavi.net.http.HttpContext;
 public abstract class SOAPResponse extends HttpContext {
 
     /** */
-    protected MessageFactory messageFactory;
+    protected final MessageFactory messageFactory;
 
     /** */
-    protected SOAPFactory soapFactory;
+    protected final SOAPFactory soapFactory;
 
     /**  */
     public SOAPResponse() {

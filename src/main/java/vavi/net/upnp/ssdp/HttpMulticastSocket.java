@@ -60,9 +60,7 @@ public class HttpMulticastSocket {
         open(address, SSDP.PORT, bindAddress);
     }
 
-    /** Destructor */
-    @Override
-    protected void finalize() throws Throwable {
+    protected void dispose() throws Throwable {
         close();
     }
 
@@ -132,7 +130,7 @@ public class HttpMulticastSocket {
         // Thanks for Tho Beisch (11/09/04)
         multicastSocket.setTimeToLive(4);
         multicastSocket.send(datagramPacket);
-//Debug.println(">>>> SENT (multicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + new String(baos.toByteArray()));
+//logger.log(Level.DEBUG, ">>>> SENT (multicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + new String(baos.toByteArray()));
         multicastSocket.close();
     }
 
@@ -147,7 +145,7 @@ public class HttpMulticastSocket {
 //      String localHost = ((InetSocketAddress) ssdpMultiSocket.getLocalSocketAddress()).getHostName();
         int localPort = ((InetSocketAddress) ssdpMultiSocket.getLocalSocketAddress()).getPort();
         SsdpRequest receivedPacket = new SsdpRequest(datagramPacket, getLocalAddress(), localPort);
-//Debug.println("<<<< RECEIVED (multicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + receivedPacket);
+//logger.log(Level.DEBUG, "<<<< RECEIVED (multicast): " + datagramPacket.getAddress() + ":" + datagramPacket.getPort() + "\n" + receivedPacket);
         receivedPacket.setLastModified(System.currentTimeMillis());
         return receivedPacket;
     }

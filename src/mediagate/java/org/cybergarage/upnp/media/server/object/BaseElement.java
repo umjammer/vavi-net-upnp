@@ -52,10 +52,10 @@ public class BaseElement implements Element {
     protected String nodeValue;
 
     /** */
-    protected List<Node> childNodes = new ArrayList<>();
+    protected final List<Node> childNodes = new ArrayList<>();
 
     /** */
-    protected Map<String, Attr> attributes = new HashMap<>();
+    protected final Map<String, Attr> attributes = new HashMap<>();
 
     /** */
     private static class MyAttr extends BaseElement implements Attr {

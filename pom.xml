@@ -68,7 +68,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.6.2</version>
         <executions>
           <execution>
             <id>generate-sources</id>
@@ -143,11 +143,6 @@
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
-    <repository>
-      <id>maven_central</id>
-      <name>Maven Central</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </repository>
   </repositories>
 
   <dependencyManagement>
@@ -196,23 +191,73 @@
           <groupId>com.fasterxml.woodstox</groupId>
           <artifactId>woodstox-core</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm-analysis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-core</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
+<dependency>
+  <groupId>org.ow2.asm</groupId>
+  <artifactId>asm</artifactId>
+  <version>9.11.1</version>
+  <scope>runtime</scope>
+</dependency>
+<dependency>
+  <groupId>org.ow2.asm</groupId>
+  <artifactId>asm-analysis</artifactId>
+  <version>9.11.1</version>
+  <scope>runtime</scope>
+</dependency>
 
-  	<dependency>
+    <dependency>
   		<groupId>commons-dbutils</groupId>
   		<artifactId>commons-dbutils</artifactId>
   		<version>1.8.1</version>
   	</dependency>
-  	<dependency>
+    <dependency>
       <groupId>com.github.umjammer</groupId>
-  		<artifactId>vavi-commons-sandbox</artifactId>
-  		<version>0.4.10</version>
-  	</dependency>
-  	<dependency>
+      <artifactId>vavi-commons-sandbox</artifactId>
+      <version>0.4.10</version>
+      <exclusions>
+        <exclusion>
+          <groupId>tools.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>tools.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+<dependency>
+  <groupId>tools.jackson.core</groupId>
+  <artifactId>jackson-core</artifactId>
+  <version>3.2.4</version>
+</dependency>
+<dependency>
+  <groupId>tools.jackson.core</groupId>
+  <artifactId>jackson-databind</artifactId>
+  <version>3.2.4</version>
+</dependency>
+    <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
       <artifactId>vavi-util-screenscraping</artifactId>
       <version>1.0.20</version>
+      <exclusions>
+        <exclusion>
+          <groupId>net.minidev</groupId>
+          <artifactId>json-smart</artifactId>
+        </exclusion>
+      </exclusions>
   	</dependency>
 
     <dependency>

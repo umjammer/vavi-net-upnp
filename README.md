@@ -1,15 +1,19 @@
-[![GitHub Packages](https://github.com/umjammer/cyberlink4java2/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/umjammer?tab=packages&repo_name=cyberlink4java2)
-[![Java CI](https://github.com/umjammer/cyberlink4java2/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/cyberlink4java2/actions/workflows/maven.yml)
-[![CodeQL](https://github.com/umjammer/cyberlink4java2/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/cyberlink4java2/actions/workflows/codeql-analysis.yml)
-![Java](https://img.shields.io/badge/Java-8-b07219)
+[![Release](https://jitpack.io/v/umjammer/vavi-net-upnp.svg)](https://jitpack.io/#umjammer/vavi-net-upmp)
+[![Java CI](https://github.com/umjammer/vavi-net-upnp/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/vavi-net-upnp/actions/workflows/maven.yml)
+[![CodeQL](https://github.com/umjammer/vavi-net-upnp/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-net-upnp/actions/workflows/codeql-analysis.yml)
+![Java](https://img.shields.io/badge/Java-17-b07219)
 
 # vavi-net-upnp
+
+<img alt="logo" src="src/test/resources/duke_upnp.png" width="160" />
 
 UPnP Library with Annotation
 
 [Original](http://www.cybergarage.org/oss/iot/cybergarage-upnp/)
 
 ## Install
+
+- [maven]()
 
 ## Usage
 
@@ -126,3 +130,7 @@ public class Light {
 ## References
 
 ## TODO
+
+---
+
+<sub>image designed by @umjammer, drawn by nano banana</sub>
